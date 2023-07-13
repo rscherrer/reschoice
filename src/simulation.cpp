@@ -30,34 +30,27 @@ int simulate(const std::vector<std::string> &args) {
 
 			std::cout << t << std::endl;
 			
+			// There are multiple feeding rounds.
+			// Every feeding round, individuals are taken in random order.
+			// Eech individual assesses its expected fitness if feeding on each resource.
+			// That expected fitness depends on the amount of resources present, the discovery rate, 
+			// its own affinity for that resource and the cumulative affinity of all individuals
+			// feeding on that resource (i.e. having chosen that resource).
+			// Of those, the amount of resource and the discovery rate remain constant (resources
+			// are replenished every round and do not go down until everyone has made a choice),
+			// and the feeding efficiency only depends on the individual's trait value x.
+			// The cumulative affinity does change as we loop through individuals within one round
+			// though. Every time an individual makes a choice, that value changes, so we need
+			// to keep track of it.
+
 			// Initialize a vector of fitnesses
-			std::vector<double> fitnesses(pop.size());
+			std::vector<double> fitnesses(pop.size(), 1.0);
 
-			// Initialize sums of feeding efficiencies for each resource
-			double sumeff1, sumeff2 = 0.0;
+			////////////////////////////
 
-			// For each individual...
-			for (size_t i = 0u; i < pop.size(); ++i) {
+			
 
-				// Update the sums of feeding efficiencies
-				sumeff1 += pop[i].getEff1();
-				sumeff2 += pop[i].getEff2();
-
-			}
-
-			// For each individual in the population...
-			for (size_t i = 0u; i < pop.size(); ++i) {
-
-				const double eff1 = pop[i].getEff1();
-				const double eff2 = pop[i].getEff2();
-
-				const double fit1 = res1 * eff1 / (sumeff1 + 1.0 / delta - 1.0);
-				const double fit2 = res2 * eff2 / (sumeff2 + 1.0 / delta - 1.0);
-
-				// Assign it a fitness value
-				fitnesses[i] = 1.0;
-
-			}
+			////////////////////////////
 
 			// Create a distribution to sample parents from proportionately to fitness
 			auto sampleParent = rnd::discrete(fitnesses.begin(), fitnesses.end());
