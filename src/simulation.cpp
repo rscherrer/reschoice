@@ -9,8 +9,8 @@ int simulate(const std::vector<std::string> &args) {
 	try
     {
 
-		// Create an individual
-		Individual ind;
+		// Create a population of individuals
+		std::vector<Individual> pop(10u);
 
         return 0;
 
