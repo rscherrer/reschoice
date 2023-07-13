@@ -4,6 +4,12 @@
 
 #include "simulation.hpp"
 
+// Lambda for removing dead individuals
+auto burry = [](Individual ind) -> bool
+{
+    return !ind.isAlive();
+};
+
 int simulate(const std::vector<std::string> &args) {
 
 	try
@@ -24,9 +30,18 @@ int simulate(const std::vector<std::string> &args) {
 			for (size_t i = 0u; i < popsize; ++i) {
 
 				// Add offspring to the population
-				pop.push_back(pop[i]);				
+				pop.push_back(pop[i]);
+
+				// Kill the adult
+				pop[i].kill();
 
 			}
+
+			// Remove dead individuals
+            auto it = std::remove_if(pop.begin(), pop.end(), burry);
+            pop.erase(it, pop.end());
+            pop.shrink_to_fit();
+
 		}
 
         return 0;

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 // Main simulation function
 int simulate(const std::vector<std::string>&);

@@ -7,7 +7,15 @@ class Individual {
 
 public:
 
+    Individual();
+
+    void kill();
+
+    bool isAlive() const;
+
 private:
+
+    bool alive; // is the individual alive?
 
 };
 
