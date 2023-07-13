@@ -10,6 +10,10 @@ Individual::Individual(const double &tradeoff) :
     alive(true)
 {
 
+    // Check that feeding efficiencies are above zero
+    assert(eff1 >= 0.0);
+    assert(eff2 >= 0.0);
+
 }
 
 // Function to kill an individual

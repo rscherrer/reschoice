@@ -6,6 +6,7 @@
 #include "utilities.hpp"
 #include "random.hpp"
 #include <cmath>
+#include <cassert>
 
 class Individual {
 

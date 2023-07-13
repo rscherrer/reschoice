@@ -73,6 +73,10 @@ int simulate(const std::vector<std::string> &args) {
 					const double fit1 = res1 * eff1 * (sumeff1 + 1.0 / delta - 1.0);
 					const double fit2 = res2 * eff2 * (sumeff2 + 1.0 / delta - 1.0);
 
+					// Check that expected fitnesses are above zero
+					assert(fit1 >= 0.0);
+					assert(fit2 >= 0.0);
+
 					// Resource choice
 					pop[i].setChoice(fit2 > fit1, beta);
 					
@@ -94,6 +98,9 @@ int simulate(const std::vector<std::string> &args) {
 
 					// Compute realized fitness on each resource
 					const double fit = res * eff * (sumeff + 1.0 / delta - 1.0);
+
+					// Check that the fitness is above zero
+					assert(fit >= 0.0);
 
 					// Add obtained food to the vector of fitnesses
 					fitnesses[i] += fit;
