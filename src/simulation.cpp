@@ -19,8 +19,8 @@ int simulate(const std::vector<std::string> &args) {
 		const size_t popsize = 10u; // fixed population size
 		const double tradeoff = 1.0; // resouce utilization tradeoff
 		const double delta = 1.0; // resource discovery rate
-		const double res1 = 1.0;
-		const double res2 = 1.0;
+		const double res1 = 100.0; // amount of resource 1
+		const double res2 = 100.0; // amount of resource 2
 
 		// Create a population of individuals
 		std::vector<Individual> pop(popsize, { tradeoff });
