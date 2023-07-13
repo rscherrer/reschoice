@@ -15,8 +15,9 @@ int simulate(const std::vector<std::string> &args) {
 	try
     {
 
-		// Fixed population size
+		// Parameters
 		const size_t popsize = 10u;
+		const double tradeoff = 1.0;
 
 		// Create a population of individuals
 		std::vector<Individual> pop(popsize);
@@ -31,6 +32,10 @@ int simulate(const std::vector<std::string> &args) {
 
 			// For each individual in the population...
 			for (size_t i = 0u; i < pop.size(); ++i) {
+
+				const double x = pop[i].getX();
+				const double eff1 = exp(-tradeoff * utl::sqr(1 + x));
+				const double eff2 = exp(-tradeoff * utl::sqr(1 - x));
 
 				// Assign it a fitness value
 				fitnesses[i] = 1.0;

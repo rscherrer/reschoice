@@ -11,6 +11,7 @@ public:
 
     void kill();
 
+    double getX() const;
     bool isAlive() const;
 
 private:

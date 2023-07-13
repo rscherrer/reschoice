@@ -13,5 +13,6 @@ Individual::Individual() :
 // Function to kill an individual
 void Individual::kill() { alive = false; }
 
-// Is an individual alive?
+// Getters
+double Individual::getX() const { return x; }
 bool Individual::isAlive() const { return alive; }
