@@ -4,6 +4,7 @@
 // This is the header containing the main simulation function
 
 #include "individual.hpp"
+#include "random.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
