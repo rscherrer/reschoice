@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(useCase) {
 // Test that an individual is initialized properly
 BOOST_AUTO_TEST_CASE(individualInitialization) {
 
-    Individual ind;
+    Individual ind(1.0);
     BOOST_CHECK(ind.isAlive());
 
 }
@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE(individualInitialization) {
 // Test that an individual is dead after we kill it
 BOOST_AUTO_TEST_CASE(individualIsDeadAfterBeingKilled) {
 
-    Individual ind;
+    Individual ind(1.0);
     ind.kill();
     BOOST_CHECK(!ind.isAlive());
 

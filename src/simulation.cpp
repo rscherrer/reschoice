@@ -16,11 +16,14 @@ int simulate(const std::vector<std::string> &args) {
     {
 
 		// Parameters
-		const size_t popsize = 10u;
-		const double tradeoff = 1.0;
+		const size_t popsize = 10u; // fixed population size
+		const double tradeoff = 1.0; // resouce utilization tradeoff
+		const double delta = 1.0; // resource discovery rate
+		const double res1 = 1.0;
+		const double res2 = 1.0;
 
 		// Create a population of individuals
-		std::vector<Individual> pop(popsize);
+		std::vector<Individual> pop(popsize, { tradeoff });
 
 		// Loop through time steps
 		for (size_t t = 0u; t <= 5u; ++t) {
@@ -30,12 +33,26 @@ int simulate(const std::vector<std::string> &args) {
 			// Initialize a vector of fitnesses
 			std::vector<double> fitnesses(pop.size());
 
+			// Initialize sums of feeding efficiencies for each resource
+			double sumeff1, sumeff2 = 0.0;
+
+			// For each individual...
+			for (size_t i = 0u; i < pop.size(); ++i) {
+
+				// Update the sums of feeding efficiencies
+				sumeff1 += pop[i].getEff1();
+				sumeff2 += pop[i].getEff2();
+
+			}
+
 			// For each individual in the population...
 			for (size_t i = 0u; i < pop.size(); ++i) {
 
-				const double x = pop[i].getX();
-				const double eff1 = exp(-tradeoff * utl::sqr(1 + x));
-				const double eff2 = exp(-tradeoff * utl::sqr(1 - x));
+				const double eff1 = pop[i].getEff1();
+				const double eff2 = pop[i].getEff2();
+
+				const double fit1 = res1 * eff1 / (sumeff1 + 1.0 / delta - 1.0);
+				const double fit2 = res2 * eff2 / (sumeff2 + 1.0 / delta - 1.0);
 
 				// Assign it a fitness value
 				fitnesses[i] = 1.0;

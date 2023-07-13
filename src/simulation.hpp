@@ -5,13 +5,11 @@
 
 #include "individual.hpp"
 #include "random.hpp"
-#include "utilities.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
 #include <cassert>
-#include <cmath>
 
 // Main simulation function
 int simulate(const std::vector<std::string>&);
