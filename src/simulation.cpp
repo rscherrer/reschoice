@@ -9,18 +9,22 @@ int simulate(const std::vector<std::string> &args) {
 	try
     {
 
+		// Fixed population size
+		size_t popsize = 10u;
+
 		// Create a population of individuals
-		std::vector<Individual> pop(10u);
+		std::vector<Individual> pop(popsize);
 
 		// Loop through time steps
-		for (size_t t = 0u; t <= 100u; ++t) {
+		for (size_t t = 0u; t <= 5u; ++t) {
 
 			std::cout << t << std::endl;
 
-			// Loop through individuals to be made (fixed population size)
-			for (size_t i = 0u; i < pop.size(); ++i) {
+			// Loop through individuals to be made
+			for (size_t i = 0u; i < popsize; ++i) {
 
-				
+				// Add offspring to the population
+				pop.push_back(pop[i]);				
 
 			}
 		}
