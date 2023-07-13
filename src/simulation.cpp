@@ -23,6 +23,8 @@ int simulate(const std::vector<std::string> &args) {
 		const double res1 = 100.0; // amount of resource 1
 		const double res2 = 100.0; // amount of resource 2
 		const size_t nrounds = 10u; // number of feeding rounds
+		const double mutrate = 0.0001; // mutation rate
+		const double mutsdev = 0.02; // mutational standard deviation
 
 		// Create a population of individuals
 		std::vector<Individual> pop(popsize, { tradeoff });
@@ -119,6 +121,9 @@ int simulate(const std::vector<std::string> &args) {
 
 				// Add offspring to the population
 				pop.push_back(pop[j]);
+
+				// Mutate offspring if needed
+				if (rnd::bernoulli(mutrate)(rnd::rng)) pop.back().mutate(mutsdev);
 
 			}
 
