@@ -25,8 +25,22 @@ int simulate(const std::vector<std::string> &args) {
 		for (size_t t = 0u; t <= 5u; ++t) {
 
 			std::cout << t << std::endl;
+			
+			// Initialize a vector of fitnesses
+			std::vector<double> fitnesses(pop.size());
 
-			// Loop through individuals to be made
+			// For each individual in the population...
+			for (size_t i = 0u; i < pop.size(); ++i) {
+
+				// Assign it a fitness value
+				fitnesses[i] = 1.0;
+
+			}
+
+			// Create a distribution to sample from
+			
+
+			// For each individual to be born...
 			for (size_t i = 0u; i < popsize; ++i) {
 
 				// Add offspring to the population
