@@ -14,3 +14,20 @@ BOOST_AUTO_TEST_CASE(useCase) {
     BOOST_CHECK_EQUAL(simulate({"program_name"}), 0);
 
 }
+
+// Test that an individual is initialized properly
+BOOST_AUTO_TEST_CASE(individualInitialization) {
+
+    Individual ind;
+    BOOST_CHECK(ind.isAlive());
+
+}
+
+// Test that an individual is dead after we kill it
+BOOST_AUTO_TEST_CASE(individualIsDeadAfterBeingKilled) {
+
+    Individual ind;
+    ind.kill();
+    BOOST_CHECK(!ind.isAlive());
+
+}
