@@ -21,6 +21,7 @@ int simulate(const std::vector<std::string> &args) {
 		const double delta = 1.0; // resource discovery rate
 		const double res1 = 100.0; // amount of resource 1
 		const double res2 = 100.0; // amount of resource 2
+		const size_t nrounds = 10u; // number of feeding rounds
 
 		// Create a population of individuals
 		std::vector<Individual> pop(popsize, { tradeoff });
@@ -45,55 +46,58 @@ int simulate(const std::vector<std::string> &args) {
 			// (well, only the amount of resources that was discovered). And it is split proportionately
 			// to the realized fitness of the individuals, which uses the same formula as the
 			// expected one but now with sums of feeding efficiencies being computed once everybody
-			// has chosen.
+			// has chosen. The total fitness of an individual is the sum of all the food obtained
+			// throughout all feeding rounds.
 
 			// Initialize a vector of fitnesses
 			std::vector<double> fitnesses(pop.size());
 
-			// One round for now
+			// For each feeding round...
+			for (size_t j = 0u; j < nrounds; ++j) {
 
-			// Initialize cumulative feeding efficiencies
-			double sumeff1, sumeff2 = 0.0;
+				// Individuals must be taken in random order
+				std::shuffle(pop.begin(), pop.end(), rnd::rng);
 
-			// Individuals must be taken in random order
-			std::shuffle(pop.begin(), pop.end(), rnd::rng);
+				// Initialize cumulative feeding efficiencies
+				double sumeff1, sumeff2 = 0.0;
 
-			// For each individual...
-			for (size_t i = 0; i < pop.size(); ++i) {
+				// For each individual...
+				for (size_t i = 0; i < pop.size(); ++i) {
 
-				// Get feedding efficiency on each resource
-				const double eff1 = pop[i].getEff1();
-				const double eff2 = pop[i].getEff2();
+					// Get feedding efficiency on each resource
+					const double eff1 = pop[i].getEff1();
+					const double eff2 = pop[i].getEff2();
 
-				// Compute expected fitness on each resource
-				const double fit1 = res1 * eff1 * (sumeff1 + 1.0 / delta - 1.0);
-				const double fit2 = res2 * eff2 * (sumeff2 + 1.0 / delta - 1.0);
+					// Compute expected fitness on each resource
+					const double fit1 = res1 * eff1 * (sumeff1 + 1.0 / delta - 1.0);
+					const double fit2 = res2 * eff2 * (sumeff2 + 1.0 / delta - 1.0);
 
-				// Resource choice
-				pop[i].setChoice(fit2 > fit1);
-				
-				// Update cumulative feeding efficiencies depending on what resource has been chosen
-				if (pop[i].getChoice()) sumeff2 += eff2; else sumeff1 += eff1;
+					// Resource choice
+					pop[i].setChoice(fit2 > fit1);
+					
+					// Update cumulative feeding efficiencies depending on what resource has been chosen
+					if (pop[i].getChoice()) sumeff2 += eff2; else sumeff1 += eff1;
 
-			}
+				}
 
-			// For each individual...
-			for (size_t i = 0u; i < pop.size(); ++i) {
+				// For each individual...
+				for (size_t i = 0u; i < pop.size(); ++i) {
 
-				// Which resource was chosen?
-				const bool choice = pop[i].getChoice();
+					// Which resource was chosen?
+					const bool choice = pop[i].getChoice();
 
-				// Corresponding values
-				const double eff = choice ? pop[i].getEff2() : pop[i].getEff1();
-				const double res = choice ? res2 : res1;
-				const double sumeff = choice ? sumeff2 : sumeff1;
+					// Corresponding values
+					const double eff = choice ? pop[i].getEff2() : pop[i].getEff1();
+					const double res = choice ? res2 : res1;
+					const double sumeff = choice ? sumeff2 : sumeff1;
 
-				// Compute realized fitness on each resource
-				const double fit = res * eff * (sumeff + 1.0 / delta - 1.0);
+					// Compute realized fitness on each resource
+					const double fit = res * eff * (sumeff + 1.0 / delta - 1.0);
 
-				// Add it to the vector of fitnesses
-				fitnesses[i] = fit;
+					// Add obtained food to the vector of fitnesses
+					fitnesses[i] += fit;
 
+				}
 			}
 
 			// Create a distribution to sample parents from proportionately to fitness
