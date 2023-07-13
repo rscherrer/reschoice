@@ -41,9 +41,8 @@ int simulate(const std::vector<std::string> &args) {
 			// and the feeding efficiency only depends on the individual's trait value x.
 			// The cumulative affinity does change as we loop through individuals within one round
 			// though. Every time an individual makes a choice, that value changes, so we need
-			// to keep track of it. Once all individuals have chosen, the resources is split.
-			// Well, only the amount of resources that was discovered (that needs to be calculated
-			// depending on the discovery rate and individual choices). And it is split proportionately
+			// to keep track of it. Once all individuals have chosen, the resources is split
+			// (well, only the amount of resources that was discovered). And it is split proportionately
 			// to the realized fitness of the individuals, which uses the same formula as the
 			// expected one but now with sums of feeding efficiencies being computed once everybody
 			// has chosen.
@@ -51,12 +50,13 @@ int simulate(const std::vector<std::string> &args) {
 			// Initialize a vector of fitnesses
 			std::vector<double> fitnesses(pop.size());
 
-			////////////////////////////
-
 			// One round for now
 
 			// Initialize cumulative feeding efficiencies
 			double sumeff1, sumeff2 = 0.0;
+
+			// Individuals must be taken in random order
+			std::shuffle(pop.begin(), pop.end(), rnd::rng);
 
 			// For each individual...
 			for (size_t i = 0; i < pop.size(); ++i) {
@@ -77,6 +77,7 @@ int simulate(const std::vector<std::string> &args) {
 
 			}
 
+			// For each individual...
 			for (size_t i = 0u; i < pop.size(); ++i) {
 
 				// Which resource was chosen?
@@ -94,8 +95,6 @@ int simulate(const std::vector<std::string> &args) {
 				fitnesses[i] = fit;
 
 			}
-
-			////////////////////////////
 
 			// Create a distribution to sample parents from proportionately to fitness
 			auto sampleParent = rnd::discrete(fitnesses.begin(), fitnesses.end());
