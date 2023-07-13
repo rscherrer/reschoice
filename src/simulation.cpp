@@ -17,6 +17,12 @@ int simulate(const std::vector<std::string> &args) {
 
 			std::cout << t << std::endl;
 
+			// Loop through individuals to be made (fixed population size)
+			for (size_t i = 0u; i < pop.size(); ++i) {
+
+				
+
+			}
 		}
 
         return 0;
