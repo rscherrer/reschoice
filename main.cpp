@@ -1,7 +1,7 @@
-#include "src/hello.hpp"
+#include "src/simulation.hpp"
 
 int main() {
 
-    return sayHello();
+    return simulate();
 
 }
