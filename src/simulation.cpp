@@ -16,7 +16,7 @@ int simulate(const std::vector<std::string> &args) {
     {
 
 		// Fixed population size
-		size_t popsize = 10u;
+		const size_t popsize = 10u;
 
 		// Create a population of individuals
 		std::vector<Individual> pop(popsize);
@@ -37,19 +37,22 @@ int simulate(const std::vector<std::string> &args) {
 
 			}
 
-			// Create a distribution to sample from
-			
+			// Create a distribution to sample parents from proportionately to fitness
+			auto sampleParent = rnd::discrete(fitnesses.begin(), fitnesses.end());
 
 			// For each individual to be born...
 			for (size_t i = 0u; i < popsize; ++i) {
 
-				// Add offspring to the population
-				pop.push_back(pop[i]);
+				// Sample parent of the current offspring (with replacement)
+				const size_t j = sampleParent(rnd::rng);
 
-				// Kill the adult
-				pop[i].kill();
+				// Add offspring to the population
+				pop.push_back(pop[j]);
 
 			}
+
+			// Kill every adult
+			for (size_t i = 0u; i < popsize; ++i) pop[i].kill();
 
 			// Remove dead individuals
             auto it = std::remove_if(pop.begin(), pop.end(), burry);
