@@ -6,6 +6,24 @@
 
 int simulate(const std::vector<std::string> &args) {
 
-	return 0;
+	try
+    {
+
+        return 0;
+		
+    }
+    catch (const std::exception& err)
+    {
+        std::cerr << "Exception: " << err.what() << '\n';
+    }
+    catch (const char* err)
+    {
+        std::cerr << "Exception: " << err << '\n';
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown Exception\n";
+    }
+    return 1;
 
 }
