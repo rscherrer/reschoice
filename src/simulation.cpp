@@ -18,6 +18,7 @@ int simulate(const std::vector<std::string> &args) {
 		// Parameters
 		const size_t popsize = 10u; // fixed population size
 		const double tradeoff = 1.0; // resouce utilization tradeoff
+		const double beta = 1.0; // degree of optimal choice
 		const double delta = 1.0; // resource discovery rate
 		const double res1 = 100.0; // amount of resource 1
 		const double res2 = 100.0; // amount of resource 2
@@ -73,7 +74,7 @@ int simulate(const std::vector<std::string> &args) {
 					const double fit2 = res2 * eff2 * (sumeff2 + 1.0 / delta - 1.0);
 
 					// Resource choice
-					pop[i].setChoice(fit2 > fit1);
+					pop[i].setChoice(fit2 > fit1, beta);
 					
 					// Update cumulative feeding efficiencies depending on what resource has been chosen
 					if (pop[i].getChoice()) sumeff2 += eff2; else sumeff1 += eff1;

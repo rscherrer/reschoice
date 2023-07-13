@@ -4,6 +4,7 @@
 // This is the header for the Individual class.
 
 #include "utilities.hpp"
+#include "random.hpp"
 #include <cmath>
 
 class Individual {
@@ -13,7 +14,7 @@ public:
     Individual(const double&);
 
     void kill();
-    void setChoice(const bool&);
+    void setChoice(const bool&, const double&);
 
     double getX() const;
     double getEff1() const;

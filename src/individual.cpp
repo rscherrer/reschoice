@@ -16,7 +16,16 @@ Individual::Individual(const double &tradeoff) :
 void Individual::kill() { alive = false; }
 
 // Function to set the resource choice
-void Individual::setChoice(const bool &r) { choice = r; }
+void Individual::setChoice(const bool &r, const double &beta) { 
+    
+    // Probability of choosing optimally
+    const double prob = 0.5 * (1.0 + beta);
+
+    // Choose
+    choice = rnd::bernoulli(prob)(rnd::rng) ? r : !r;
+
+    
+}
 
 // Getters
 double Individual::getX() const { return x; }
