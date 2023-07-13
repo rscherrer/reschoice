@@ -15,8 +15,12 @@ Individual::Individual(const double &tradeoff) :
 // Function to kill an individual
 void Individual::kill() { alive = false; }
 
+// Function to set the resource choice
+void Individual::setChoice(const bool &r) { choice = r; }
+
 // Getters
 double Individual::getX() const { return x; }
 double Individual::getEff1() const { return eff1; }
 double Individual::getEff2() const { return eff2; }
+bool Individual::getChoice() const { return choice; }
 bool Individual::isAlive() const { return alive; }

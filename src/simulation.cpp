@@ -41,10 +41,15 @@ int simulate(const std::vector<std::string> &args) {
 			// and the feeding efficiency only depends on the individual's trait value x.
 			// The cumulative affinity does change as we loop through individuals within one round
 			// though. Every time an individual makes a choice, that value changes, so we need
-			// to keep track of it.
+			// to keep track of it. Once all individuals have chosen, the resources is split.
+			// Well, only the amount of resources that was discovered (that needs to be calculated
+			// depending on the discovery rate and individual choices). And it is split proportionately
+			// to the realized fitness of the individuals, which uses the same formula as the
+			// expected one but now with sums of feeding efficiencies being computed once everybody
+			// has chosen.
 
 			// Initialize a vector of fitnesses
-			std::vector<double> fitnesses(pop.size(), 1.0);
+			std::vector<double> fitnesses(pop.size());
 
 			////////////////////////////
 
@@ -53,6 +58,7 @@ int simulate(const std::vector<std::string> &args) {
 			// Initialize cumulative feeding efficiencies
 			double sumeff1, sumeff2 = 0.0;
 
+			// For each individual...
 			for (size_t i = 0; i < pop.size(); ++i) {
 
 				// Get feedding efficiency on each resource
@@ -64,10 +70,28 @@ int simulate(const std::vector<std::string> &args) {
 				const double fit2 = res2 * eff2 * (sumeff2 + 1.0 / delta - 1.0);
 
 				// Resource choice
-				const bool j = fit2 > fit1;
+				pop[i].setChoice(fit2 > fit1);
 				
 				// Update cumulative feeding efficiencies depending on what resource has been chosen
-				if (j) sumeff2 += eff2; else sumeff1 += eff1;
+				if (pop[i].getChoice()) sumeff2 += eff2; else sumeff1 += eff1;
+
+			}
+
+			for (size_t i = 0u; i < pop.size(); ++i) {
+
+				// Which resource was chosen?
+				const bool choice = pop[i].getChoice();
+
+				// Corresponding values
+				const double eff = choice ? pop[i].getEff2() : pop[i].getEff1();
+				const double res = choice ? res2 : res1;
+				const double sumeff = choice ? sumeff2 : sumeff1;
+
+				// Compute realized fitness on each resource
+				const double fit = res * eff * (sumeff + 1.0 / delta - 1.0);
+
+				// Add it to the vector of fitnesses
+				fitnesses[i] = fit;
 
 			}
 
