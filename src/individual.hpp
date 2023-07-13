@@ -15,6 +15,7 @@ public:
 
 private:
 
+    double x; // trait value
     bool alive; // is the individual alive?
 
 };

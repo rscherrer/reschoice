@@ -4,6 +4,7 @@
 
 // Constructor
 Individual::Individual() :
+    x(0.0),
     alive(true)
 {
 
