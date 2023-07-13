@@ -12,6 +12,13 @@ int simulate(const std::vector<std::string> &args) {
 		// Create a population of individuals
 		std::vector<Individual> pop(10u);
 
+		// Loop through time steps
+		for (size_t t = 0u; t <= 100u; ++t) {
+
+			std::cout << t << std::endl;
+
+		}
+
         return 0;
 
     }
