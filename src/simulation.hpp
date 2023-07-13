@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <cassert>
 
 // Main simulation function
 int simulate(const std::vector<std::string>&);

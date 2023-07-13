@@ -42,6 +42,9 @@ int simulate(const std::vector<std::string> &args) {
             pop.erase(it, pop.end());
             pop.shrink_to_fit();
 
+			// Make sure population size has not changed
+			assert(pop.size() == popsize);
+
 		}
 
         return 0;
