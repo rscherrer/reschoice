@@ -9,8 +9,11 @@ int simulate(const std::vector<std::string> &args) {
 	try
     {
 
+		// Create an individual
+		Individual ind;
+
         return 0;
-		
+
     }
     catch (const std::exception& err)
     {

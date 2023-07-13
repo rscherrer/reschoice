@@ -3,6 +3,7 @@
 
 // This is the header containing the main simulation function
 
+#include "individual.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
