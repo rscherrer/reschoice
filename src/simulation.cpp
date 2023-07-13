@@ -62,7 +62,7 @@ int simulate(const std::vector<std::string> &args) {
 				std::shuffle(pop.begin(), pop.end(), rnd::rng);
 
 				// Initialize cumulative feeding efficiencies
-				double sumeff1, sumeff2 = 0.0;
+				double sumeff1 = 0.0, sumeff2 = 0.0;
 
 				// For each individual...
 				for (size_t i = 0; i < pop.size(); ++i) {
