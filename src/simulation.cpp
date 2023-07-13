@@ -48,7 +48,28 @@ int simulate(const std::vector<std::string> &args) {
 
 			////////////////////////////
 
-			
+			// One round for now
+
+			// Initialize cumulative feeding efficiencies
+			double sumeff1, sumeff2 = 0.0;
+
+			for (size_t i = 0; i < pop.size(); ++i) {
+
+				// Get feedding efficiency on each resource
+				const double eff1 = pop[i].getEff1();
+				const double eff2 = pop[i].getEff2();
+
+				// Compute expected fitness on each resource
+				const double fit1 = res1 * eff1 * (sumeff1 + 1.0 / delta - 1.0);
+				const double fit2 = res2 * eff2 * (sumeff2 + 1.0 / delta - 1.0);
+
+				// Resource choice
+				const bool j = fit2 > fit1;
+				
+				// Update cumulative feeding efficiencies depending on what resource has been chosen
+				if (j) sumeff2 += eff2; else sumeff1 += eff1;
+
+			}
 
 			////////////////////////////
 
