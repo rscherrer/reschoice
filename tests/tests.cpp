@@ -50,6 +50,17 @@ BOOST_AUTO_TEST_CASE(invalidFileName) {
 
 }
 
+// Should error when invalid parameter name
+BOOST_AUTO_TEST_CASE(errorWhenInvalidParameterName) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "ahdggfhsgdhs 0\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
 // Test that an individual is initialized properly
 BOOST_AUTO_TEST_CASE(individualInitialization) {
 
