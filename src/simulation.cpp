@@ -169,7 +169,7 @@ int simulate(const std::vector<std::string> &args) {
 
 			}
 
-			// Save a phenotypic divergence statistic if needed
+			// Save a ecological isolation statistic if needed
 			if (timetosave && ecologicalIsolationFile >= 0) {
 
 				// Initialize mean trait value
