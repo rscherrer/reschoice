@@ -18,6 +18,9 @@ int simulate(const std::vector<std::string> &args) {
 		// Create a default parameter set
 		Parameters pars;
 
+		// Error if two many arguments
+        if (args.size() > 2u) throw std::runtime_error("Two many arguments provided.");
+
 		// Distribution of mutational deviations (set up here for speed)
 		auto sampleMutation = rnd::normal(0.0, pars.mutsdev);
 
