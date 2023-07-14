@@ -36,7 +36,7 @@ int simulate(const std::vector<std::string> &args) {
 		// What variables do we save in this study?
 		// - [OK] Time steps
 		// - [OK] Individual habitat at each time step
-		// - Individual trait value at each time step
+		// - [OK] Individual trait value at each time step
 		// - Individual realized fitness at each time step
 		// - Individual choice at each feeding round at each time step
 		// - Individual position in the queue at each feeding round at each time step
@@ -50,7 +50,7 @@ int simulate(const std::vector<std::string> &args) {
 		// - A statistic for spatial divergence in the poopulation at each time step
 
 		// Which variables to save
-        std::vector<std::string> filenames = { "time", "individualHabitat", "individualTraitValue" };
+        std::vector<std::string> filenames = { "time", "individualHabitat", "individualTraitValue", "individualRealizedFitness" };
 
 		// Update the list of which variables to save if needed...
         if (pars.choose) {
@@ -74,7 +74,8 @@ int simulate(const std::vector<std::string> &args) {
         stf::open(outfiles, filenames);
 
 		// Set up flags for which data to save
-        int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1);
+        int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1),
+		individualRealizedFitnessFile(-1);
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
@@ -82,6 +83,7 @@ int simulate(const std::vector<std::string> &args) {
             if (filename == "time") timeFile = f;
 			else if (filename == "individualHabitat") individualHabitatFile = f;
 			else if (filename == "individualTraitValue") individualTraitValueFile = f;
+			else if (filename == "individualRealizedFitness") individualRealizedFitnessFile = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
@@ -222,8 +224,20 @@ int simulate(const std::vector<std::string> &args) {
 
 			}
 
-			// Kill every adult
-			for (size_t i = 0u; i < pars.popsize; ++i) pop[i].kill();
+			// For each adult individual...
+			for (size_t i = 0u; i < pars.popsize; ++i) {
+				
+				// Record the final fitness if needed
+				if (timetosave && individualRealizedFitnessFile >= 0) {
+
+					outfiles[individualRealizedFitnessFile]->write((char *) &fitnesses[i], sizeof(double));
+
+                }
+
+				// Kill that individual
+				pop[i].kill();
+
+			}
 
 			// Remove dead individuals
             auto it = std::remove_if(pop.begin(), pop.end(), burry);
