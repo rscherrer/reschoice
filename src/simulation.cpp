@@ -124,7 +124,7 @@ int simulate(const std::vector<std::string> &args) {
             if (timetosave && timeFile >= 0) {
 
                 const double t_ = static_cast<double>(t);
-                outfiles[timeFile]->write((char *) &(t_), sizeof(double));
+                outfiles[timeFile]->write((char *) &t_, sizeof(double));
 
             }
 
@@ -138,8 +138,8 @@ int simulate(const std::vector<std::string> &args) {
 				// Write to file
                 const double n1_ = static_cast<double>(n[0u]);
 				const double n2_ = static_cast<double>(n[1u]);
-                outfiles[habitatCensusFile]->write((char *) &(n1_), sizeof(double));
-				outfiles[habitatCensusFile]->write((char *) &(n2_), sizeof(double));
+                outfiles[habitatCensusFile]->write((char *) &n1_, sizeof(double));
+				outfiles[habitatCensusFile]->write((char *) &n2_, sizeof(double));
 
             }
 
@@ -159,8 +159,8 @@ int simulate(const std::vector<std::string> &args) {
 				meanx[1u] /= n[1u];
 
 				// Write to file
-				outfiles[habitatMeanTraitValueFile]->write((char *) &(meanx[0u]), sizeof(double));
-				outfiles[habitatMeanTraitValueFile]->write((char *) &(meanx[1u]), sizeof(double));
+				outfiles[habitatMeanTraitValueFile]->write((char *) &meanx[0u], sizeof(double));
+				outfiles[habitatMeanTraitValueFile]->write((char *) &meanx[1u], sizeof(double));
 
 			}
 			
