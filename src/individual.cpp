@@ -7,6 +7,8 @@ Individual::Individual(const double &tradeoff) :
     x(0.0),
     eff1(0.0),
     eff2(0.0),
+    habitat(false),
+    choice(false),
     alive(true)
 {
 
@@ -57,5 +59,6 @@ void Individual::develop(const double &tradeoff) {
 double Individual::getX() const { return x; }
 double Individual::getEff1() const { return eff1; }
 double Individual::getEff2() const { return eff2; }
+bool Individual::getHabitat() const { return habitat; }
 bool Individual::getChoice() const { return choice; }
 bool Individual::isAlive() const { return alive; }

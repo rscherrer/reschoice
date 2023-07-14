@@ -22,6 +22,7 @@ public:
     double getX() const;
     double getEff1() const;
     double getEff2() const;
+    bool getHabitat() const;
     bool getChoice() const;
     bool isAlive() const;
 
@@ -30,6 +31,7 @@ private:
     double x; // trait value
     double eff1; // feeding efficiency on resource 1
     double eff2; // feeding efficiency on resource 2
+    bool habitat; // habitat where the individual lives
     bool choice; // which resource is chosen?
     bool alive; // is the individual alive?
 

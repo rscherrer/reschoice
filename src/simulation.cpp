@@ -45,12 +45,12 @@ int simulate(const std::vector<std::string> &args) {
 		// - Number of individuals in each habitat at each time step
 		// - Mean trait value in each habitat at each time step
 		// - Number of individuals on each resource in each habitat at each feeding round at each time step
-		// - Mean trait value on each resource in each habitat at each feedinf round at each time step
+		// - Mean trait value on each resource in each habitat at each feeding round at each time step
 		// - A statistic for phenotypic divergence in the population at each time step
 		// - A statistic for spatial divergence in the poopulation at each time step
 
 		// Which variables to save
-        std::vector<std::string> filenames = { "time" };
+        std::vector<std::string> filenames = { "time", "individualHabitat" };
 
 		// Update the list of which variables to save if needed...
         if (pars.choose) {
@@ -74,12 +74,13 @@ int simulate(const std::vector<std::string> &args) {
         stf::open(outfiles, filenames);
 
 		// Set up flags for which data to save
-        int timeFile(-1);
+        int timeFile(-1), individualHabitatFile(-1);
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
 
             if (filename == "time") timeFile = f;
+			else if (filename == "individualHabitat") individualHabitatFile = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
@@ -140,6 +141,14 @@ int simulate(const std::vector<std::string> &args) {
 
 				// For each individual...
 				for (size_t i = 0; i < pop.size(); ++i) {
+
+					// Save individual habitats if needed
+					if (timetosave && individualHabitatFile >= 0) {
+
+						const double habitat_ = static_cast<double>(pop[i].getHabitat());
+						outfiles[individualHabitatFile]->write((char *) &habitat_, sizeof(double));
+
+                	}
 
 					// Get feedding efficiency on each resource
 					const double eff1 = pop[i].getEff1();
