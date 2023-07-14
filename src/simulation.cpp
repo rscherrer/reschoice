@@ -79,6 +79,9 @@ int simulate(const std::vector<std::string> &args) {
 		// Create a population of individuals
 		std::vector<Individual> pop(pars.popsize, { pars.tradeoff });
 
+		// Screen output
+		std::cout << "Simulation started.\n";
+
 		// Loop through time steps
 		for (size_t t = 0u; t <= pars.tend; ++t) {
 
@@ -190,6 +193,9 @@ int simulate(const std::vector<std::string> &args) {
 			assert(pop.size() == pars.popsize);
 
 		}
+
+		// Screen output
+		std::cout << "Simulation ended.\n";
 
 		// Close the log file if needed
 		if (pars.savelog) std::fclose(stdout);
