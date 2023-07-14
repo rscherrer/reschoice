@@ -54,7 +54,8 @@ int simulate(const std::vector<std::string> &args) {
 			
 			"time", "individualHabitat", "individualTraitValue", "individualTotalFitness",
 			"individualChoice", "individualIndex", "individualRealizedFitness",
-			"individualExpectedFitnessDifference", "habitatCensus", "habitatMeanTraitValue"
+			"individualExpectedFitnessDifference", "habitatCensus", "habitatMeanTraitValue",
+			"resourceCensus"
 		
 		};
 
@@ -83,7 +84,7 @@ int simulate(const std::vector<std::string> &args) {
         int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1),
 		individualTotalFitnessFile(-1), individualChoiceFile(-1), individualIndexFile(-1),
 		individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1),
-		habitatCensusFile(-1), habitatMeanTraitValueFile(-1);
+		habitatCensusFile(-1), habitatMeanTraitValueFile(-1), resourceCensusFile(-1);
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
@@ -98,6 +99,7 @@ int simulate(const std::vector<std::string> &args) {
 			else if (filename == "individualExpectedFitnessDifference") individualExpectedFitnessDifference = f;
 			else if (filename == "habitatCensus") habitatCensusFile = f;
 			else if (filename == "habitatMeanTraitValue") habitatMeanTraitValueFile = f;
+			else if (filename == "resourceCensus") resourceCensusFile = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
@@ -194,6 +196,9 @@ int simulate(const std::vector<std::string> &args) {
 				// Initialize cumulative feeding efficiencies
 				double sumeff1 = 0.0, sumeff2 = 0.0;
 
+				// Initialize numbers of individuals feeding on each resource
+				size_t n1 = 0.0, n2 = 0.0;
+
 				// For each individual...
 				for (size_t i = 0; i < pop.size(); ++i) {
 
@@ -250,6 +255,9 @@ int simulate(const std::vector<std::string> &args) {
 					// Update cumulative feeding efficiencies depending on what resource has been chosen
 					if (choice) sumeff2 += eff2; else sumeff1 += eff1;
 
+					// Update the number of individuals feeding on each resource
+					if (choice) ++n2; else ++n1;
+
 					// Save individual index if needed
 					if (timetosave && individualIndexFile >= 0) {
 
@@ -258,6 +266,16 @@ int simulate(const std::vector<std::string> &args) {
 
                 	}
 				}
+
+				// Save the number of individuals feeding on each resource if needed
+				if (timetosave && resourceCensusFile >= 0) {
+
+					const double n1_ = static_cast<double>(n1);
+					const double n2_ = static_cast<double>(n2);
+					outfiles[resourceCensusFile]->write((char *) &n1_, sizeof(double));
+					outfiles[resourceCensusFile]->write((char *) &n2_, sizeof(double));
+
+                }
 
 				// For each individual...
 				for (size_t i = 0u; i < pop.size(); ++i) {
