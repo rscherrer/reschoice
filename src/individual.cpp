@@ -42,6 +42,10 @@ void Individual::mutate(const double &dx, const double &tradeoff) {
     eff1 = exp(-tradeoff * utl::sqr(1 + x));
     eff2 = exp(-tradeoff * utl::sqr(1 - x));
 
+    // Check that feeding efficiencies are still above zero
+    assert(eff1 >= 0.0);
+    assert(eff2 >= 0.0);
+
 }
 
 // Getters
