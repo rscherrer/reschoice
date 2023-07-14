@@ -42,3 +42,12 @@ BOOST_AUTO_TEST_CASE(optimalChoice) {
 }
 
 // Test mutation
+BOOST_AUTO_TEST_CASE(mutation) {
+
+    Individual ind(1.0);
+    ind.mutate(0.01);
+    BOOST_CHECK_EQUAL(ind.getX(), 0.01);
+    ind.mutate(-0.02);
+    BOOST_CHECK_EQUAL(ind.getX(), -0.01);
+
+}
