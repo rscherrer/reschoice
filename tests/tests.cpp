@@ -210,3 +210,30 @@ BOOST_AUTO_TEST_CASE(mutation) {
     BOOST_CHECK_EQUAL(ind.getX(), -0.01);
 
 }
+
+// Test that parameters are saved properly
+BOOST_AUTO_TEST_CASE(paramSavedProperly) {
+
+    // Prepare a parameter file
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "savepars 1\n";
+    file.close();
+
+    // First run where we save the parameters
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 0);
+
+    // Second run where we provide the saved parameters from the first one
+    BOOST_CHECK_EQUAL(simulate({"program_name", "paramlog.txt"}), 0);
+
+    // Check the seed was saved too
+    std::ifstream infile;
+    infile.open("paramlog.txt");
+    std::string input;
+    size_t seed = 0u;
+    while (infile >> input) if (input == "seed") infile >> seed;
+    infile.close();
+
+    BOOST_CHECK(seed > 0u); // check that a random (nonzero) seed was saved
+
+}
