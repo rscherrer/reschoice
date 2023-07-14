@@ -15,6 +15,13 @@ BOOST_AUTO_TEST_CASE(useCase) {
 
 }
 
+// Test that it fails when too many arguments are provided
+BOOST_AUTO_TEST_CASE(tooManyArgs) {
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameter.txt", "onetoomany.txt"}), 1);
+
+}
+
 // Test that an individual is initialized properly
 BOOST_AUTO_TEST_CASE(individualInitialization) {
 
