@@ -21,6 +21,9 @@ int simulate(const std::vector<std::string> &args) {
 		// Error if two many arguments
         if (args.size() > 2u) throw std::runtime_error("Two many arguments provided.");
 
+		// Read parameters from a file if supplied
+        if (args.size() == 2u) pars.read(args[1u]);
+
 		// Distribution of mutational deviations (set up here for speed)
 		auto sampleMutation = rnd::normal(0.0, pars.mutsdev);
 
