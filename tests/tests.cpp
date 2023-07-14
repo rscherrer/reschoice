@@ -15,6 +15,27 @@ BOOST_AUTO_TEST_CASE(useCase) {
 
 }
 
+// Test that it works when a parameter file is supplied
+BOOST_AUTO_TEST_CASE(runWithParameterFile) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "popsize 10\n";
+    file << "tradeoff 1\n";
+    file << "beta 1\n";
+    file << "delta 1\n";
+    file << "res1 100\n";
+    file << "res2 100\n";
+    file << "nrounds 10\n";
+    file << "mutrate 0.0001\n";
+    file << "mutsdev 0.02\n";
+    file << "tend 100\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 0);
+
+}
+
 // Test that it fails when too many arguments are provided
 BOOST_AUTO_TEST_CASE(tooManyArgs) {
 
