@@ -49,10 +49,10 @@ int simulate(const std::vector<std::string> &args) {
 		// - A statistic for phenotypic divergence in the population at each time step
 		// - A statistic for spatial divergence in the poopulation at each time step
 
-		// Which data files to save
+		// Which variables to save
         std::vector<std::string> filenames = { "time" };
 
-		// Update the files to save if needed...
+		// Update the list of which variables to save if needed...
         if (pars.choose) {
 
             // Read file where those are provided
@@ -69,6 +69,9 @@ int simulate(const std::vector<std::string> &args) {
                 filenames[f] = newfilenames[f];
 
         }
+
+		// Open the file streams
+        stf::open(outfiles, filenames);
 
 		// Distribution of mutational deviations (set up here for speed)
 		auto sampleMutation = rnd::normal(0.0, pars.mutsdev);
@@ -187,6 +190,9 @@ int simulate(const std::vector<std::string> &args) {
 			assert(pop.size() == pars.popsize);
 
 		}
+
+		// Close output file streams
+        stf::close(outfiles);
 
         return 0;
 
