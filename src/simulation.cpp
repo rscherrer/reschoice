@@ -40,8 +40,8 @@ int simulate(const std::vector<std::string> &args) {
 		// - [OK] Individual total fitness at each time step
 		// - [OK] Individual choice at each feeding round at each time step
 		// - [OK] Individual position in the queue (index) at each feeding round at each time step
-		// - Individual realized fitness at each feeding round at each time step
-		// - Individual expected fitness at each feeding round at each time step
+		// - [OK] Individual realized fitness at each feeding round at each time step
+		// - Individual expected fitness difference at each feeding round at each time step
 		// - Number of individuals in each habitat at each time step
 		// - Mean trait value in each habitat at each time step
 		// - Number of individuals on each resource in each habitat at each feeding round at each time step
@@ -53,7 +53,8 @@ int simulate(const std::vector<std::string> &args) {
         std::vector<std::string> filenames = { 
 			
 			"time", "individualHabitat", "individualTraitValue", "individualTotalFitness",
-			"individualChoice", "individualIndex", "individualRealizedFitness"
+			"individualChoice", "individualIndex", "individualRealizedFitness",
+			"individualExpectedFitnessDifference"
 		
 		};
 
@@ -81,7 +82,7 @@ int simulate(const std::vector<std::string> &args) {
 		// Set up flags for which data to save
         int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1),
 		individualTotalFitnessFile(-1), individualChoiceFile(-1), individualIndexFile(-1),
-		individualRealizedFitnessFile(-1);
+		individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1);
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
@@ -93,6 +94,7 @@ int simulate(const std::vector<std::string> &args) {
 			else if (filename == "individualChoice") individualChoiceFile = f;
 			else if (filename == "individualIndex") individualIndexFile = f;
 			else if (filename == "individualRealizedFitness") individualRealizedFitnessFile = f;
+			else if (filename == "individualExpectedFitnessDifference") individualExpectedFitnessDifference = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
@@ -183,6 +185,14 @@ int simulate(const std::vector<std::string> &args) {
 					// Check that expected fitnesses are above zero
 					assert(fit1 >= 0.0);
 					assert(fit2 >= 0.0);
+
+					// Save individual expected fitness difference if needed
+					if (timetosave && individualExpectedFitnessDifference >= 0) {
+
+						const double diff = fit2 - fit1;
+						outfiles[individualExpectedFitnessDifference]->write((char *) &diff, sizeof(double));
+
+                	}
 
 					// Resource choice
 					pop[i].setChoice(fit2 > fit1, pars.beta);
