@@ -43,6 +43,13 @@ BOOST_AUTO_TEST_CASE(tooManyArgs) {
 
 }
 
+// Test that it fails if the parameter file name is invalid
+BOOST_AUTO_TEST_CASE(invalidFileName) {
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "paraaameters.txt"}), 1);
+
+}
+
 // Test that an individual is initialized properly
 BOOST_AUTO_TEST_CASE(individualInitialization) {
 
