@@ -5,14 +5,13 @@
 // Constructor
 Individual::Individual(const double &tradeoff) :
     x(0.0),
-    eff1(exp(-tradeoff * utl::sqr(1 + x))),
-    eff2(exp(-tradeoff * utl::sqr(1 - x))),
+    eff1(0.0),
+    eff2(0.0),
     alive(true)
 {
 
-    // Check that feeding efficiencies are above zero
-    assert(eff1 >= 0.0);
-    assert(eff2 >= 0.0);
+    // Update feeding efficiencies
+    develop(tradeoff);
 
 }
 
@@ -30,13 +29,19 @@ void Individual::setChoice(const bool &r, const double &beta) {
     
 }
 
-
-
 // Function to mutate an individual
 void Individual::mutate(const double &dx, const double &tradeoff) {
 
     // Apply phenotypic deviation
     x += dx;
+
+    // Update feeding efficiencies
+    develop(tradeoff);
+
+}
+
+// Function to update feeding efficiencies
+void Individual::develop(const double &tradeoff) {
 
     // Update feeding efficiencies
     eff1 = exp(-tradeoff * utl::sqr(1 + x));

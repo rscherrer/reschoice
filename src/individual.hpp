@@ -17,6 +17,7 @@ public:
     void kill();
     void setChoice(const bool&, const double&);
     void mutate(const double&, const double&);
+    void develop(const double&);
 
     double getX() const;
     double getEff1() const;
