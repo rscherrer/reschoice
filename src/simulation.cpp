@@ -44,7 +44,7 @@ int simulate(const std::vector<std::string> &args) {
 		// - [OK] Individual expected fitness difference at each feeding round at each time step
 		// - [OK] Number of individuals in each habitat at each time step
 		// - [OK] Mean trait value in each habitat at each time step
-		// - Number of individuals on each resource in each habitat at each feeding round at each time step
+		// - [OK] Number of individuals on each resource in each habitat at each feeding round at each time step
 		// - Mean trait value on each resource in each habitat at each feeding round at each time step
 		// - A statistic for phenotypic divergence in the population at each time step
 		// - A statistic for spatial divergence in the poopulation at each time step
@@ -55,7 +55,7 @@ int simulate(const std::vector<std::string> &args) {
 			"time", "individualHabitat", "individualTraitValue", "individualTotalFitness",
 			"individualChoice", "individualIndex", "individualRealizedFitness",
 			"individualExpectedFitnessDifference", "habitatCensus", "habitatMeanTraitValue",
-			"resourceCensus"
+			"resourceCensus", "resourceMeanTraitValue"
 		
 		};
 
@@ -84,7 +84,8 @@ int simulate(const std::vector<std::string> &args) {
         int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1),
 		individualTotalFitnessFile(-1), individualChoiceFile(-1), individualIndexFile(-1),
 		individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1),
-		habitatCensusFile(-1), habitatMeanTraitValueFile(-1), resourceCensusFile(-1);
+		habitatCensusFile(-1), habitatMeanTraitValueFile(-1), resourceCensusFile(-1),
+		resourceMeanTraitValueFile(-1);
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
@@ -100,6 +101,7 @@ int simulate(const std::vector<std::string> &args) {
 			else if (filename == "habitatCensus") habitatCensusFile = f;
 			else if (filename == "habitatMeanTraitValue") habitatMeanTraitValueFile = f;
 			else if (filename == "resourceCensus") resourceCensusFile = f;
+			else if (filename == "resourceMeanTraitValue") resourceMeanTraitValueFile = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
@@ -199,6 +201,9 @@ int simulate(const std::vector<std::string> &args) {
 				// Initialize numbers of individuals feeding on each resource
 				size_t n1 = 0.0, n2 = 0.0;
 
+				// Initialize sums of trait values of individuals feeding on each resource
+				double meanx1 = 0.0, meanx2 = 0.0; 
+
 				// For each individual...
 				for (size_t i = 0; i < pop.size(); ++i) {
 
@@ -210,10 +215,12 @@ int simulate(const std::vector<std::string> &args) {
 
                 	}
 
+					// Read individual trait value
+					const double x = pop[i].getX();
+
 					// Save individual trait values if needed
 					if (timetosave && individualTraitValueFile >= 0) {
 
-						const double x = pop[i].getX();
 						outfiles[individualTraitValueFile]->write((char *) &x, sizeof(double));
 
                 	}
@@ -258,6 +265,9 @@ int simulate(const std::vector<std::string> &args) {
 					// Update the number of individuals feeding on each resource
 					if (choice) ++n2; else ++n1;
 
+					// Update the sum of trait values of individuals feeding on each resource
+					if (choice) meanx2 += x; else meanx1 += x;
+
 					// Save individual index if needed
 					if (timetosave && individualIndexFile >= 0) {
 
@@ -274,6 +284,19 @@ int simulate(const std::vector<std::string> &args) {
 					const double n2_ = static_cast<double>(n2);
 					outfiles[resourceCensusFile]->write((char *) &n1_, sizeof(double));
 					outfiles[resourceCensusFile]->write((char *) &n2_, sizeof(double));
+
+                }
+
+				// Save the mean trait value of individuals feeding on each resource if needed
+				if (timetosave && resourceMeanTraitValueFile >= 0) {
+
+					// Turn sums of trait values into means
+					meanx1 /= n1;
+					meanx2 /= n2;
+
+					// Write to file
+					outfiles[resourceMeanTraitValueFile]->write((char *) &meanx1, sizeof(double));
+					outfiles[resourceMeanTraitValueFile]->write((char *) &meanx2, sizeof(double));
 
                 }
 
