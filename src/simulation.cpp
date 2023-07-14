@@ -45,9 +45,9 @@ int simulate(const std::vector<std::string> &args) {
 		// - [OK] Number of individuals in each habitat at each time step
 		// - [OK] Mean trait value in each habitat at each time step
 		// - [OK] Number of individuals on each resource in each habitat at each feeding round at each time step
-		// - Mean trait value on each resource in each habitat at each feeding round at each time step
-		// - A statistic for phenotypic divergence in the population at each time step
-		// - A statistic for spatial divergence in the poopulation at each time step
+		// - [OK] Mean trait value on each resource in each habitat at each feeding round at each time step
+		// - [OK] A statistic for ecological isolation between ecotypes at each time step
+		// - A statistic for spatial isolation between ecotypes at each time step
 
 		// Which variables to save
         std::vector<std::string> filenames = { 
@@ -55,7 +55,7 @@ int simulate(const std::vector<std::string> &args) {
 			"time", "individualHabitat", "individualTraitValue", "individualTotalFitness",
 			"individualChoice", "individualIndex", "individualRealizedFitness",
 			"individualExpectedFitnessDifference", "habitatCensus", "habitatMeanTraitValue",
-			"resourceCensus", "resourceMeanTraitValue"
+			"resourceCensus", "resourceMeanTraitValue", "ecologicalIsolation"
 		
 		};
 
@@ -85,7 +85,7 @@ int simulate(const std::vector<std::string> &args) {
 		individualTotalFitnessFile(-1), individualChoiceFile(-1), individualIndexFile(-1),
 		individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1),
 		habitatCensusFile(-1), habitatMeanTraitValueFile(-1), resourceCensusFile(-1),
-		resourceMeanTraitValueFile(-1);
+		resourceMeanTraitValueFile(-1), ecologicalIsolationFile(-1);
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
@@ -102,6 +102,7 @@ int simulate(const std::vector<std::string> &args) {
 			else if (filename == "habitatMeanTraitValue") habitatMeanTraitValueFile = f;
 			else if (filename == "resourceCensus") resourceCensusFile = f;
 			else if (filename == "resourceMeanTraitValue") resourceMeanTraitValueFile = f;
+			else if (filename == "ecologicalIsolation") ecologicalIsolationFile = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
@@ -165,6 +166,82 @@ int simulate(const std::vector<std::string> &args) {
 				// Write to file
 				outfiles[habitatMeanTraitValueFile]->write((char *) &meanx[0u], sizeof(double));
 				outfiles[habitatMeanTraitValueFile]->write((char *) &meanx[1u], sizeof(double));
+
+			}
+
+			// Save a phenotypic divergence statistic if needed
+			if (timetosave && ecologicalIsolationFile >= 0) {
+
+				// Initialize mean trait value
+				double meanx = 0.0;
+
+				// For each individual...
+				for (size_t i = 0u; i < pop.size(); ++i) {
+
+					// Record trait value
+					const double x = pop[i].getX();
+
+					// Update the mean trait value
+					meanx += x;
+
+				}
+
+				// Finish the calculation of the mean trait value
+				meanx /= pop.size();
+
+				// Initialize vectors of numbers, sums and sums of squares of individual trait values in each ecotype,
+				// with one extra slot for the total population
+				std::vector<size_t> n(3u, 0u);
+				std::vector<double> sumx(3u, 0.0);
+				std::vector<double> ssqx(3u, 0.0);
+
+				// Loop again...
+				for (size_t i = 0u; i < pop.size(); ++i) {
+
+					// Record trait value
+					const double x = pop[i].getX();
+
+					// Identify ecotype
+					const bool ecotype = x > meanx;
+
+					// Update the number of individuals in that ecotype and in the total population
+					++n[ecotype];
+					++n[2u];
+
+					// Update the sum of squares of individual traits in that ecotype and in the total population
+					ssqx[ecotype] += utl::sqr(x);
+					ssqx[2u] += utl::sqr(x);
+
+					// Update the sum of individual traits in that ecotype and in the total population
+					sumx[ecotype] += x;
+					sumx[2u] += x;
+
+				}
+
+				// Initialize a vector for the variance in trait value in each ecotype and in the total population
+				std::vector<double> varx(3u, 0.0);
+
+				// For each ecotype (plus the whole population)...
+				for (size_t j = 0u; j < 3u; ++j) {
+					
+					// If thre are individuals in the current ecotype...
+					if (n[j] > 0u) {
+
+						// Compute variance
+						varx[j] = ssqx[j] / n[j] - utl::sqr(sumx[j] / n[j]);
+
+					}
+
+					// Check that the variance is positive
+					assert(varx[j] >= 0.0);
+
+				}
+
+				// Compute ecological isolation
+				const double EI = 1.0 - (n[0u] * varx[0u] + n[1u] * varx[1u]) / (n[2u] * varx[2u]);
+
+				// Write to file
+				outfiles[ecologicalIsolationFile]->write((char *) &EI, sizeof(double));
 
 			}
 			
