@@ -3,6 +3,7 @@
 
 // This is the header containing the main simulation function
 
+#include "parameters.hpp"
 #include "individual.hpp"
 #include "random.hpp"
 #include <iostream>

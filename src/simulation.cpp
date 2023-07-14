@@ -15,22 +15,14 @@ int simulate(const std::vector<std::string> &args) {
 	try
     {
 
-		// Parameters
-		const size_t popsize = 10u; // fixed population size
-		const double tradeoff = 1.0; // resouce utilization tradeoff
-		const double beta = 1.0; // degree of optimal choice
-		const double delta = 1.0; // resource discovery rate
-		const double res1 = 100.0; // amount of resource 1
-		const double res2 = 100.0; // amount of resource 2
-		const size_t nrounds = 10u; // number of feeding rounds
-		const double mutrate = 0.0001; // mutation rate
-		const double mutsdev = 0.02; // mutational standard deviation
+		// Create a default parameter set
+		Parameters pars;
 
 		// Distribution of mutational deviations (set up here for speed)
-		auto sampleMutation = rnd::normal(0.0, mutsdev);
+		auto sampleMutation = rnd::normal(0.0, pars.mutsdev);
 
 		// Create a population of individuals
-		std::vector<Individual> pop(popsize, { tradeoff });
+		std::vector<Individual> pop(pars.popsize, { pars.tradeoff });
 
 		// Loop through time steps
 		for (size_t t = 0u; t <= 5u; ++t) {
@@ -59,7 +51,7 @@ int simulate(const std::vector<std::string> &args) {
 			std::vector<double> fitnesses(pop.size());
 
 			// For each feeding round...
-			for (size_t j = 0u; j < nrounds; ++j) {
+			for (size_t j = 0u; j < pars.nrounds; ++j) {
 
 				// Individuals must be taken in random order
 				std::shuffle(pop.begin(), pop.end(), rnd::rng);
@@ -75,15 +67,15 @@ int simulate(const std::vector<std::string> &args) {
 					const double eff2 = pop[i].getEff2();
 
 					// Compute expected fitness on each resource
-					const double fit1 = res1 * eff1 * (sumeff1 + 1.0 / delta - 1.0);
-					const double fit2 = res2 * eff2 * (sumeff2 + 1.0 / delta - 1.0);
+					const double fit1 = pars.res1 * eff1 * (sumeff1 + 1.0 / pars.delta - 1.0);
+					const double fit2 = pars.res2 * eff2 * (sumeff2 + 1.0 / pars.delta - 1.0);
 
 					// Check that expected fitnesses are above zero
 					assert(fit1 >= 0.0);
 					assert(fit2 >= 0.0);
 
 					// Resource choice
-					pop[i].setChoice(fit2 > fit1, beta);
+					pop[i].setChoice(fit2 > fit1, pars.beta);
 					
 					// Update cumulative feeding efficiencies depending on what resource has been chosen
 					if (pop[i].getChoice()) sumeff2 += eff2; else sumeff1 += eff1;
@@ -98,11 +90,11 @@ int simulate(const std::vector<std::string> &args) {
 
 					// Corresponding values
 					const double eff = choice ? pop[i].getEff2() : pop[i].getEff1();
-					const double res = choice ? res2 : res1;
+					const double res = choice ? pars.res2 : pars.res1;
 					const double sumeff = choice ? sumeff2 : sumeff1;
 
 					// Compute realized fitness on each resource
-					const double fit = res * eff * (sumeff + 1.0 / delta - 1.0);
+					const double fit = res * eff * (sumeff + 1.0 / pars.delta - 1.0);
 
 					// Check that the fitness is above zero
 					assert(fit >= 0.0);
@@ -117,7 +109,7 @@ int simulate(const std::vector<std::string> &args) {
 			auto sampleParent = rnd::discrete(fitnesses.begin(), fitnesses.end());
 
 			// For each individual to be born...
-			for (size_t i = 0u; i < popsize; ++i) {
+			for (size_t i = 0u; i < pars.popsize; ++i) {
 
 				// Sample parent of the current offspring (with replacement)
 				const size_t j = sampleParent(rnd::rng);
@@ -126,13 +118,13 @@ int simulate(const std::vector<std::string> &args) {
 				pop.push_back(pop[j]);
 
 				// Mutate offspring if needed
-				if (rnd::bernoulli(mutrate)(rnd::rng)) 
-					pop.back().mutate(sampleMutation(rnd::rng), tradeoff);
+				if (rnd::bernoulli(pars.mutrate)(rnd::rng)) 
+					pop.back().mutate(sampleMutation(rnd::rng), pars.tradeoff);
 
 			}
 
 			// Kill every adult
-			for (size_t i = 0u; i < popsize; ++i) pop[i].kill();
+			for (size_t i = 0u; i < pars.popsize; ++i) pop[i].kill();
 
 			// Remove dead individuals
             auto it = std::remove_if(pop.begin(), pop.end(), burry);
@@ -140,7 +132,7 @@ int simulate(const std::vector<std::string> &args) {
             pop.shrink_to_fit();
 
 			// Make sure population size has not changed
-			assert(pop.size() == popsize);
+			assert(pop.size() == pars.popsize);
 
 		}
 
