@@ -37,9 +37,9 @@ int simulate(const std::vector<std::string> &args) {
 		// - [OK] Time steps
 		// - [OK] Individual habitat at each time step
 		// - [OK] Individual trait value at each time step
-		// - [OK] Individual realized fitness at each time step
+		// - [OK] Individual total fitness at each time step
 		// - [OK] Individual choice at each feeding round at each time step
-		// - Individual position in the queue (index) at each feeding round at each time step
+		// - [OK] Individual position in the queue (index) at each feeding round at each time step
 		// - Individual realized fitness at each feeding round at each time step
 		// - Individual expected fitness at each feeding round at each time step
 		// - Number of individuals in each habitat at each time step
@@ -52,7 +52,7 @@ int simulate(const std::vector<std::string> &args) {
 		// Which variables to save
         std::vector<std::string> filenames = { 
 			
-			"time", "individualHabitat", "individualTraitValue", "individualRealizedFitness",
+			"time", "individualHabitat", "individualTraitValue", "individualTotalFitness",
 			"individualChoice", "individualIndex"
 		
 		};
@@ -80,7 +80,7 @@ int simulate(const std::vector<std::string> &args) {
 
 		// Set up flags for which data to save
         int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1),
-		individualRealizedFitnessFile(-1), individualChoiceFile(-1), individualIndexFile(-1);
+		individualTotalFitnessFile(-1), individualChoiceFile(-1), individualIndexFile(-1);
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
@@ -88,7 +88,7 @@ int simulate(const std::vector<std::string> &args) {
             if (filename == "time") timeFile = f;
 			else if (filename == "individualHabitat") individualHabitatFile = f;
 			else if (filename == "individualTraitValue") individualTraitValueFile = f;
-			else if (filename == "individualRealizedFitness") individualRealizedFitnessFile = f;
+			else if (filename == "individualTotalFitness") individualTotalFitnessFile = f;
 			else if (filename == "individualChoice") individualChoiceFile = f;
 			else if (filename == "individualIndex") individualIndexFile = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
@@ -253,9 +253,9 @@ int simulate(const std::vector<std::string> &args) {
 			for (size_t i = 0u; i < pars.popsize; ++i) {
 				
 				// Record the final fitness if needed
-				if (timetosave && individualRealizedFitnessFile >= 0) {
+				if (timetosave && individualTotalFitnessFile >= 0) {
 
-					outfiles[individualRealizedFitnessFile]->write((char *) &fitnesses[i], sizeof(double));
+					outfiles[individualTotalFitnessFile]->write((char *) &fitnesses[i], sizeof(double));
 
                 }
 
