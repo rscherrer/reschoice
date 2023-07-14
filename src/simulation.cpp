@@ -85,7 +85,8 @@ int simulate(const std::vector<std::string> &args) {
 		// Loop through time steps
 		for (size_t t = 0u; t <= pars.tend; ++t) {
 
-			std::cout << t << std::endl;
+			// Verbose if needed
+			if (pars.talkative) std::cout << "t = " << t << '\n';
 			
 			// There are multiple feeding rounds.
 			// Every feeding round, individuals are taken in random order.
