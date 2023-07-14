@@ -191,6 +191,9 @@ int simulate(const std::vector<std::string> &args) {
 
 		}
 
+		// Close the log file if needed
+		if (pars.savelog) std::fclose(stdout);
+
 		// Close output file streams
         stf::close(outfiles);
 
