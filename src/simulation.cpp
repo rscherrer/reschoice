@@ -41,9 +41,9 @@ int simulate(const std::vector<std::string> &args) {
 		// - [OK] Individual choice at each feeding round at each time step
 		// - [OK] Individual position in the queue (index) at each feeding round at each time step
 		// - [OK] Individual realized fitness at each feeding round at each time step
-		// - Individual expected fitness difference at each feeding round at each time step
-		// - Number of individuals in each habitat at each time step
-		// - Mean trait value in each habitat at each time step
+		// - [OK] Individual expected fitness difference at each feeding round at each time step
+		// - [OK] Number of individuals in each habitat at each time step
+		// - [OK] Mean trait value in each habitat at each time step
 		// - Number of individuals on each resource in each habitat at each feeding round at each time step
 		// - Mean trait value on each resource in each habitat at each feeding round at each time step
 		// - A statistic for phenotypic divergence in the population at each time step
@@ -54,7 +54,7 @@ int simulate(const std::vector<std::string> &args) {
 			
 			"time", "individualHabitat", "individualTraitValue", "individualTotalFitness",
 			"individualChoice", "individualIndex", "individualRealizedFitness",
-			"individualExpectedFitnessDifference"
+			"individualExpectedFitnessDifference", "habitatCensus", "habitatMeanTraitValue"
 		
 		};
 
@@ -82,7 +82,8 @@ int simulate(const std::vector<std::string> &args) {
 		// Set up flags for which data to save
         int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1),
 		individualTotalFitnessFile(-1), individualChoiceFile(-1), individualIndexFile(-1),
-		individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1);
+		individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1),
+		habitatCensusFile(-1), habitatMeanTraitValueFile(-1);
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
@@ -95,6 +96,8 @@ int simulate(const std::vector<std::string> &args) {
 			else if (filename == "individualIndex") individualIndexFile = f;
 			else if (filename == "individualRealizedFitness") individualRealizedFitnessFile = f;
 			else if (filename == "individualExpectedFitnessDifference") individualExpectedFitnessDifference = f;
+			else if (filename == "habitatCensus") habitatCensusFile = f;
+			else if (filename == "habitatMeanTraitValue") habitatMeanTraitValueFile = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
@@ -124,6 +127,42 @@ int simulate(const std::vector<std::string> &args) {
                 outfiles[timeFile]->write((char *) &(t_), sizeof(double));
 
             }
+
+			// Save the number of individuals in each habitat if needed
+			if (timetosave && habitatCensusFile >= 0) {
+
+				// Count the number of individuals in each habitat
+				std::vector<size_t> n(2u, 0u);
+				for (size_t i = 0u; i < pop.size(); ++i) ++n[pop[i].getHabitat()];
+
+				// Write to file
+                const double n1_ = static_cast<double>(n[0u]);
+				const double n2_ = static_cast<double>(n[1u]);
+                outfiles[habitatCensusFile]->write((char *) &(n1_), sizeof(double));
+				outfiles[habitatCensusFile]->write((char *) &(n2_), sizeof(double));
+
+            }
+
+			// Save the mean trait value in each habitat if needed
+			if (timetosave && habitatMeanTraitValueFile >= 0) {
+
+				// Compute the mean trait value in each habitat
+				std::vector<size_t> n(2u, 0u);
+				std::vector<double> meanx(2u, 0.0);
+				for (size_t i = 0u; i < pop.size(); ++i) {
+
+					++n[pop[i].getHabitat()];
+					meanx[pop[i].getHabitat()] += pop[i].getX();
+
+				}
+				meanx[0u] /= n[0u];
+				meanx[1u] /= n[1u];
+
+				// Write to file
+				outfiles[habitatMeanTraitValueFile]->write((char *) &(meanx[0u]), sizeof(double));
+				outfiles[habitatMeanTraitValueFile]->write((char *) &(meanx[1u]), sizeof(double));
+
+			}
 			
 			// There are multiple feeding rounds.
 			// Every feeding round, individuals are taken in random order.
