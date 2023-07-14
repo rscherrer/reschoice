@@ -27,6 +27,9 @@ int simulate(const std::vector<std::string> &args) {
 		// Save parameters if necessary
         if (pars.savepars) pars.save();
 
+		// Redirect output to log file if needed
+        if (pars.savelog) pars.savelog = std::freopen("log.txt", "w", stdout);
+
 		// Distribution of mutational deviations (set up here for speed)
 		auto sampleMutation = rnd::normal(0.0, pars.mutsdev);
 
