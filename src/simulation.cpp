@@ -53,7 +53,7 @@ int simulate(const std::vector<std::string> &args) {
         std::vector<std::string> filenames = { 
 			
 			"time", "individualHabitat", "individualTraitValue", "individualTotalFitness",
-			"individualChoice", "individualIndex"
+			"individualChoice", "individualIndex", "individualRealizedFitness"
 		
 		};
 
@@ -80,7 +80,8 @@ int simulate(const std::vector<std::string> &args) {
 
 		// Set up flags for which data to save
         int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1),
-		individualTotalFitnessFile(-1), individualChoiceFile(-1), individualIndexFile(-1);
+		individualTotalFitnessFile(-1), individualChoiceFile(-1), individualIndexFile(-1),
+		individualRealizedFitnessFile(-1);
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
@@ -91,6 +92,7 @@ int simulate(const std::vector<std::string> &args) {
 			else if (filename == "individualTotalFitness") individualTotalFitnessFile = f;
 			else if (filename == "individualChoice") individualChoiceFile = f;
 			else if (filename == "individualIndex") individualIndexFile = f;
+			else if (filename == "individualRealizedFitness") individualRealizedFitnessFile = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
@@ -219,11 +221,18 @@ int simulate(const std::vector<std::string> &args) {
 					const double res = choice ? pars.res2 : pars.res1;
 					const double sumeff = choice ? sumeff2 : sumeff1;
 
-					// Compute realized fitness on each resource
+					// Compute realized fitness on the chosen resource
 					const double fit = res * eff * (sumeff + 1.0 / pars.delta - 1.0);
 
 					// Check that the fitness is above zero
 					assert(fit >= 0.0);
+
+					// Save individual realized fitness if needed
+					if (timetosave && individualRealizedFitnessFile >= 0) {
+
+						outfiles[individualRealizedFitnessFile]->write((char *) &fit, sizeof(double));
+
+                	}
 
 					// Add obtained food to the vector of fitnesses
 					fitnesses[i] += fit;
