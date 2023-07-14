@@ -308,6 +308,32 @@ BOOST_AUTO_TEST_CASE(outputDataAreCorrectlyWritten) {
     BOOST_CHECK(newtimepoints.size() < timepoints.size());
     BOOST_CHECK_EQUAL(newtimepoints.size(), 3u);
 
+}
 
+// Test that providing a file with what to save works
+BOOST_AUTO_TEST_CASE(whatToSaveWorks) {
+
+    // Create parameters
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "tend 10\n";
+    file << "tsave 2\n";
+    file << "choose 1\n";
+    file.close();
+
+    // Create a what-to-save file
+    std::ofstream wtsfile;
+    wtsfile.open("whattosave.txt");
+    wtsfile << "time\n";
+    wtsfile.close();
+
+    // Simulate
+    simulate({"program_name", "parameters.txt"});
+
+    // Read back
+    std::vector<size_t> timepoints = readBinary("time.dat");
+
+    // Check
+    BOOST_CHECK_EQUAL(timepoints.size(), 6u);
 
 }
