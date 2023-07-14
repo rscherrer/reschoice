@@ -73,6 +73,17 @@ int simulate(const std::vector<std::string> &args) {
 		// Open the file streams
         stf::open(outfiles, filenames);
 
+		// Set up flags for which data to save
+        int timeFile(-1);
+        for (size_t f = 0u; f < filenames.size(); ++f) {
+
+            const std::string filename = filenames[f];
+
+            if (filename == "time") timeFile = f;
+            else throw std::runtime_error("Invalid output requested in whattosave.txt");
+
+        }
+
 		// Distribution of mutational deviations (set up here for speed)
 		auto sampleMutation = rnd::normal(0.0, pars.mutsdev);
 
@@ -87,6 +98,15 @@ int simulate(const std::vector<std::string> &args) {
 
 			// Verbose if needed
 			if (pars.talkative) std::cout << "t = " << t << '\n';
+
+			// Flag to know if it is time to save some data
+            const bool timetosave = t % pars.tsave == 0u;
+
+			// Save time if needed
+            if (timetosave && timeFile >= 0) {
+                const double t_ = static_cast<double>(t);
+                outfiles[timeFile]->write((char *) &(t_), sizeof(double));
+            }
 			
 			// There are multiple feeding rounds.
 			// Every feeding round, individuals are taken in random order.

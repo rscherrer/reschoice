@@ -237,3 +237,59 @@ BOOST_AUTO_TEST_CASE(paramSavedProperly) {
     BOOST_CHECK(seed > 0u); // check that a random (nonzero) seed was saved
 
 }
+
+// Function to read in a binary output data file
+std::vector<size_t> readBinary(const std::string &filename)
+{
+    // Open the input file
+    std::ifstream file(filename.c_str(), std::ios::in | std::ios::binary);
+
+    // Prepare storage for values
+    size_t x;
+    std::vector<size_t> v;
+
+    // If the file is open
+    if (file.is_open()) {
+
+        // Loop through the file until we reach the end of the file
+        while(file) {
+
+            // Read elements
+            file.read((char *) &x, sizeof(size_t));
+
+            // Exit if reaching the end of the file
+            if (!file.gcount()) break;
+
+            // Store elements
+            v.push_back(x);
+
+        }
+    }
+
+    // Close the file
+    file.close();
+
+    return v;
+
+}
+
+// Test that output data are correctly written
+BOOST_AUTO_TEST_CASE(outputDataAreCorrectlyWritten) {
+
+    // Set up parameters with a known frequency of recording the data
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "tend 10\n";
+    file << "tsave 1\n";
+    file.close();
+
+    // Run a simulation
+    simulate({"program_name", "parameters.txt"});
+
+    // Read back one saved output data file
+    std::vector<size_t> timepoints = readBinary("time.dat");
+
+    // Check the right number of entries have been saved
+    BOOST_CHECK_EQUAL(timepoints.size(), 11u);
+
+}
