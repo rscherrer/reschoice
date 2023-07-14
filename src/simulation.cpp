@@ -26,6 +26,9 @@ int simulate(const std::vector<std::string> &args) {
 		const double mutrate = 0.0001; // mutation rate
 		const double mutsdev = 0.02; // mutational standard deviation
 
+		// Distribution of mutational deviations
+		auto sampleMutation = rnd::normal(0.0, mutsdev);
+
 		// Create a population of individuals
 		std::vector<Individual> pop(popsize, { tradeoff });
 
@@ -123,7 +126,7 @@ int simulate(const std::vector<std::string> &args) {
 				pop.push_back(pop[j]);
 
 				// Mutate offspring if needed
-				if (rnd::bernoulli(mutrate)(rnd::rng)) pop.back().mutate(mutsdev);
+				if (rnd::bernoulli(mutrate)(rnd::rng)) pop.back().mutate(sampleMutation(rnd::rng));
 
 			}
 

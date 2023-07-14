@@ -40,3 +40,5 @@ BOOST_AUTO_TEST_CASE(optimalChoice) {
     BOOST_CHECK(ind.getChoice());
 
 }
+
+// Test mutation

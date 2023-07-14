@@ -27,15 +27,16 @@ void Individual::setChoice(const bool &r, const double &beta) {
 
     // Choose
     choice = rnd::bernoulli(prob)(rnd::rng) ? r : !r;
-
     
 }
 
-// Function to mutate an individual
-void Individual::mutate(const double &stepsize) {
 
-    // Sample phenotypic deviation from a normal distribution
-    x += rnd::normal(0.0, stepsize)(rnd::rng);
+
+// Function to mutate an individual
+void Individual::mutate(const double &dx) {
+
+    // Apply phenotypic deviation
+    x += dx;
 
 }
 
