@@ -6,6 +6,7 @@
 #include "parameters.hpp"
 #include "individual.hpp"
 #include "random.hpp"
+#include "printer.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
