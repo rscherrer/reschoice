@@ -38,8 +38,8 @@ int simulate(const std::vector<std::string> &args) {
 		// - [OK] Individual habitat at each time step
 		// - [OK] Individual trait value at each time step
 		// - [OK] Individual realized fitness at each time step
-		// - Individual choice at each feeding round at each time step
-		// - Individual position in the queue at each feeding round at each time step
+		// - [OK] Individual choice at each feeding round at each time step
+		// - Individual position in the queue (index) at each feeding round at each time step
 		// - Individual realized fitness at each feeding round at each time step
 		// - Individual expected fitness at each feeding round at each time step
 		// - Number of individuals in each habitat at each time step
@@ -53,7 +53,7 @@ int simulate(const std::vector<std::string> &args) {
         std::vector<std::string> filenames = { 
 			
 			"time", "individualHabitat", "individualTraitValue", "individualRealizedFitness",
-			"individualChoice"
+			"individualChoice", "individualIndex"
 		
 		};
 
@@ -80,7 +80,7 @@ int simulate(const std::vector<std::string> &args) {
 
 		// Set up flags for which data to save
         int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1),
-		individualRealizedFitnessFile(-1), individualChoiceFile(-1);
+		individualRealizedFitnessFile(-1), individualChoiceFile(-1), individualIndexFile(-1);
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
@@ -90,6 +90,7 @@ int simulate(const std::vector<std::string> &args) {
 			else if (filename == "individualTraitValue") individualTraitValueFile = f;
 			else if (filename == "individualRealizedFitness") individualRealizedFitnessFile = f;
 			else if (filename == "individualChoice") individualChoiceFile = f;
+			else if (filename == "individualIndex") individualIndexFile = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
@@ -194,10 +195,17 @@ int simulate(const std::vector<std::string> &args) {
 						outfiles[individualChoiceFile]->write((char *) &choice_, sizeof(double));
 
                 	}
-					
+
 					// Update cumulative feeding efficiencies depending on what resource has been chosen
 					if (choice) sumeff2 += eff2; else sumeff1 += eff1;
 
+					// Save individual index if needed
+					if (timetosave && individualIndexFile >= 0) {
+
+						const double index_ = static_cast<double>(pop[i].getIndex());
+						outfiles[individualIndexFile]->write((char *) &index_, sizeof(double));
+
+                	}
 				}
 
 				// For each individual...
