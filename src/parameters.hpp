@@ -10,7 +10,6 @@
 #include <iostream>
 #include <chrono>
 #include <cassert>
-//#include <cstdint>
 
 struct Parameters {
 
