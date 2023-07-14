@@ -37,7 +37,7 @@ int simulate(const std::vector<std::string> &args) {
 		// - [OK] Time steps
 		// - [OK] Individual habitat at each time step
 		// - [OK] Individual trait value at each time step
-		// - Individual realized fitness at each time step
+		// - [OK] Individual realized fitness at each time step
 		// - Individual choice at each feeding round at each time step
 		// - Individual position in the queue at each feeding round at each time step
 		// - Individual realized fitness at each feeding round at each time step
@@ -50,7 +50,12 @@ int simulate(const std::vector<std::string> &args) {
 		// - A statistic for spatial divergence in the poopulation at each time step
 
 		// Which variables to save
-        std::vector<std::string> filenames = { "time", "individualHabitat", "individualTraitValue", "individualRealizedFitness" };
+        std::vector<std::string> filenames = { 
+			
+			"time", "individualHabitat", "individualTraitValue", "individualRealizedFitness",
+			"individualChoice"
+		
+		};
 
 		// Update the list of which variables to save if needed...
         if (pars.choose) {
@@ -75,7 +80,7 @@ int simulate(const std::vector<std::string> &args) {
 
 		// Set up flags for which data to save
         int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1),
-		individualRealizedFitnessFile(-1);
+		individualRealizedFitnessFile(-1), individualChoiceFile(-1);
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
@@ -84,6 +89,7 @@ int simulate(const std::vector<std::string> &args) {
 			else if (filename == "individualHabitat") individualHabitatFile = f;
 			else if (filename == "individualTraitValue") individualTraitValueFile = f;
 			else if (filename == "individualRealizedFitness") individualRealizedFitnessFile = f;
+			else if (filename == "individualChoice") individualChoiceFile = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
@@ -177,9 +183,20 @@ int simulate(const std::vector<std::string> &args) {
 
 					// Resource choice
 					pop[i].setChoice(fit2 > fit1, pars.beta);
+
+					// Read the choice that was made
+					const bool choice = pop[i].getChoice();
+
+					// Save individual choice if needed
+					if (timetosave && individualChoiceFile >= 0) {
+
+						const double choice_ = static_cast<double>(choice);
+						outfiles[individualChoiceFile]->write((char *) &choice_, sizeof(double));
+
+                	}
 					
 					// Update cumulative feeding efficiencies depending on what resource has been chosen
-					if (pop[i].getChoice()) sumeff2 += eff2; else sumeff1 += eff1;
+					if (choice) sumeff2 += eff2; else sumeff1 += eff1;
 
 				}
 
