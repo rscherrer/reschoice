@@ -33,6 +33,43 @@ int simulate(const std::vector<std::string> &args) {
 		// Create a vector of output file streams (using smart pointers)
         std::vector<std::shared_ptr<std::ofstream> > outfiles;
 
+		// What variables do we save in this study?
+		// - Time steps
+		// - Individual habitat at each time step
+		// - Individual trait value at each time step
+		// - Individual realized fitness at each time step
+		// - Individual choice at each feeding round at each time step
+		// - Individual position in the queue at each feeding round at each time step
+		// - Individual realized fitness at each feeding round at each time step
+		// - Individual expected fitness at each feeding round at each time step
+		// - Number of individuals in each habitat at each time step
+		// - Mean trait value in each habitat at each time step
+		// - Number of individuals on each resource in each habitat at each feeding round at each time step
+		// - Mean trait value on each resource in each habitat at each feedinf round at each time step
+		// - A statistic for phenotypic divergence in the population at each time step
+		// - A statistic for spatial divergence in the poopulation at each time step
+
+		// Which data files to save
+        std::vector<std::string> filenames = { "time" };
+
+		// Update the files to save if needed...
+        if (pars.choose) {
+
+            // Read file where those are provided
+            std::ifstream infile("whattosave.txt");
+            if (!infile.is_open())
+                throw std::runtime_error("Could not read input file whattosave.txt");
+            std::vector<std::string> newfilenames;
+            std::string input;
+            while (infile >> input) newfilenames.push_back(input);
+            stf::check(newfilenames, filenames);
+            filenames.reserve(newfilenames.size());
+            filenames.resize(newfilenames.size());
+            for (size_t f = 0u; f < newfilenames.size(); ++f)
+                filenames[f] = newfilenames[f];
+
+        }
+
 		// Distribution of mutational deviations (set up here for speed)
 		auto sampleMutation = rnd::normal(0.0, pars.mutsdev);
 
@@ -40,7 +77,7 @@ int simulate(const std::vector<std::string> &args) {
 		std::vector<Individual> pop(pars.popsize, { pars.tradeoff });
 
 		// Loop through time steps
-		for (size_t t = 0u; t <= 5u; ++t) {
+		for (size_t t = 0u; t <= pars.tend; ++t) {
 
 			std::cout << t << std::endl;
 			
