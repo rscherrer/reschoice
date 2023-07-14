@@ -292,4 +292,22 @@ BOOST_AUTO_TEST_CASE(outputDataAreCorrectlyWritten) {
     // Check the right number of entries have been saved
     BOOST_CHECK_EQUAL(timepoints.size(), 11u);
 
+    // Now change the number of entries to save
+    file.open("parameters.txt");
+    file << "tend 10\n";
+    file << "tsave 5\n";
+    file.close();
+
+    // Re-simulate
+    simulate({"program_name", "parameters.txt"});
+
+    // Read the new data back
+    std::vector<size_t> newtimepoints = readBinary("time.dat");
+
+    // Check the new data does not have the same number of entries
+    BOOST_CHECK(newtimepoints.size() < timepoints.size());
+    BOOST_CHECK_EQUAL(newtimepoints.size(), 3u);
+
+
+
 }
