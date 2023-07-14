@@ -24,6 +24,9 @@ int simulate(const std::vector<std::string> &args) {
 		// Read parameters from a file if supplied
         if (args.size() == 2u) pars.read(args[1u]);
 
+		// Save parameters if necessary
+        if (pars.savepars) pars.save();
+
 		// Distribution of mutational deviations (set up here for speed)
 		auto sampleMutation = rnd::normal(0.0, pars.mutsdev);
 
