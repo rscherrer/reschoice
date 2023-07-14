@@ -61,6 +61,119 @@ BOOST_AUTO_TEST_CASE(errorWhenInvalidParameterName) {
     BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
 }
 
+// Test that error when fixed population size is zero
+BOOST_AUTO_TEST_CASE(errorWhenPopSizeIsZero) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "popsize 0\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
+// Test that error when tradeoff is negative
+BOOST_AUTO_TEST_CASE(errorWhenTradeOffIsNegative) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "tradeoff -1\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
+// Test that error when choice accuracy is not between zero and one
+BOOST_AUTO_TEST_CASE(errorWhenAccuracyIsNotBetweenZeroAndOne) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "beta -1\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
+// Test that error when discovery rate is negative
+BOOST_AUTO_TEST_CASE(errorWhenDiscoveryRateIsNegative) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "delta -1\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
+// Test that error when resource amounts are negative
+BOOST_AUTO_TEST_CASE(errorWhenResourceAmountsAreNegative) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "res1 -1\n";
+    file << "res2 -1\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
+// Test that error when zero feeding rounds
+BOOST_AUTO_TEST_CASE(errorWhenZeroFeedingRounds) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "nrounds 0\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
+// Test that error when mutation rate is not between zero and one
+BOOST_AUTO_TEST_CASE(errorWhenMutationRateIsNotBetweenZeroAndOne) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "mutrate -1\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
+// Test that error when mutational standard deviation is negative
+BOOST_AUTO_TEST_CASE(errorWhenMutationalStandardDeviationIsNegative) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "mutsdev -1\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
+// Test that error when simulation time is zero
+BOOST_AUTO_TEST_CASE(errorWhenSimulationTimeIsZero) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "tend 0\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
+
+// Test that error when saving frequency is zero
+BOOST_AUTO_TEST_CASE(errorWhenSavingFrequencyIsZero) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "tsave 0\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
+
 // Test that an individual is initialized properly
 BOOST_AUTO_TEST_CASE(individualInitialization) {
 
