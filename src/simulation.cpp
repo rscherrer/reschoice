@@ -34,8 +34,8 @@ int simulate(const std::vector<std::string> &args) {
         std::vector<std::shared_ptr<std::ofstream> > outfiles;
 
 		// What variables do we save in this study?
-		// - Time steps
-		// - Individual habitat at each time step
+		// - [OK] Time steps
+		// - [OK] Individual habitat at each time step
 		// - Individual trait value at each time step
 		// - Individual realized fitness at each time step
 		// - Individual choice at each feeding round at each time step
@@ -50,7 +50,7 @@ int simulate(const std::vector<std::string> &args) {
 		// - A statistic for spatial divergence in the poopulation at each time step
 
 		// Which variables to save
-        std::vector<std::string> filenames = { "time", "individualHabitat" };
+        std::vector<std::string> filenames = { "time", "individualHabitat", "individualTraitValue" };
 
 		// Update the list of which variables to save if needed...
         if (pars.choose) {
@@ -74,13 +74,14 @@ int simulate(const std::vector<std::string> &args) {
         stf::open(outfiles, filenames);
 
 		// Set up flags for which data to save
-        int timeFile(-1), individualHabitatFile(-1);
+        int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1);
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
 
             if (filename == "time") timeFile = f;
 			else if (filename == "individualHabitat") individualHabitatFile = f;
+			else if (filename == "individualTraitValue") individualTraitValueFile = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
@@ -105,8 +106,10 @@ int simulate(const std::vector<std::string> &args) {
 
 			// Save time if needed
             if (timetosave && timeFile >= 0) {
+
                 const double t_ = static_cast<double>(t);
                 outfiles[timeFile]->write((char *) &(t_), sizeof(double));
+
             }
 			
 			// There are multiple feeding rounds.
@@ -147,6 +150,14 @@ int simulate(const std::vector<std::string> &args) {
 
 						const double habitat_ = static_cast<double>(pop[i].getHabitat());
 						outfiles[individualHabitatFile]->write((char *) &habitat_, sizeof(double));
+
+                	}
+
+					// Save individual trait values if needed
+					if (timetosave && individualTraitValueFile >= 0) {
+
+						const double x = pop[i].getX();
+						outfiles[individualTraitValueFile]->write((char *) &x, sizeof(double));
 
                 	}
 
