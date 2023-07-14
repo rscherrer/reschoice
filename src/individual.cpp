@@ -33,10 +33,14 @@ void Individual::setChoice(const bool &r, const double &beta) {
 
 
 // Function to mutate an individual
-void Individual::mutate(const double &dx) {
+void Individual::mutate(const double &dx, const double &tradeoff) {
 
     // Apply phenotypic deviation
     x += dx;
+
+    // Update feeding efficiencies
+    eff1 = exp(-tradeoff * utl::sqr(1 + x));
+    eff2 = exp(-tradeoff * utl::sqr(1 - x));
 
 }
 
