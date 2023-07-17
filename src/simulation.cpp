@@ -285,23 +285,8 @@ int simulate(const std::vector<std::string> &args) {
 				// For each individual...
 				for (size_t i = 0; i < pop.size(); ++i) {
 
-					// Save individual habitats if needed
-					if (timetosave && individualHabitatFile >= 0) {
-
-						const double habitat_ = static_cast<double>(pop[i].getHabitat());
-						outfiles[individualHabitatFile]->write((char *) &habitat_, sizeof(double));
-
-                	}
-
 					// Read individual trait value
 					const double x = pop[i].getX();
-
-					// Save individual trait values if needed
-					if (timetosave && individualTraitValueFile >= 0) {
-
-						outfiles[individualTraitValueFile]->write((char *) &x, sizeof(double));
-
-                	}
 
 					// Get feeding efficiency on each resource
 					const double eff1 = pop[i].getEff1();
