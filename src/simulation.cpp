@@ -425,15 +425,26 @@ int simulate(const std::vector<std::string> &args) {
 				if (rnd::bernoulli(pars.mutrate)(rnd::rng)) 
 					pop.back().mutate(sampleMutation(rnd::rng), pars.tradeoff);
 
-				// Kill a parent corresponding the the index of the current offspring
+				// Kill an adult corresponding the the index of the current offspring
 				pop[i].kill();
 
-			}
+				// Save the habitat of that adult if needed
+				if (timetosave && individualHabitatFile >= 0) {
 
-			// For each adult individual...
-			for (size_t i = 0u; i < pars.popsize; ++i) {
-				
-				// Record the final fitness if needed
+					const double habitat_ = static_cast<double>(pop[i].getHabitat());
+					outfiles[individualHabitatFile]->write((char *) &habitat_, sizeof(double));
+
+                }
+
+				// Save the trait value of that adult if needed
+				if (timetosave && individualTraitValueFile >= 0) {
+
+					const double x = pop[i].getX();
+					outfiles[individualTraitValueFile]->write((char *) &x, sizeof(double));
+
+                }
+
+				// Save the final fitness of that adult if needed
 				if (timetosave && individualTotalFitnessFile >= 0) {
 
 					outfiles[individualTotalFitnessFile]->write((char *) &fitnesses[i], sizeof(double));
