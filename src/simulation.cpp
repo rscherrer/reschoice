@@ -440,9 +440,6 @@ int simulate(const std::vector<std::string> &args) {
 
                 }
 
-				// Kill that individual
-				pop[i].kill();
-
 			}
 
 			// Remove dead individuals
