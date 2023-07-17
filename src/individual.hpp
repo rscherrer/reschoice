@@ -18,6 +18,7 @@ public:
     void setChoice(const bool&, const double&);
     void mutate(const double&, const double&);
     void develop(const double&);
+    void isBorn();
 
     double getX() const;
     double getEff1() const;

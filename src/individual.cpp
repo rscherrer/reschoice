@@ -2,7 +2,7 @@
 
 #include "individual.hpp"
 
-// Constructor
+// Spontaneous generation constructor
 Individual::Individual(const double &tradeoff) :
     x(0.0),
     eff1(0.0),
@@ -20,6 +20,9 @@ Individual::Individual(const double &tradeoff) :
 
 // Function to kill an individual
 void Individual::kill() { alive = false; }
+
+// Function to make sure an individual is alive
+void Individual::isBorn() { alive = true; }
 
 // Function to set the resource choice
 void Individual::setChoice(const bool &r, const double &beta) { 

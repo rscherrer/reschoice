@@ -86,6 +86,7 @@ int simulate(const std::vector<std::string> &args) {
 		individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1),
 		habitatCensusFile(-1), habitatMeanTraitValueFile(-1), resourceCensusFile(-1),
 		resourceMeanTraitValueFile(-1), ecologicalIsolationFile(-1);
+
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
             const std::string filename = filenames[f];
@@ -169,7 +170,7 @@ int simulate(const std::vector<std::string> &args) {
 
 			}
 
-			// Save a ecological isolation statistic if needed
+			// Save an ecological isolation statistic if needed
 			if (timetosave && ecologicalIsolationFile >= 0) {
 
 				// Initialize mean trait value
@@ -302,7 +303,7 @@ int simulate(const std::vector<std::string> &args) {
 
                 	}
 
-					// Get feedding efficiency on each resource
+					// Get feeding efficiency on each resource
 					const double eff1 = pop[i].getEff1();
 					const double eff2 = pop[i].getEff2();
 
@@ -418,6 +419,7 @@ int simulate(const std::vector<std::string> &args) {
 
 				// Add offspring to the population
 				pop.push_back(pop[j]);
+				pop.back().isBorn(); // make sure it is alive (avoids some extra loops)
 
 				// Mutate offspring if needed
 				if (rnd::bernoulli(pars.mutrate)(rnd::rng)) 
