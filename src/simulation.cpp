@@ -425,6 +425,9 @@ int simulate(const std::vector<std::string> &args) {
 				if (rnd::bernoulli(pars.mutrate)(rnd::rng)) 
 					pop.back().mutate(sampleMutation(rnd::rng), pars.tradeoff);
 
+				// Kill a parent corresponding the the index of the current offspring
+				pop[i].kill();
+
 			}
 
 			// For each adult individual...
