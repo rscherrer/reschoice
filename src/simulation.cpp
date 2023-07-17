@@ -300,27 +300,11 @@ int simulate(const std::vector<std::string> &args) {
 					assert(fit1 >= 0.0);
 					assert(fit2 >= 0.0);
 
-					// Save individual expected fitness difference if needed
-					if (timetosave && individualExpectedFitnessDifference >= 0) {
-
-						const double diff = fit2 - fit1;
-						outfiles[individualExpectedFitnessDifference]->write((char *) &diff, sizeof(double));
-
-                	}
-
 					// Resource choice
 					pop[i].setChoice(fit2 > fit1, pars.beta);
 
 					// Read the choice that was made
 					const bool choice = pop[i].getChoice();
-
-					// Save individual choice if needed
-					if (timetosave && individualChoiceFile >= 0) {
-
-						const double choice_ = static_cast<double>(choice);
-						outfiles[individualChoiceFile]->write((char *) &choice_, sizeof(double));
-
-                	}
 
 					// Update cumulative feeding efficiencies depending on what resource has been chosen
 					if (choice) sumeff2 += eff2; else sumeff1 += eff1;
@@ -330,6 +314,22 @@ int simulate(const std::vector<std::string> &args) {
 
 					// Update the sum of trait values of individuals feeding on each resource
 					if (choice) meanx2 += x; else meanx1 += x;
+
+					// Save individual expected fitness difference if needed
+					if (timetosave && individualExpectedFitnessDifference >= 0) {
+
+						const double diff = fit2 - fit1;
+						outfiles[individualExpectedFitnessDifference]->write((char *) &diff, sizeof(double));
+
+                	}
+
+					// Save individual choice if needed
+					if (timetosave && individualChoiceFile >= 0) {
+
+						const double choice_ = static_cast<double>(choice);
+						outfiles[individualChoiceFile]->write((char *) &choice_, sizeof(double));
+
+                	}
 
 				}
 
