@@ -331,13 +331,6 @@ int simulate(const std::vector<std::string> &args) {
 					// Update the sum of trait values of individuals feeding on each resource
 					if (choice) meanx2 += x; else meanx1 += x;
 
-					// Save individual index if needed
-					if (timetosave && individualIndexFile >= 0) {
-
-						const double index_ = static_cast<double>(pop[i].getIndex());
-						outfiles[individualIndexFile]->write((char *) &index_, sizeof(double));
-
-                	}
 				}
 
 				// Save the number of individuals feeding on each resource if needed
