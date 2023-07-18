@@ -209,6 +209,17 @@ BOOST_AUTO_TEST_CASE(optimalChoice) {
 
 }
 
+// Test birth
+BOOST_AUTO_TEST_CASE(birth) {
+
+    Individual ind(1.0);
+    ind.kill();
+    BOOST_CHECK(!ind.isAlive());
+    ind.isBorn();
+    BOOST_CHECK(ind.isAlive());
+
+}
+
 // Test mutation
 BOOST_AUTO_TEST_CASE(mutation) {
 
