@@ -29,6 +29,7 @@ struct Parameters {
 	double beta; // resource choice accuracy
 	double delta; // resource discovery rate
 	double resource; // baseline amount of each resource
+    double hsymmetry; // habitat symmetry parameter
 	size_t nrounds; // number of feeding rounds
 	double mutrate; // mutation rate
 	double mutsdev; // mutational standard deviation

@@ -8,6 +8,7 @@ Parameters::Parameters() :
     beta(1.0),
     delta(1.0),
     resource(100.0),
+    hsymmetry(1.0),
     nrounds(10u),
     mutrate(0.0001),
     mutsdev(0.02),
@@ -64,6 +65,7 @@ void Parameters::import(std::ifstream &file)
         else if (input == "beta") file >> beta;
         else if (input == "delta") file >> delta;
         else if (input == "resource") file >> resource;
+        else if (input == "hsymmetry") file >> hsymmetry;
         else if (input == "nrounds") file >> nrounds;
         else if (input == "mutrate") file >> mutrate;
         else if (input == "mutsdev") file >> mutsdev;
@@ -105,6 +107,7 @@ void Parameters::check() const
     if (beta > 1.0 || beta < 0.0) throw std::runtime_error("Resource choice accuracy should be between zero and one");
     if (delta < 0.0) throw std::runtime_error("Resource discovery rate cannot be negative");
     if (resource < 0.0) throw std::runtime_error("Resource amount cannot be negative");
+    if (hsymmetry < 0.0 || hsymmetry > 1.0) throw std::runtime_error("Habitat symmetry should be between zero and one");
     if (nrounds == 0u) throw std::runtime_error("There should be at least one feeding round");
     if (mutrate < 0.0 || mutrate > 1.0) throw std::runtime_error("Mutation rate should be between zero and one");
     if (mutsdev < 0.0) throw std::runtime_error("Mutational standard deviation cannot be negative");
@@ -135,6 +138,7 @@ void Parameters::write(std::ofstream &file) const
     file << "beta " << beta << '\n';
     file << "delta " << delta << '\n';
     file << "resource " << resource << '\n';
+    file << "hsymmetry " << hsymmetry << '\n';
     file << "nrounds " << nrounds << '\n';
     file << "mutrate " << mutrate << '\n';
     file << "mutsdev " << mutsdev << '\n';
