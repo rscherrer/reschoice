@@ -36,6 +36,7 @@ int simulate(const std::vector<std::string> &args) {
 		// What variables do we save in this study?
 		// - [OK] Time steps
 		// - [OK] Individual habitat at each time step
+		// - [OK] Individual ecotype at each time step
 		// - [OK] Individual trait value at each time step
 		// - [OK] Individual total fitness at each time step
 		// - [OK] Individual choice at each feeding round at each time step
