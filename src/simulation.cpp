@@ -175,8 +175,8 @@ int simulate(const std::vector<std::string> &args) {
 					const std::vector<double> effs({ pop[i].getEff1(), pop[i].getEff2() });
 
 					// Compute expected fitness on each resource
-					const double fit1 = pars.res1 * effs[0u] * (sumeffs[0u] + 1.0 / pars.delta - 1.0);
-					const double fit2 = pars.res2 * effs[1u] * (sumeffs[1u] + 1.0 / pars.delta - 1.0);
+					const double fit1 = pars.resource * effs[0u] * (sumeffs[0u] + 1.0 / pars.delta - 1.0);
+					const double fit2 = pars.resource * effs[1u] * (sumeffs[1u] + 1.0 / pars.delta - 1.0);
 
 					// Check that expected fitnesses are above zero
 					assert(fit1 >= 0.0);
@@ -229,11 +229,10 @@ int simulate(const std::vector<std::string> &args) {
 
 					// Corresponding values
 					const double eff = choice ? pop[i].getEff2() : pop[i].getEff1();
-					const double res = choice ? pars.res2 : pars.res1;
 					const double sumeff = choice ? sumeffs[0u] : sumeffs[1u];
 
 					// Compute realized fitness on the chosen resource
-					const double fit = res * eff * (sumeff + 1.0 / pars.delta - 1.0);
+					const double fit = pars.resource * eff * (sumeff + 1.0 / pars.delta - 1.0);
 
 					// Check that the fitness is above zero
 					assert(fit >= 0.0);
@@ -265,10 +264,12 @@ int simulate(const std::vector<std::string> &args) {
 				// Sample parent of the current offspring (with replacement)
 				const size_t j = sampleParent(rnd::rng);
 
-				// Add offspring to the population
+				// Add offspring to the population by cloning
 				pop.push_back(pop[j]);
-				pop.back().isBorn(); // make sure it is alive (saves some loops)
-				
+
+				// Make sure it is alive (the adult may have been killed already)
+				pop.back().isBorn(); 
+
 				// Mutate offspring if needed
 				if (rnd::bernoulli(pars.mutrate)(rnd::rng)) 
 					pop.back().mutate(sampleMutation(rnd::rng), pars.tradeoff);

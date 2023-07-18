@@ -24,8 +24,7 @@ BOOST_AUTO_TEST_CASE(runWithParameterFile) {
     file << "tradeoff 1\n";
     file << "beta 1\n";
     file << "delta 1\n";
-    file << "res1 100\n";
-    file << "res2 100\n";
+    file << "resource 100\n";
     file << "nrounds 10\n";
     file << "mutrate 0.0001\n";
     file << "mutsdev 0.02\n";
@@ -105,13 +104,12 @@ BOOST_AUTO_TEST_CASE(errorWhenDiscoveryRateIsNegative) {
     BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
 }
 
-// Test that error when resource amounts are negative
-BOOST_AUTO_TEST_CASE(errorWhenResourceAmountsAreNegative) {
+// Test that error when resource amount is negative
+BOOST_AUTO_TEST_CASE(errorWhenResourceAmountIsNegative) {
 
     std::ofstream file;
     file.open("parameters.txt");
-    file << "res1 -1\n";
-    file << "res2 -1\n";
+    file << "resource -1\n";
     file.close();
 
     BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);

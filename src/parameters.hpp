@@ -28,8 +28,7 @@ struct Parameters {
 	double tradeoff; // resouce utilization tradeoff
 	double beta; // resource choice accuracy
 	double delta; // resource discovery rate
-	double res1; // amount of resource 1
-	double res2; // amount of resource 2
+	double resource; // baseline amount of each resource
 	size_t nrounds; // number of feeding rounds
 	double mutrate; // mutation rate
 	double mutsdev; // mutational standard deviation
