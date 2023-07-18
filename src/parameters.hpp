@@ -33,6 +33,7 @@ struct Parameters {
 	size_t nrounds; // number of feeding rounds
 	double mutrate; // mutation rate
 	double mutsdev; // mutational standard deviation
+    double dispersal; // dispersal rate
     size_t tend; // simulation time
     size_t tsave; // recording time
     size_t seed; // seed for the random number generator

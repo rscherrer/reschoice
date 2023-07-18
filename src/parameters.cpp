@@ -12,6 +12,7 @@ Parameters::Parameters() :
     nrounds(10u),
     mutrate(0.0001),
     mutsdev(0.02),
+    dispersal(0.1),
     tend(100u),
     tsave(20u),
     seed(makeDefaultSeed()),
@@ -68,6 +69,7 @@ void Parameters::import(std::ifstream &file)
         else if (input == "nrounds") file >> nrounds;
         else if (input == "mutrate") file >> mutrate;
         else if (input == "mutsdev") file >> mutsdev;
+        else if (input == "dispersal") file >> dispersal;
         else if (input == "tend") file >> tend;
         else if (input == "tsave") file >> tsave;
         else if (input == "seed") file >> seed;
@@ -108,6 +110,7 @@ void Parameters::check() const
     if (nrounds == 0u) throw std::runtime_error("There should be at least one feeding round");
     if (mutrate < 0.0 || mutrate > 1.0) throw std::runtime_error("Mutation rate should be between zero and one");
     if (mutsdev < 0.0) throw std::runtime_error("Mutational standard deviation cannot be negative");
+    if (dispersal < 0.0 || dispersal > 1.0) throw std::runtime_error("Dispersal rate should be between zero and one");
     if (tend == 0u) throw std::runtime_error("Simulation time cannot be zero");
     if (tsave == 0u) throw std::runtime_error("Cannot save data every zero time point");
     
@@ -138,6 +141,7 @@ void Parameters::write(std::ofstream &file) const
     file << "nrounds " << nrounds << '\n';
     file << "mutrate " << mutrate << '\n';
     file << "mutsdev " << mutsdev << '\n';
+    file << "dispersal " << dispersal << '\n';
     file << "tend " << tend << '\n';
     file << "tsave " << tsave << '\n';
     file << "seed " << seed << '\n';

@@ -273,6 +273,10 @@ int simulate(const std::vector<std::string> &args) {
 				if (rnd::bernoulli(pars.mutrate)(rnd::rng)) 
 					pop.back().mutate(sampleMutation(rnd::rng), pars.tradeoff);
 
+				// The offspring has a chance to disperse
+				if (rnd::bernoulli(pars.dispersal)(rnd::rng))
+					pop.back().disperse();
+
 				// Kill an adult corresponding the the index of the current offspring
 				pop[i].kill();
 

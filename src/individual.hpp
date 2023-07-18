@@ -18,6 +18,7 @@ public:
     void setChoice(const bool&, const double&);
     void mutate(const double&, const double&);
     void develop(const double&);
+    void disperse();
     void isBorn();
     void setEcotype(const double&);
 

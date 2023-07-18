@@ -68,6 +68,13 @@ void Individual::develop(const double &tradeoff) {
 
 }
 
+// Function to switch the habitat of an individual to the opposite
+void Individual::disperse() {
+
+    habitat = !habitat;
+
+}
+
 // Getters
 double Individual::getX() const { return x; }
 double Individual::getEff1() const { return eff1; }
