@@ -170,82 +170,6 @@ int simulate(const std::vector<std::string> &args) {
 
 			}
 
-			// Save an ecological isolation statistic if needed
-			if (timetosave && ecologicalIsolationFile >= 0) {
-
-				// Initialize mean trait value
-				double meanx = 0.0;
-
-				// For each individual...
-				for (size_t i = 0u; i < pop.size(); ++i) {
-
-					// Record trait value
-					const double x = pop[i].getX();
-
-					// Update the mean trait value
-					meanx += x;
-
-				}
-
-				// Finish the calculation of the mean trait value
-				meanx /= pop.size();
-
-				// Initialize vectors of numbers, sums and sums of squares of individual trait values in each ecotype,
-				// with one extra slot for the total population
-				std::vector<size_t> n(3u, 0u);
-				std::vector<double> sumx(3u, 0.0);
-				std::vector<double> ssqx(3u, 0.0);
-
-				// Loop again...
-				for (size_t i = 0u; i < pop.size(); ++i) {
-
-					// Record trait value
-					const double x = pop[i].getX();
-
-					// Identify ecotype
-					const bool ecotype = x > meanx;
-
-					// Update the number of individuals in that ecotype and in the total population
-					++n[ecotype];
-					++n[2u];
-
-					// Update the sum of squares of individual traits in that ecotype and in the total population
-					ssqx[ecotype] += utl::sqr(x);
-					ssqx[2u] += utl::sqr(x);
-
-					// Update the sum of individual traits in that ecotype and in the total population
-					sumx[ecotype] += x;
-					sumx[2u] += x;
-
-				}
-
-				// Initialize a vector for the variance in trait value in each ecotype and in the total population
-				std::vector<double> varx(3u, 0.0);
-
-				// For each ecotype (plus the whole population)...
-				for (size_t j = 0u; j < 3u; ++j) {
-					
-					// If thre are individuals in the current ecotype...
-					if (n[j] > 0u) {
-
-						// Compute variance
-						varx[j] = ssqx[j] / n[j] - utl::sqr(sumx[j] / n[j]);
-
-					}
-
-					// Check that the variance is positive
-					assert(varx[j] >= 0.0);
-
-				}
-
-				// Compute ecological isolation
-				const double EI = 1.0 - (n[0u] * varx[0u] + n[1u] * varx[1u]) / (n[2u] * varx[2u]);
-
-				// Write to file
-				outfiles[ecologicalIsolationFile]->write((char *) &EI, sizeof(double));
-
-			}
-			
 			// There are multiple feeding rounds.
 			// Every feeding round, individuals are taken in random order.
 			// Eech individual assesses its expected fitness if feeding on each resource.
@@ -276,10 +200,8 @@ int simulate(const std::vector<std::string> &args) {
 				// Initialize cumulative feeding efficiencies
 				std::vector<double> sumeffs(2u, 0.0);
 
-				// Initialize numbers of individuals feeding on each resource
+				// Initialize other useful containers
 				std::vector<size_t> n(2u, 0u);
-
-				// Initialize sums of trait values of individuals feeding on each resource
 				std::vector<double> sumx(2u, 0.0); 
 
 				// For each individual...
@@ -308,10 +230,8 @@ int simulate(const std::vector<std::string> &args) {
 					// Update cumulative feeding efficiencies depending on what resource has been chosen
 					sumeffs[choice] += effs[choice];
 
-					// Update the number of individuals feeding on each resource
+					// Update other important statistics
 					++n[choice];
-
-					// Update the sum of trait values of individuals feeding on each resource
 					sumx[choice] += x;
 
 					// Save individual expected fitness difference if needed
@@ -367,6 +287,9 @@ int simulate(const std::vector<std::string> &args) {
 					// Save individual realized fitness if needed
 					if (timetosave && individualRealizedFitnessFile >= 0) 
 						stf::save(fit, outfiles[individualRealizedFitnessFile]);
+
+					// Set individual ecotype relative to population average while we are looping through individuals
+					if (!j) pop[i].setEcotype((sumx[0u] + sumx[1u]) / pop.size());
 
 				}
 			}
@@ -427,7 +350,7 @@ int simulate(const std::vector<std::string> &args) {
 			// Compute within-ecotype and whole-population variances
 			const double varx1 = n[0u] ? ssqx[0u] / n[0u] - utl::sqr(sumx[0u] / n[0u]) : 0.0;
 			const double varx2 = n[1u] ? ssqx[1u] / n[1u] - utl::sqr(sumx[1u] / n[1u]) : 0.0;
-			const double varx0 = (ssqx[0u] + ssqx[1u]) / (n[0u] + n[1u]) - utl::sqr((sumx[0u] + sumx[1u]) / (n[0u] + n[1u]));
+			const double varx0 = (ssqx[0u] + ssqx[1u]) / pop.size() - utl::sqr((sumx[0u] + sumx[1u]) / pop.size());
 
 			// Make sure the variances are positive
 			assert(varx1 >= 0.0);
@@ -435,7 +358,7 @@ int simulate(const std::vector<std::string> &args) {
 			assert(varx0 >= 0.0);
 
 			// Compute ecological isolation between ecotypes
-			const double EI = varx0 ? 1.0 - (n[0u] * varx1 + n[1u] * varx2) / ((n[0u] + n[1u]) * varx0) : 0.0;
+			const double EI = varx0 ? 1.0 - (n[0u] * varx1 + n[1u] * varx2) / (pop.size() * varx0) : 0.0;
 
 			// Make sure ecological isolation is between zero and one
 			assert(EI >= 0.0 && EI <= 1.0);

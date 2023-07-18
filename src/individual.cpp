@@ -47,6 +47,14 @@ void Individual::mutate(const double &dx, const double &tradeoff) {
 
 }
 
+// Function to set the ecotype of an individual
+void Individual::setEcotype(const double &meanx) {
+
+    // Is the trait value above or below population average?
+    ecotype = x > meanx;
+
+}
+
 // Function to update feeding efficiencies
 void Individual::develop(const double &tradeoff) {
 

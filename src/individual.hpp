@@ -19,6 +19,7 @@ public:
     void mutate(const double&, const double&);
     void develop(const double&);
     void isBorn();
+    void setEcotype(const double&);
 
     double getX() const;
     double getEff1() const;
