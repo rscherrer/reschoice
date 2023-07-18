@@ -150,6 +150,17 @@ BOOST_AUTO_TEST_CASE(errorWhenMutationalStandardDeviationIsNegative) {
     BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
 }
 
+// Test that error when dispersal rate is negative
+BOOST_AUTO_TEST_CASE(errorWhenDispersalIsNegative) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "dispersal -1\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
 // Test that error when simulation time is zero
 BOOST_AUTO_TEST_CASE(errorWhenSimulationTimeIsZero) {
 
