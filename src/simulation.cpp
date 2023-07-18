@@ -374,6 +374,11 @@ int simulate(const std::vector<std::string> &args) {
 			// Create a distribution to sample parents from proportionately to fitness
 			auto sampleParent = rnd::discrete(fitnesses.begin(), fitnesses.end());
 
+			// Initialize useful containers
+			std::vector<size_t> n(2u, 0u);
+			std::vector<double> sumx(2u, 0.0);
+			std::vector<double> ssqx(2u, 0.0);
+
 			// For each individual to be born...
 			for (size_t i = 0u; i < pars.popsize; ++i) {
 
@@ -391,13 +396,23 @@ int simulate(const std::vector<std::string> &args) {
 				// Kill an adult corresponding the the index of the current offspring
 				pop[i].kill();
 
+				// Get relevant individual metrics for that adult
+				const double x = pop[i].getX();
+				const bool habitat = pop[i].getHabitat();
+				const bool ecotype = pop[i].getEcotype();
+
+				// Update ecotype-specific statistics
+				++n[ecotype];
+				sumx[ecotype] += x;
+				ssqx[ecotype] += utl::sqr(x);
+
 				// Save the habitat of that adult if needed
 				if (timetosave && individualHabitatFile >= 0)
-					stf::save(pop[i].getHabitat(), outfiles[individualHabitatFile]);
+					stf::save(habitat, outfiles[individualHabitatFile]);
 
 				// Save the trait value of that adult if needed
 				if (timetosave && individualTraitValueFile >= 0) 
-					stf::save(pop[i].getX(), outfiles[individualTraitValueFile]);
+					stf::save(x, outfiles[individualTraitValueFile]);
 
 				// Save the final fitness of that adult if needed
 				if (timetosave && individualTotalFitnessFile >= 0)
@@ -405,7 +420,7 @@ int simulate(const std::vector<std::string> &args) {
 
 				// Save the ecotype of that adult if needed
 				if (timetosave && individualEcotypeFile >= 0)
-					stf::save(pop[i].getEcotype(), outfiles[individualEcotypeFile]);
+					stf::save(ecotype, outfiles[individualEcotypeFile]);
 
 			}
 
