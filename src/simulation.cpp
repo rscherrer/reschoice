@@ -34,21 +34,21 @@ int simulate(const std::vector<std::string> &args) {
         std::vector<std::shared_ptr<std::ofstream> > outfiles;
 
 		// What variables do we save in this study?
-		// - [OK] Time steps
-		// - [OK] Individual habitat at each time step
-		// - [OK] Individual ecotype at each time step (whether trait value is above or below population average)
-		// - [OK] Individual trait value at each time step
-		// - [OK] Individual total fitness at each time step
-		// - [OK] Individual choice at each feeding round at each time step
-		// - [OK] Individual position in the queue (index) at each feeding round at each time step
-		// - [OK] Individual realized fitness at each feeding round at each time step
-		// - [OK] Individual expected fitness difference at each feeding round at each time step
-		// - [OK] Number of individuals in each habitat at each time step
-		// - [OK] Mean trait value in each habitat at each time step
-		// - [OK] Number of individuals on each resource in each habitat at each feeding round at each time step
-		// - [OK] Mean trait value on each resource in each habitat at each feeding round at each time step
-		// - [OK] A statistic for ecological isolation between ecotypes at each time step
-		// - [OK] A statistic for spatial isolation between ecotypes at each time step
+		// - Time steps
+		// - Individual habitat at each time step
+		// - Individual ecotype at each time step (whether trait value is above or below population average)
+		// - Individual trait value at each time step
+		// - Individual total fitness at each time step
+		// - Individual choice at each feeding round at each time step
+		// - Individual position in the queue (index) at each feeding round at each time step
+		// - Individual realized fitness at each feeding round at each time step
+		// - Individual expected fitness difference at each feeding round at each time step
+		// - Number of individuals in each habitat at each time step
+		// - Mean trait value in each habitat at each time step
+		// - Number of individuals on each resource in each habitat at each feeding round at each time step
+		// - Mean trait value on each resource in each habitat at each feeding round at each time step
+		// - A statistic for ecological isolation between ecotypes at each time step
+		// - A statistic for spatial isolation between ecotypes at each time step
 
 		// Which variables to save
         std::vector<std::string> filenames = { 
