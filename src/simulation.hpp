@@ -5,6 +5,7 @@
 
 #include "parameters.hpp"
 #include "individual.hpp"
+#include "buffer.hpp"
 #include "random.hpp"
 #include "printer.hpp"
 #include <iostream>

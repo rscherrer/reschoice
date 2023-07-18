@@ -2,7 +2,7 @@
 
 #include "buffer.hpp"
 
-Buffer::Buffer() :
+Buffer::Buffer()
 {
-    
+
 }
