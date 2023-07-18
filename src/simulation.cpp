@@ -297,10 +297,10 @@ int simulate(const std::vector<std::string> &args) {
 			// Create a distribution to sample parents from proportionately to fitness
 			auto sampleParent = rnd::discrete(fitnesses.begin(), fitnesses.end());
 
-			// Initialize useful containers
-			std::vector<size_t> n(2u, 0u);
-			std::vector<double> sumx(2u, 0.0);
-			std::vector<double> ssqx(2u, 0.0);
+			// Initialize useful containers for habitat- and ecotype-specific statistics
+			std::vector<std::vector<size_t> > n({{0u, 0u}, {0u, 0u}});
+			std::vector<std::vector<double> > sumx({{0.0, 0.0}, {0.0, 0.0}});
+			std::vector<std::vector<double> > ssqx({{0.0, 0.0}, {0.0, 0.0}});
 
 			// For each individual to be born...
 			for (size_t i = 0u; i < pars.popsize; ++i) {
@@ -324,10 +324,10 @@ int simulate(const std::vector<std::string> &args) {
 				const bool habitat = pop[i].getHabitat();
 				const bool ecotype = pop[i].getEcotype();
 
-				// Update ecotype-specific statistics
-				++n[ecotype];
-				sumx[ecotype] += x;
-				ssqx[ecotype] += utl::sqr(x);
+				// Update habitat- and ecotype-specific statistics
+				++n[habitat][ecotype];
+				sumx[habitat][ecotype] += x;
+				ssqx[habitat][ecotype] += utl::sqr(x);
 
 				// Save the habitat of that adult if needed
 				if (timetosave && individualHabitatFile >= 0)
@@ -348,9 +348,15 @@ int simulate(const std::vector<std::string> &args) {
 			}
 
 			// Compute within-ecotype and whole-population variances
-			const double varx1 = n[0u] ? ssqx[0u] / n[0u] - utl::sqr(sumx[0u] / n[0u]) : 0.0;
-			const double varx2 = n[1u] ? ssqx[1u] / n[1u] - utl::sqr(sumx[1u] / n[1u]) : 0.0;
-			const double varx0 = (ssqx[0u] + ssqx[1u]) / pop.size() - utl::sqr((sumx[0u] + sumx[1u]) / pop.size());
+			const size_t n1 = n[0u][0u] + n[1u][0u];
+			const size_t n2 = n[0u][1u] + n[1u][1u];
+			const double sumx1 = sumx[0u][0u] + sumx[1u][0u];
+			const double sumx2 = sumx[0u][1u] + sumx[1u][1u];
+			const double ssqx1 = ssqx[0u][0u] + ssqx[1u][0u];
+			const double ssqx2 = ssqx[0u][1u] + ssqx[1u][1u];
+			const double varx1 = n1 ? ssqx1 / n1 - utl::sqr(sumx1 / n1) : 0.0;
+			const double varx2 = n2 ? ssqx2 / n2 - utl::sqr(sumx2 / n2) : 0.0;
+			const double varx0 = (ssqx1 + ssqx2) / pop.size() - utl::sqr((sumx1 + sumx2) / pop.size());
 
 			// Make sure the variances are positive
 			assert(varx1 >= 0.0);
@@ -358,7 +364,7 @@ int simulate(const std::vector<std::string> &args) {
 			assert(varx0 >= 0.0);
 
 			// Compute ecological isolation between ecotypes
-			const double EI = varx0 ? 1.0 - (n[0u] * varx1 + n[1u] * varx2) / (pop.size() * varx0) : 0.0;
+			const double EI = varx0 ? 1.0 - (n1 * varx1 + n2 * varx2) / (pop.size() * varx0) : 0.0;
 
 			// Make sure ecological isolation is between zero and one
 			assert(EI >= 0.0 && EI <= 1.0);
