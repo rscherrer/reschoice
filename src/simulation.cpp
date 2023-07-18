@@ -424,6 +424,22 @@ int simulate(const std::vector<std::string> &args) {
 
 			}
 
+			// Compute within-ecotype and whole-population variances
+			const double varx1 = n[0u] ? ssqx[0u] / n[0u] - utl::sqr(sumx[0u] / n[0u]) : 0.0;
+			const double varx2 = n[1u] ? ssqx[1u] / n[1u] - utl::sqr(sumx[1u] / n[1u]) : 0.0;
+			const double varx0 = (ssqx[0u] + ssqx[1u]) / (n[0u] + n[1u]) - utl::sqr((sumx[0u] + sumx[1u]) / (n[0u] + n[1u]));
+
+			// Make sure the variances are positive
+			assert(varx1 >= 0.0);
+			assert(varx2 >= 0.0);
+			assert(varx0 >= 0.0);
+
+			// Compute ecological isolation between ecotypes
+			const double EI = varx0 ? 1.0 - (n[0u] * varx1 + n[1u] * varx2) / ((n[0u] + n[1u]) * varx0) : 0.0;
+
+			// Make sure ecological isolation is between zero and one
+			assert(EI >= 0.0 && EI <= 1.0);
+
 			// Remove dead individuals
             auto it = std::remove_if(pop.begin(), pop.end(), burry);
             pop.erase(it, pop.end());
