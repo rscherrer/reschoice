@@ -120,6 +120,12 @@ int simulate(const std::vector<std::string> &args) {
 		// Make sure the container can contain twice the population size
 		pop.reserve(2u * pop.size());
 
+		// Create a matrix of resource concentrations
+		std::vector<std::vector<double> > resources({{0.0, 0.0}, {0.0, 0.0}});
+		for (size_t i = 0u; i < 2u; ++i)
+			for (size_t j = 0u; j < 2u; ++j)
+				resources[i][j] = i == pars.resource * (j ? 1.0 : pars.hsymmetry);
+
 		// Screen output
 		std::cout << "Simulation started.\n";
 
@@ -188,10 +194,8 @@ int simulate(const std::vector<std::string> &args) {
 					const std::vector<double> effs({ pop[ii].getEff1(), pop[ii].getEff2() });
 
 					// Compute expected fitness on each resource in the individual's habitat
-					const double res1 = pars.resource * (habitat ? pars.hsymmetry : 1.0);
-					const double res2 = pars.resource * (habitat ? 1.0 : pars.hsymmetry);
-					const double fit1 = res1 * effs[0u] * (sumeffs[habitat][0u] + 1.0 / pars.delta - 1.0);
-					const double fit2 = res2 * effs[1u] * (sumeffs[habitat][1u] + 1.0 / pars.delta - 1.0);
+					const double fit1 = resources[habitat][0u] * effs[0u] * (sumeffs[habitat][0u] + 1.0 / pars.delta - 1.0);
+					const double fit2 = resources[habitat][1u] * effs[1u] * (sumeffs[habitat][1u] + 1.0 / pars.delta - 1.0);
 
 					// Check that expected fitnesses are above zero
 					assert(fit1 >= 0.0);
@@ -241,13 +245,11 @@ int simulate(const std::vector<std::string> &args) {
 					const bool habitat = pop[i].getHabitat();
 					const bool diff = pop[i].getDiff();
 
-					// Corresponding values
+					// Corresponding feeding efficiency
 					const double eff = choice ? pop[i].getEff2() : pop[i].getEff1();
-					const double res = pars.resource * (habitat == choice ? 1.0 : pars.hsymmetry); 
-					const double sumeff = sumeffs[habitat][choice];
 
 					// Compute realized fitness on the chosen resource
-					const double fit = res * eff * (sumeff + 1.0 / pars.delta - 1.0);
+					const double fit = resources[habitat][choice] * eff * (sumeffs[habitat][choice] + 1.0 / pars.delta - 1.0);
 
 					// Check that the fitness is above zero
 					assert(fit >= 0.0);
