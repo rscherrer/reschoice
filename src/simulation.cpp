@@ -10,6 +10,14 @@ auto burry = [](Individual ind) -> bool
     return !ind.isAlive();
 };
 
+// Function to save a value to output file
+template <typename T> void save(const T &x, std::shared_ptr<std::ofstream> &file) {
+
+    const double x_ = static_cast<double>(x);
+    file->write((char *) &x_, sizeof(double));
+
+}
+
 int simulate(const std::vector<std::string> &args) {
 
 	try
@@ -130,7 +138,8 @@ int simulate(const std::vector<std::string> &args) {
             const bool timetosave = t % pars.tsave == 0u;
 
 			// Save time if needed
-			if (timetosave && timeFile >= 0) stf::saveTime(t, outfiles[timeFile]);
+			if (timetosave && timeFile >= 0) 
+				save(t, outfiles[timeFile]);
 
 			// Save the number of individuals in each habitat if needed
 			if (timetosave && habitatCensusFile >= 0) {
@@ -314,25 +323,33 @@ int simulate(const std::vector<std::string> &args) {
 
 					// Save individual expected fitness difference if needed
 					if (timetosave && individualExpectedFitnessDifference >= 0) 
-						stf::saveIndividualExpectedFitnessDifference(fit2 - fit1, outfiles[individualExpectedFitnessDifference]);
+						save(fit2 - fit1, outfiles[individualExpectedFitnessDifference]);
 
 					// Save individual choice if needed
 					if (timetosave && individualChoiceFile >= 0)
-						stf::saveIndividualChoice(choice, outfiles[individualChoiceFile]);
+						save(choice, outfiles[individualChoiceFile]);
 
 				}
 
 				// Save the number of individuals feeding on each resource if needed
-				if (timetosave && resourceCensusFile >= 0) 
-					stf::saveResourceCensusFile(n[0u], n[1u], outfiles[resourceCensusFile]);
+				if (timetosave && resourceCensusFile >= 0) {
+
+					save(n[0u], outfiles[resourceCensusFile]);
+					save(n[1u], outfiles[resourceCensusFile]);
+
+				}
 
 				// Turn sums of trait values into means
 				const double meanx1 = sumx[0u] /= n[0u];
 				const double meanx2 = sumx[1u] /= n[1u];
 
 				// Save the mean trait value of individuals feeding on each resource if needed
-				if (timetosave && resourceMeanTraitValueFile >= 0) 
-					stf::saveResourceMeanTraitValue(meanx1, meanx2, outfiles[resourceMeanTraitValueFile]);
+				if (timetosave && resourceMeanTraitValueFile >= 0) {
+
+					save(meanx1, outfiles[resourceMeanTraitValueFile]);
+					save(meanx2, outfiles[resourceMeanTraitValueFile]);
+
+				}
 
 				// For each individual...
 				for (size_t i = 0u; i < pop.size(); ++i) {
@@ -356,7 +373,7 @@ int simulate(const std::vector<std::string> &args) {
 
 					// Save individual realized fitness if needed
 					if (timetosave && individualRealizedFitnessFile >= 0) 
-						stf::saveIndividualRealizedFitness(fit, outfiles[individualRealizedFitnessFile]);
+						save(fit, outfiles[individualRealizedFitnessFile]);
 
 				}
 			}
@@ -383,15 +400,15 @@ int simulate(const std::vector<std::string> &args) {
 
 				// Save the habitat of that adult if needed
 				if (timetosave && individualHabitatFile >= 0)
-					stf::saveIndividualHabitat(pop[i].getHabitat(), outfiles[individualHabitatFile]);
+					save(pop[i].getHabitat(), outfiles[individualHabitatFile]);
 
 				// Save the trait value of that adult if needed
 				if (timetosave && individualTraitValueFile >= 0) 
-					stf::saveIndividualTraitValue(pop[i].getX(), outfiles[individualTraitValueFile]);
+					save(pop[i].getX(), outfiles[individualTraitValueFile]);
 
 				// Save the final fitness of that adult if needed
-				if (timetosave && individualTotalFitnessFile >= 0) 
-					stf::saveIndividualTotalFitness(fitnesses[i], outfiles[individualTotalFitnessFile]);
+				if (timetosave && individualTotalFitnessFile >= 0)
+					save(fitnesses[i], outfiles[individualTotalFitnessFile]);
 
 			}
 
