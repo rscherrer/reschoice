@@ -134,42 +134,6 @@ int simulate(const std::vector<std::string> &args) {
 			if (timetosave && timeFile >= 0) 
 				stf::save(t, outfiles[timeFile]);
 
-			// Save the number of individuals in each habitat if needed
-			if (timetosave && habitatCensusFile >= 0) {
-
-				// Count the number of individuals in each habitat
-				std::vector<size_t> n(2u, 0u);
-				for (size_t i = 0u; i < pop.size(); ++i) ++n[pop[i].getHabitat()];
-
-				// Write to file
-                const double n1_ = static_cast<double>(n[0u]);
-				const double n2_ = static_cast<double>(n[1u]);
-                outfiles[habitatCensusFile]->write((char *) &n1_, sizeof(double));
-				outfiles[habitatCensusFile]->write((char *) &n2_, sizeof(double));
-
-            }
-
-			// Save the mean trait value in each habitat if needed
-			if (timetosave && habitatMeanTraitValueFile >= 0) {
-
-				// Compute the mean trait value in each habitat
-				std::vector<size_t> n(2u, 0u);
-				std::vector<double> meanx(2u, 0.0);
-				for (size_t i = 0u; i < pop.size(); ++i) {
-
-					++n[pop[i].getHabitat()];
-					meanx[pop[i].getHabitat()] += pop[i].getX();
-
-				}
-				meanx[0u] /= n[0u];
-				meanx[1u] /= n[1u];
-
-				// Write to file
-				outfiles[habitatMeanTraitValueFile]->write((char *) &meanx[0u], sizeof(double));
-				outfiles[habitatMeanTraitValueFile]->write((char *) &meanx[1u], sizeof(double));
-
-			}
-
 			// There are multiple feeding rounds.
 			// Every feeding round, individuals are taken in random order.
 			// Eech individual assesses its expected fitness if feeding on each resource.
@@ -347,31 +311,50 @@ int simulate(const std::vector<std::string> &args) {
 
 			}
 
-			// Compute within-ecotype and whole-population variances
-			const size_t n1 = n[0u][0u] + n[1u][0u];
-			const size_t n2 = n[0u][1u] + n[1u][1u];
-			const double sumx1 = sumx[0u][0u] + sumx[1u][0u];
-			const double sumx2 = sumx[0u][1u] + sumx[1u][1u];
-			const double ssqx1 = ssqx[0u][0u] + ssqx[1u][0u];
-			const double ssqx2 = ssqx[0u][1u] + ssqx[1u][1u];
-			const double varx1 = n1 ? ssqx1 / n1 - utl::sqr(sumx1 / n1) : 0.0;
-			const double varx2 = n2 ? ssqx2 / n2 - utl::sqr(sumx2 / n2) : 0.0;
-			const double varx0 = (ssqx1 + ssqx2) / pop.size() - utl::sqr((sumx1 + sumx2) / pop.size());
+			// Save the number of individuals in each habitat if needed
+			if (timetosave && habitatCensusFile >= 0) {
 
-			// Make sure the variances are positive
-			assert(varx1 >= 0.0);
-			assert(varx2 >= 0.0);
-			assert(varx0 >= 0.0);
+				stf::save(n[0u][0u] + n[0u][1u], outfiles[habitatCensusFile]);
+				stf::save(n[1u][0u] + n[1u][1u], outfiles[habitatCensusFile]);
 
-			// Compute ecological isolation between ecotypes
-			const double EI = varx0 ? 1.0 - (n1 * varx1 + n2 * varx2) / (pop.size() * varx0) : 0.0;
+			}
 
-			// Make sure ecological isolation is between zero and one
-			assert(EI >= 0.0 && EI <= 1.0);
+			// Save the mean trait value in each habitat if needed
+			if (timetosave && habitatMeanTraitValueFile >= 0) {
+
+				stf::save((sumx[0u][0u] + sumx[0u][1u]) / (n[0u][0u] + n[0u][1u]), outfiles[habitatMeanTraitValueFile]);
+				stf::save((sumx[1u][0u] + sumx[1u][1u]) / (n[1u][0u] + n[1u][1u]), outfiles[habitatMeanTraitValueFile]);
+
+			}
 
 			// Save ecological isolation if needed
-			if (timetosave && ecologicalIsolationFile >= 0)
+			if (timetosave && ecologicalIsolationFile >= 0) {
+
+				// Compute within-ecotype and whole-population variances
+				const size_t n1 = n[0u][0u] + n[1u][0u];
+				const size_t n2 = n[0u][1u] + n[1u][1u];
+				const double sumx1 = sumx[0u][0u] + sumx[1u][0u];
+				const double sumx2 = sumx[0u][1u] + sumx[1u][1u];
+				const double ssqx1 = ssqx[0u][0u] + ssqx[1u][0u];
+				const double ssqx2 = ssqx[0u][1u] + ssqx[1u][1u];
+				const double varx1 = n1 ? ssqx1 / n1 - utl::sqr(sumx1 / n1) : 0.0;
+				const double varx2 = n2 ? ssqx2 / n2 - utl::sqr(sumx2 / n2) : 0.0;
+				const double varx0 = (ssqx1 + ssqx2) / pop.size() - utl::sqr((sumx1 + sumx2) / pop.size());
+
+				// Make sure the variances are positive
+				assert(varx1 >= 0.0);
+				assert(varx2 >= 0.0);
+				assert(varx0 >= 0.0);
+
+				// Compute ecological isolation between ecotypes
+				const double EI = varx0 ? 1.0 - (n1 * varx1 + n2 * varx2) / (pop.size() * varx0) : 0.0;
+
+				// Make sure ecological isolation is between zero and one
+				assert(EI >= 0.0 && EI <= 1.0);
+
 				stf::save(EI, outfiles[ecologicalIsolationFile]);
+
+			}
 
 			// Remove dead individuals
             auto it = std::remove_if(pop.begin(), pop.end(), burry);
