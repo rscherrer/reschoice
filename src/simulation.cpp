@@ -130,12 +130,7 @@ int simulate(const std::vector<std::string> &args) {
             const bool timetosave = t % pars.tsave == 0u;
 
 			// Save time if needed
-            if (timetosave && timeFile >= 0) {
-
-                const double t_ = static_cast<double>(t);
-                outfiles[timeFile]->write((char *) &t_, sizeof(double));
-
-            }
+			if (timetosave && timeFile >= 0) stf::saveTime(t, outfiles[timeFile]);
 
 			// Save the number of individuals in each habitat if needed
 			if (timetosave && habitatCensusFile >= 0) {

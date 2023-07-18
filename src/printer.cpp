@@ -71,3 +71,11 @@ void stf::check(const std::vector<std::string> &v1, const std::vector<std::strin
     }
 
 }
+
+// Function to save time
+void stf::saveTime(const size_t &t, std::shared_ptr<std::ofstream> &file) {
+
+    const double t_ = static_cast<double>(t);
+    file->write((char *) &t_, sizeof(double));
+
+}

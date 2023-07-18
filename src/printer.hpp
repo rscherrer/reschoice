@@ -14,6 +14,8 @@ namespace stf
     void close(std::vector<std::shared_ptr<std::ofstream> >&);
     void check(const std::vector<std::string>&, const std::vector<std::string>&);
 
+    void saveTime(const size_t&, std::shared_ptr<std::ofstream>&);
+
 }
 
 #endif
