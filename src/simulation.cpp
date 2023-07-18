@@ -117,6 +117,9 @@ int simulate(const std::vector<std::string> &args) {
 		// Create a population of individuals
 		std::vector<Individual> pop(pars.popsize, { pars.tradeoff });
 
+		// Make sure the container can contain twice the population size
+		pop.reserve(2u * pop.size());
+
 		// Screen output
 		std::cout << "Simulation started.\n";
 
@@ -154,11 +157,15 @@ int simulate(const std::vector<std::string> &args) {
 			// Initialize a vector of fitnesses
 			std::vector<double> fitnesses(pop.size());
 
+			// Initialize a vector of consecutive indices
+			std::vector<size_t> indices(pop.size());
+			std::iota(indices.begin(), indices.end(), 0u);
+
 			// For each feeding round...
 			for (size_t j = 0u; j < pars.nrounds; ++j) {
 
-				// Individuals must be taken in random order
-				std::shuffle(pop.begin(), pop.end(), rnd::rng);
+				// Shuffle indices to take individuals in random order
+				std::shuffle(indices.begin(), indices.end(), rnd::rng);
 
 				// Initialize cumulative feeding efficiencies in each habitat on each resource
 				std::vector<std::vector<double> > sumeffs({{0.0, 0.0}, {0.0, 0.0}});
@@ -170,12 +177,15 @@ int simulate(const std::vector<std::string> &args) {
 				// For each individual...
 				for (size_t i = 0; i < pop.size(); ++i) {
 
+					// Respect random order
+					const size_t ii = indices[i];
+
 					// Read individual properties
-					const double x = pop[i].getX();
-					const bool habitat = pop[i].getHabitat();
+					const double x = pop[ii].getX();
+					const bool habitat = pop[ii].getHabitat();
 
 					// Get feeding efficiency on each resource
-					const std::vector<double> effs({ pop[i].getEff1(), pop[i].getEff2() });
+					const std::vector<double> effs({ pop[ii].getEff1(), pop[ii].getEff2() });
 
 					// Compute expected fitness on each resource in the individual's habitat
 					const double res1 = pars.resource * (habitat ? pars.hsymmetry : 1.0);
@@ -187,8 +197,9 @@ int simulate(const std::vector<std::string> &args) {
 					assert(fit1 >= 0.0);
 					assert(fit2 >= 0.0);
 
-					// Resource choice
-					pop[i].setChoice(fit2 > fit1, pars.beta);
+					// Record expected fitness difference and make the individual choose
+					pop[ii].setDiff(fit2 - fit1);
+					pop[ii].setChoice(fit2 > fit1, pars.beta);
 
 					// Read the choice that was made
 					const bool choice = pop[i].getChoice();
@@ -199,14 +210,6 @@ int simulate(const std::vector<std::string> &args) {
 					// Update other important statistics
 					++n[habitat][choice];
 					sumx[habitat][choice] += x;
-
-					// Save individual expected fitness difference if needed
-					if (timeToSave && individualExpectedFitnessDifference >= 0) 
-						stf::save(fit2 - fit1, outfiles[individualExpectedFitnessDifference]);
-
-					// Save individual choice if needed
-					if (timeToSave && individualChoiceFile >= 0)
-						stf::save(choice, outfiles[individualChoiceFile]);
 
 				}
 
@@ -236,6 +239,7 @@ int simulate(const std::vector<std::string> &args) {
 					// Read relevant individual properties
 					const bool choice = pop[i].getChoice();
 					const bool habitat = pop[i].getHabitat();
+					const bool diff = pop[i].getDiff();
 
 					// Corresponding values
 					const double eff = choice ? pop[i].getEff2() : pop[i].getEff1();
@@ -250,6 +254,14 @@ int simulate(const std::vector<std::string> &args) {
 
 					// Add obtained food to the vector of fitnesses
 					fitnesses[i] += fit;
+
+					// Save individual expected fitness difference if needed
+					if (timeToSave && individualExpectedFitnessDifference >= 0) 
+						stf::save(diff, outfiles[individualExpectedFitnessDifference]);
+
+					// Save individual choice if needed
+					if (timeToSave && individualChoiceFile >= 0)
+						stf::save(choice, outfiles[individualChoiceFile]);
 
 					// Save individual realized fitness if needed
 					if (timeToSave && individualRealizedFitnessFile >= 0) 

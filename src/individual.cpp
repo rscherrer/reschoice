@@ -7,6 +7,7 @@ Individual::Individual(const double &tradeoff) :
     x(0.0),
     eff1(0.0),
     eff2(0.0),
+    diff(0.0),
     habitat(false),
     ecotype(false),
     choice(false),
@@ -34,6 +35,13 @@ void Individual::setChoice(const bool &r, const double &beta) {
     // Choose
     choice = rnd::bernoulli(prob)(rnd::rng) ? r : !r;
     
+}
+
+// Function to record the expected fitness difference
+void Individual::setDiff(const double &value) {
+
+    diff = value;
+
 }
 
 // Function to mutate an individual
@@ -79,6 +87,7 @@ void Individual::disperse() {
 double Individual::getX() const { return x; }
 double Individual::getEff1() const { return eff1; }
 double Individual::getEff2() const { return eff2; }
+double Individual::getDiff() const { return diff; }
 bool Individual::getHabitat() const { return habitat; }
 bool Individual::getEcotype() const { return ecotype; }
 bool Individual::getChoice() const { return choice; }

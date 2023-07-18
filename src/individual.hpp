@@ -16,6 +16,7 @@ public:
 
     void kill();
     void setChoice(const bool&, const double&);
+    void setDiff(const double&);
     void mutate(const double&, const double&);
     void develop(const double&);
     void disperse();
@@ -25,6 +26,7 @@ public:
     double getX() const;
     double getEff1() const;
     double getEff2() const;
+    double getDiff() const;
     bool getHabitat() const;
     bool getEcotype() const;
     bool getChoice() const;
@@ -36,6 +38,7 @@ private:
     double x; // trait value
     double eff1; // feeding efficiency on resource 1
     double eff2; // feeding efficiency on resource 2
+    double diff; // expected fitness difference
     bool habitat; // habitat where the individual lives
     bool ecotype; // what resource is the individual more adapted to relative to the pop average
     bool choice; // which resource is chosen?
