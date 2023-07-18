@@ -82,8 +82,8 @@ int simulate(const std::vector<std::string> &args) {
 
 		// Set up flags for which data to save
         int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1),
-		individualTotalFitnessFile(-1), individualChoiceFile(-1), individualIndexFile(-1),
-		individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1),
+		individualEcotypeFile(-1), individualTotalFitnessFile(-1), individualChoiceFile(-1), 
+		individualIndexFile(-1), individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1),
 		habitatCensusFile(-1), habitatMeanTraitValueFile(-1), resourceCensusFile(-1),
 		resourceMeanTraitValueFile(-1), ecologicalIsolationFile(-1);
 
@@ -94,6 +94,7 @@ int simulate(const std::vector<std::string> &args) {
             if (filename == "time") timeFile = f;
 			else if (filename == "individualHabitat") individualHabitatFile = f;
 			else if (filename == "individualTraitValue") individualTraitValueFile = f;
+			else if (filename == "individualEcotype") individualEcotypeFile = f;
 			else if (filename == "individualTotalFitness") individualTotalFitnessFile = f;
 			else if (filename == "individualChoice") individualChoiceFile = f;
 			else if (filename == "individualIndex") individualIndexFile = f;
@@ -331,12 +332,12 @@ int simulate(const std::vector<std::string> &args) {
 
 				}
 
-				// Turn sums of trait values into means
-				const double meanx1 = sumx[0u] /= n[0u];
-				const double meanx2 = sumx[1u] /= n[1u];
-
 				// Save the mean trait value of individuals feeding on each resource if needed
 				if (timetosave && resourceMeanTraitValueFile >= 0) {
+
+					// Turn sums of trait values into means
+					const double meanx1 = sumx[0u] /= n[0u];
+					const double meanx2 = sumx[1u] /= n[1u];
 
 					stf::save(meanx1, outfiles[resourceMeanTraitValueFile]);
 					stf::save(meanx2, outfiles[resourceMeanTraitValueFile]);
@@ -401,6 +402,10 @@ int simulate(const std::vector<std::string> &args) {
 				// Save the final fitness of that adult if needed
 				if (timetosave && individualTotalFitnessFile >= 0)
 					stf::save(fitnesses[i], outfiles[individualTotalFitnessFile]);
+
+				// Save the ecotype of that adult if needed
+				if (timetosave && individualEcotypeFile >= 0)
+					stf::save(pop[i].getEcotype(), outfiles[individualEcotypeFile]);
 
 			}
 

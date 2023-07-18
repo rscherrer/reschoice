@@ -24,6 +24,7 @@ public:
     double getEff1() const;
     double getEff2() const;
     bool getHabitat() const;
+    bool getEcotype() const;
     bool getChoice() const;
     size_t getIndex() const;
     bool isAlive() const;
@@ -34,6 +35,7 @@ private:
     double eff1; // feeding efficiency on resource 1
     double eff2; // feeding efficiency on resource 2
     bool habitat; // habitat where the individual lives
+    bool ecotype; // what resource is the individual more adapted to relative to the pop average
     bool choice; // which resource is chosen?
     size_t index; // individual identifier (to keep track despite shuffling)
     bool alive; // is the individual alive?

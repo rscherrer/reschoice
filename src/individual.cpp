@@ -8,6 +8,7 @@ Individual::Individual(const double &tradeoff) :
     eff1(0.0),
     eff2(0.0),
     habitat(false),
+    ecotype(false),
     choice(false),
     index(0u),
     alive(true)
@@ -64,6 +65,7 @@ double Individual::getX() const { return x; }
 double Individual::getEff1() const { return eff1; }
 double Individual::getEff2() const { return eff2; }
 bool Individual::getHabitat() const { return habitat; }
+bool Individual::getEcotype() const { return ecotype; }
 bool Individual::getChoice() const { return choice; }
 size_t Individual::getIndex() const { return index; }
 bool Individual::isAlive() const { return alive; }
