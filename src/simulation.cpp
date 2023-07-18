@@ -440,6 +440,10 @@ int simulate(const std::vector<std::string> &args) {
 			// Make sure ecological isolation is between zero and one
 			assert(EI >= 0.0 && EI <= 1.0);
 
+			// Save ecological isolation if needed
+			if (timetosave && ecologicalIsolationFile >= 0)
+				stf::save(EI, outfiles[ecologicalIsolationFile]);
+
 			// Remove dead individuals
             auto it = std::remove_if(pop.begin(), pop.end(), burry);
             pop.erase(it, pop.end());
