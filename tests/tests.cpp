@@ -220,6 +220,16 @@ BOOST_AUTO_TEST_CASE(mutation) {
 
 }
 
+// Test dispersal
+BOOST_AUTO_TEST_CASE(dispersal) {
+
+    Individual ind(1.0);
+    BOOST_CHECK(!ind.getHabitat());
+    ind.disperse();
+    BOOST_CHECK(ind.getHabitat());
+
+}
+
 // Test that parameters are saved properly
 BOOST_AUTO_TEST_CASE(paramSavedProperly) {
 
