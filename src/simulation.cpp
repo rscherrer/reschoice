@@ -267,8 +267,8 @@ int simulate(const std::vector<std::string> &args) {
 
 				// Add offspring to the population
 				pop.push_back(pop[j]);
-				pop.back().isBorn(); // make sure it is alive (avoids some extra loops)
-
+				pop.back().isBorn(); // make sure it is alive (saves some loops)
+				
 				// Mutate offspring if needed
 				if (rnd::bernoulli(pars.mutrate)(rnd::rng)) 
 					pop.back().mutate(sampleMutation(rnd::rng), pars.tradeoff);
