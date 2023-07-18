@@ -36,7 +36,7 @@ int simulate(const std::vector<std::string> &args) {
 		// What variables do we save in this study?
 		// - [OK] Time steps
 		// - [OK] Individual habitat at each time step
-		// - [OK] Individual ecotype at each time step
+		// - [OK] Individual ecotype at each time step (whether trait value is above or below population average)
 		// - [OK] Individual trait value at each time step
 		// - [OK] Individual total fitness at each time step
 		// - [OK] Individual choice at each feeding round at each time step
@@ -53,10 +53,10 @@ int simulate(const std::vector<std::string> &args) {
 		// Which variables to save
         std::vector<std::string> filenames = { 
 			
-			"time", "individualHabitat", "individualTraitValue", "individualTotalFitness",
-			"individualChoice", "individualIndex", "individualRealizedFitness",
+			"time", "individualHabitat", "individualTraitValue", "individualEcotype", 
+			"individualTotalFitness", "individualChoice", "individualIndex", "individualRealizedFitness",
 			"individualExpectedFitnessDifference", "habitatCensus", "habitatMeanTraitValue",
-			"resourceCensus", "resourceMeanTraitValue", "ecologicalIsolation"
+			"resourceCensus", "resourceMeanTraitValue", "ecologicalIsolation", "spatialIsolation"
 		
 		};
 
@@ -86,7 +86,7 @@ int simulate(const std::vector<std::string> &args) {
 		individualEcotypeFile(-1), individualTotalFitnessFile(-1), individualChoiceFile(-1), 
 		individualIndexFile(-1), individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1),
 		habitatCensusFile(-1), habitatMeanTraitValueFile(-1), resourceCensusFile(-1),
-		resourceMeanTraitValueFile(-1), ecologicalIsolationFile(-1);
+		resourceMeanTraitValueFile(-1), ecologicalIsolationFile(-1), spatialIsolationFile(-1);
 
         for (size_t f = 0u; f < filenames.size(); ++f) {
 
@@ -106,6 +106,7 @@ int simulate(const std::vector<std::string> &args) {
 			else if (filename == "resourceCensus") resourceCensusFile = f;
 			else if (filename == "resourceMeanTraitValue") resourceMeanTraitValueFile = f;
 			else if (filename == "ecologicalIsolation") ecologicalIsolationFile = f;
+			else if (filename == "spatialIsolation") spatialIsolationFile = f;
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
@@ -363,7 +364,35 @@ int simulate(const std::vector<std::string> &args) {
 				// Make sure ecological isolation is between zero and one
 				assert(EI >= 0.0 && EI <= 1.0);
 
+				// Save it
 				stf::save(EI, outfiles[ecologicalIsolationFile]);
+
+			}
+
+			// Save spatial isolation if needed
+			if (timetosave && spatialIsolationFile >= 0) {
+
+				// Different components of the statistic
+				const size_t n11 = n[0u][0u];
+				const size_t n12 = n[0u][1u];
+				const size_t n21 = n[1u][0u];
+				const size_t n22 = n[1u][1u];
+				const size_t n10 = n11 + n12;
+				const size_t n20 = n21 + n22;
+				const size_t n01 = n11 + n21;
+				const size_t n02 = n12 + n22;
+
+				// Compute the product that will go in the denominator
+				const double prod = n10 * n20 * n01 * n02;
+
+				// Make sure it is positive
+				assert(prod >= 0.0);
+
+				// Compute spatial isolation
+				const double SI = prod ? fabs((n11 * n22 - n12 * n21) / sqrt(prod)) : 0.0;
+
+				// Save it
+				stf::save(SI, outfiles[spatialIsolationFile]);
 
 			}
 
