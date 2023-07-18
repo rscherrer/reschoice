@@ -274,13 +274,13 @@ int simulate(const std::vector<std::string> &args) {
 				std::shuffle(pop.begin(), pop.end(), rnd::rng);
 
 				// Initialize cumulative feeding efficiencies
-				double sumeff1 = 0.0, sumeff2 = 0.0;
+				std::vector<double> sumeffs(2u, 0.0);
 
 				// Initialize numbers of individuals feeding on each resource
-				size_t n1 = 0.0, n2 = 0.0;
+				std::vector<size_t> n(2u, 0u);
 
 				// Initialize sums of trait values of individuals feeding on each resource
-				double meanx1 = 0.0, meanx2 = 0.0; 
+				std::vector<double> sumx(2u, 0.0); 
 
 				// For each individual...
 				for (size_t i = 0; i < pop.size(); ++i) {
@@ -289,12 +289,11 @@ int simulate(const std::vector<std::string> &args) {
 					const double x = pop[i].getX();
 
 					// Get feeding efficiency on each resource
-					const double eff1 = pop[i].getEff1();
-					const double eff2 = pop[i].getEff2();
+					const std::vector<double> effs({ pop[i].getEff1(), pop[i].getEff2() });
 
 					// Compute expected fitness on each resource
-					const double fit1 = pars.res1 * eff1 * (sumeff1 + 1.0 / pars.delta - 1.0);
-					const double fit2 = pars.res2 * eff2 * (sumeff2 + 1.0 / pars.delta - 1.0);
+					const double fit1 = pars.res1 * effs[0u] * (sumeffs[0u] + 1.0 / pars.delta - 1.0);
+					const double fit2 = pars.res2 * effs[1u] * (sumeffs[1u] + 1.0 / pars.delta - 1.0);
 
 					// Check that expected fitnesses are above zero
 					assert(fit1 >= 0.0);
@@ -307,13 +306,13 @@ int simulate(const std::vector<std::string> &args) {
 					const bool choice = pop[i].getChoice();
 
 					// Update cumulative feeding efficiencies depending on what resource has been chosen
-					if (choice) sumeff2 += eff2; else sumeff1 += eff1;
+					sumeffs[choice] += effs[choice];
 
 					// Update the number of individuals feeding on each resource
-					if (choice) ++n2; else ++n1;
+					++n[choice];
 
 					// Update the sum of trait values of individuals feeding on each resource
-					if (choice) meanx2 += x; else meanx1 += x;
+					sumx[choice] += x;
 
 					// Save individual expected fitness difference if needed
 					if (timetosave && individualExpectedFitnessDifference >= 0) {
@@ -330,14 +329,13 @@ int simulate(const std::vector<std::string> &args) {
 						outfiles[individualChoiceFile]->write((char *) &choice_, sizeof(double));
 
                 	}
-
 				}
 
 				// Save the number of individuals feeding on each resource if needed
 				if (timetosave && resourceCensusFile >= 0) {
 
-					const double n1_ = static_cast<double>(n1);
-					const double n2_ = static_cast<double>(n2);
+					const double n1_ = static_cast<double>(n[0u]);
+					const double n2_ = static_cast<double>(n[1u]);
 					outfiles[resourceCensusFile]->write((char *) &n1_, sizeof(double));
 					outfiles[resourceCensusFile]->write((char *) &n2_, sizeof(double));
 
@@ -347,8 +345,8 @@ int simulate(const std::vector<std::string> &args) {
 				if (timetosave && resourceMeanTraitValueFile >= 0) {
 
 					// Turn sums of trait values into means
-					meanx1 /= n1;
-					meanx2 /= n2;
+					const double meanx1 = sumx[0u] /= n[0u];
+					const double meanx2 = sumx[1u] /= n[1u];
 
 					// Write to file
 					outfiles[resourceMeanTraitValueFile]->write((char *) &meanx1, sizeof(double));
@@ -365,7 +363,7 @@ int simulate(const std::vector<std::string> &args) {
 					// Corresponding values
 					const double eff = choice ? pop[i].getEff2() : pop[i].getEff1();
 					const double res = choice ? pars.res2 : pars.res1;
-					const double sumeff = choice ? sumeff2 : sumeff1;
+					const double sumeff = choice ? sumeffs[0u] : sumeffs[1u];
 
 					// Compute realized fitness on the chosen resource
 					const double fit = res * eff * (sumeff + 1.0 / pars.delta - 1.0);
@@ -373,16 +371,15 @@ int simulate(const std::vector<std::string> &args) {
 					// Check that the fitness is above zero
 					assert(fit >= 0.0);
 
+					// Add obtained food to the vector of fitnesses
+					fitnesses[i] += fit;
+
 					// Save individual realized fitness if needed
 					if (timetosave && individualRealizedFitnessFile >= 0) {
 
 						outfiles[individualRealizedFitnessFile]->write((char *) &fit, sizeof(double));
 
                 	}
-
-					// Add obtained food to the vector of fitnesses
-					fitnesses[i] += fit;
-
 				}
 			}
 
@@ -428,7 +425,6 @@ int simulate(const std::vector<std::string> &args) {
 					outfiles[individualTotalFitnessFile]->write((char *) &fitnesses[i], sizeof(double));
 
                 }
-
 			}
 
 			// Remove dead individuals
