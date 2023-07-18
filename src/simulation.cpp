@@ -176,8 +176,10 @@ int simulate(const std::vector<std::string> &args) {
 					const std::vector<double> effs({ pop[i].getEff1(), pop[i].getEff2() });
 
 					// Compute expected fitness on each resource in the individual's habitat
-					const double fit1 = pars.resource * effs[0u] * (sumeffs[habitat][0u] + 1.0 / pars.delta - 1.0);
-					const double fit2 = pars.resource * effs[1u] * (sumeffs[habitat][1u] + 1.0 / pars.delta - 1.0);
+					const double res1 = pars.resource * (habitat ? pars.hsymmetry : 1.0);
+					const double res2 = pars.resource * (habitat ? 1.0 : pars.hsymmetry);
+					const double fit1 = res1 * effs[0u] * (sumeffs[habitat][0u] + 1.0 / pars.delta - 1.0);
+					const double fit2 = res2 * effs[1u] * (sumeffs[habitat][1u] + 1.0 / pars.delta - 1.0);
 
 					// Check that expected fitnesses are above zero
 					assert(fit1 >= 0.0);
@@ -216,7 +218,7 @@ int simulate(const std::vector<std::string> &args) {
 
 				}
 
-				// Save the mean trait value of individuals feeding on each resource if needed
+				// Save the mean trait value of individuals feeding on each resource in each habitat if needed
 				if (timetosave && resourceMeanTraitValueFile >= 0) {
 
 					stf::save(n[0u][0u] ? sumx[0u][0u] / n[0u][0u] : 0.0, outfiles[resourceMeanTraitValueFile]);
@@ -235,10 +237,11 @@ int simulate(const std::vector<std::string> &args) {
 
 					// Corresponding values
 					const double eff = choice ? pop[i].getEff2() : pop[i].getEff1();
+					const double res = pars.resource * (habitat == choice ? 1.0 : pars.hsymmetry); 
 					const double sumeff = sumeffs[habitat][choice];
 
 					// Compute realized fitness on the chosen resource
-					const double fit = pars.resource * eff * (sumeff + 1.0 / pars.delta - 1.0);
+					const double fit = res * eff * (sumeff + 1.0 / pars.delta - 1.0);
 
 					// Check that the fitness is above zero
 					assert(fit >= 0.0);
