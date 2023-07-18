@@ -313,44 +313,26 @@ int simulate(const std::vector<std::string> &args) {
 					sumx[choice] += x;
 
 					// Save individual expected fitness difference if needed
-					if (timetosave && individualExpectedFitnessDifference >= 0) {
-
-						const double diff = fit2 - fit1;
-						outfiles[individualExpectedFitnessDifference]->write((char *) &diff, sizeof(double));
-
-                	}
+					if (timetosave && individualExpectedFitnessDifference >= 0) 
+						stf::saveIndividualExpectedFitnessDifference(fit2 - fit1, outfiles[individualExpectedFitnessDifference]);
 
 					// Save individual choice if needed
-					if (timetosave && individualChoiceFile >= 0) {
+					if (timetosave && individualChoiceFile >= 0)
+						stf::saveIndividualChoice(choice, outfiles[individualChoiceFile]);
 
-						const double choice_ = static_cast<double>(choice);
-						outfiles[individualChoiceFile]->write((char *) &choice_, sizeof(double));
-
-                	}
 				}
 
 				// Save the number of individuals feeding on each resource if needed
-				if (timetosave && resourceCensusFile >= 0) {
+				if (timetosave && resourceCensusFile >= 0) 
+					stf::saveResourceCensusFile(n[0u], n[1u], outfiles[resourceCensusFile]);
 
-					const double n1_ = static_cast<double>(n[0u]);
-					const double n2_ = static_cast<double>(n[1u]);
-					outfiles[resourceCensusFile]->write((char *) &n1_, sizeof(double));
-					outfiles[resourceCensusFile]->write((char *) &n2_, sizeof(double));
-
-                }
+				// Turn sums of trait values into means
+				const double meanx1 = sumx[0u] /= n[0u];
+				const double meanx2 = sumx[1u] /= n[1u];
 
 				// Save the mean trait value of individuals feeding on each resource if needed
-				if (timetosave && resourceMeanTraitValueFile >= 0) {
-
-					// Turn sums of trait values into means
-					const double meanx1 = sumx[0u] /= n[0u];
-					const double meanx2 = sumx[1u] /= n[1u];
-
-					// Write to file
-					outfiles[resourceMeanTraitValueFile]->write((char *) &meanx1, sizeof(double));
-					outfiles[resourceMeanTraitValueFile]->write((char *) &meanx2, sizeof(double));
-
-                }
+				if (timetosave && resourceMeanTraitValueFile >= 0) 
+					stf::saveResourceMeanTraitValue(meanx1, meanx2, outfiles[resourceMeanTraitValueFile]);
 
 				// For each individual...
 				for (size_t i = 0u; i < pop.size(); ++i) {
@@ -373,11 +355,9 @@ int simulate(const std::vector<std::string> &args) {
 					fitnesses[i] += fit;
 
 					// Save individual realized fitness if needed
-					if (timetosave && individualRealizedFitnessFile >= 0) {
+					if (timetosave && individualRealizedFitnessFile >= 0) 
+						stf::saveIndividualRealizedFitness(fit, outfiles[individualRealizedFitnessFile]);
 
-						outfiles[individualRealizedFitnessFile]->write((char *) &fit, sizeof(double));
-
-                	}
 				}
 			}
 
@@ -402,27 +382,17 @@ int simulate(const std::vector<std::string> &args) {
 				pop[i].kill();
 
 				// Save the habitat of that adult if needed
-				if (timetosave && individualHabitatFile >= 0) {
-
-					const double habitat_ = static_cast<double>(pop[i].getHabitat());
-					outfiles[individualHabitatFile]->write((char *) &habitat_, sizeof(double));
-
-                }
+				if (timetosave && individualHabitatFile >= 0)
+					stf::saveIndividualHabitat(pop[i].getHabitat(), outfiles[individualHabitatFile]);
 
 				// Save the trait value of that adult if needed
-				if (timetosave && individualTraitValueFile >= 0) {
-
-					const double x = pop[i].getX();
-					outfiles[individualTraitValueFile]->write((char *) &x, sizeof(double));
-
-                }
+				if (timetosave && individualTraitValueFile >= 0) 
+					stf::saveIndividualTraitValue(pop[i].getX(), outfiles[individualTraitValueFile]);
 
 				// Save the final fitness of that adult if needed
-				if (timetosave && individualTotalFitnessFile >= 0) {
+				if (timetosave && individualTotalFitnessFile >= 0) 
+					stf::saveIndividualTotalFitness(fitnesses[i], outfiles[individualTotalFitnessFile]);
 
-					outfiles[individualTotalFitnessFile]->write((char *) &fitnesses[i], sizeof(double));
-
-                }
 			}
 
 			// Remove dead individuals
