@@ -159,6 +159,18 @@ BOOST_AUTO_TEST_CASE(errorWhenDispersalIsNegative) {
     BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
 }
 
+// Test that error when habitat symmetry is negative
+BOOST_AUTO_TEST_CASE(errorWhenHabitatSymmetryIsNegative) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "hsymmetry -1\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+
+}
+
 // Test that error when simulation time is zero
 BOOST_AUTO_TEST_CASE(errorWhenSimulationTimeIsZero) {
 
