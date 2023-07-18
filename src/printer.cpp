@@ -70,11 +70,3 @@ void stf::check(const std::vector<std::string> &v1, const std::vector<std::strin
         if (!found) throw std::runtime_error("Invalid file name provided in whattosave");
     }
 }
-
-// Function to save a value to output file
-template <typename T> void stf::save(const T &x, std::shared_ptr<std::ofstream> &file) {
-
-    const double x_ = static_cast<double>(x);
-    file->write((char *) &x_, sizeof(double));
-
-}

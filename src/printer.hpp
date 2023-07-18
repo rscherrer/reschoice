@@ -14,7 +14,16 @@ namespace stf
     void close(std::vector<std::shared_ptr<std::ofstream> >&);
     void check(const std::vector<std::string>&, const std::vector<std::string>&);
 
+    // Function to save a value to output file
     template <typename T> void save(const T&, std::shared_ptr<std::ofstream>&);
+
+}
+
+// Function to save a value to output file (defined here because template function)
+template <typename T> void stf::save(const T &x, std::shared_ptr<std::ofstream> &file) {
+
+    const double x_ = static_cast<double>(x);
+    file->write((char *) &x_, sizeof(double));
 
 }
 
