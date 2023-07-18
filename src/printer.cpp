@@ -141,29 +141,6 @@ void stf::saveIndividualTotalFitness(const double &fit, std::shared_ptr<std::ofs
 
 }
 
-// Function to save a double
-void stf::save(const double &x, std::shared_ptr<std::ofstream> &file) {
-    
-    file->write((char *) &x, sizeof(double));
-
-}
-
-// Function to save a boolean
-void stf::save(const bool &x, std::shared_ptr<std::ofstream> &file) {
-
-    const double x_ = static_cast<double>(x);
-    file->write((char *) &x_, sizeof(double));
-
-}
-
-// Function to save a size-type
-void stf::save(const size_t &x, std::shared_ptr<std::ofstream> &file) {
-
-    const double x_ = static_cast<double>(x);
-    file->write((char *) &x_, sizeof(double));
-
-}
-
 // Function to save a value to output file
 template <typename T> void stf::save(const T &x, std::shared_ptr<std::ofstream> &file) {
 

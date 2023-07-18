@@ -24,10 +24,6 @@ namespace stf
     void saveIndividualTraitValue(const double&, std::shared_ptr<std::ofstream>&);
     void saveIndividualTotalFitness(const double&, std::shared_ptr<std::ofstream>&);
 
-    void save(const double&, std::shared_ptr<std::ofstream>&);
-    void save(const bool&, std::shared_ptr<std::ofstream>&);
-    void save(const size_t&, std::shared_ptr<std::ofstream>&);
-
     template <typename T> void save(const T&, std::shared_ptr<std::ofstream>&);
 
 }
