@@ -219,12 +219,8 @@ int simulate(const std::vector<std::string> &args) {
 				// Save the mean trait value of individuals feeding on each resource if needed
 				if (timetosave && resourceMeanTraitValueFile >= 0) {
 
-					// Turn sums of trait values into means
-					const double meanx1 = sumx[0u] /= n[0u];
-					const double meanx2 = sumx[1u] /= n[1u];
-
-					stf::save(meanx1, outfiles[resourceMeanTraitValueFile]);
-					stf::save(meanx2, outfiles[resourceMeanTraitValueFile]);
+					stf::save(n[0u] ? sumx[0u] / n[0u] : 0.0, outfiles[resourceMeanTraitValueFile]);
+					stf::save(n[1u] ? sumx[1u] / n[1u] : 0.0, outfiles[resourceMeanTraitValueFile]);
 
 				}
 
@@ -322,8 +318,11 @@ int simulate(const std::vector<std::string> &args) {
 			// Save the mean trait value in each habitat if needed
 			if (timetosave && habitatMeanTraitValueFile >= 0) {
 
-				stf::save((sumx[0u][0u] + sumx[0u][1u]) / (n[0u][0u] + n[0u][1u]), outfiles[habitatMeanTraitValueFile]);
-				stf::save((sumx[1u][0u] + sumx[1u][1u]) / (n[1u][0u] + n[1u][1u]), outfiles[habitatMeanTraitValueFile]);
+				const size_t n1 = n[0u][0u] + n[0u][1u];
+				const size_t n2 = n[1u][0u] + n[1u][1u];
+
+				stf::save(n1 ? (sumx[0u][0u] + sumx[0u][1u]) / n1 : 0.0, outfiles[habitatMeanTraitValueFile]);
+				stf::save(n2 ? (sumx[1u][0u] + sumx[1u][1u]) / n2 : 0.0, outfiles[habitatMeanTraitValueFile]);
 
 			}
 
