@@ -253,6 +253,16 @@ BOOST_AUTO_TEST_CASE(dispersal) {
 
 }
 
+// Test rank assignment
+BOOST_AUTO_TEST_CASE(rankAssignment) {
+
+    Individual ind(1.0);
+    BOOST_CHECK(!ind.getRank());
+    ind.setRank(30u);
+    BOOST_CHECK_EQUAL(ind.getRank(), 30u);
+
+}
+
 // Test that parameters are saved properly
 BOOST_AUTO_TEST_CASE(paramSavedProperly) {
 
