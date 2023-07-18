@@ -158,25 +158,26 @@ int simulate(const std::vector<std::string> &args) {
 				// Individuals must be taken in random order
 				std::shuffle(pop.begin(), pop.end(), rnd::rng);
 
-				// Initialize cumulative feeding efficiencies
-				std::vector<double> sumeffs(2u, 0.0);
+				// Initialize cumulative feeding efficiencies in each habitat on each resource
+				std::vector<std::vector<double> > sumeffs({{0.0, 0.0}, {0.0, 0.0}});
 
 				// Initialize other useful containers
-				std::vector<size_t> n(2u, 0u);
-				std::vector<double> sumx(2u, 0.0); 
+				std::vector<std::vector<size_t> > n({{0u, 0u}, {0u, 0u}});
+				std::vector<std::vector<double> > sumx({{0.0, 0.0}, {0.0, 0.0}}); 
 
 				// For each individual...
 				for (size_t i = 0; i < pop.size(); ++i) {
 
-					// Read individual trait value
+					// Read individual properties
 					const double x = pop[i].getX();
+					const bool habitat = pop[i].getHabitat();
 
 					// Get feeding efficiency on each resource
 					const std::vector<double> effs({ pop[i].getEff1(), pop[i].getEff2() });
 
-					// Compute expected fitness on each resource
-					const double fit1 = pars.resource * effs[0u] * (sumeffs[0u] + 1.0 / pars.delta - 1.0);
-					const double fit2 = pars.resource * effs[1u] * (sumeffs[1u] + 1.0 / pars.delta - 1.0);
+					// Compute expected fitness on each resource in the individual's habitat
+					const double fit1 = pars.resource * effs[0u] * (sumeffs[habitat][0u] + 1.0 / pars.delta - 1.0);
+					const double fit2 = pars.resource * effs[1u] * (sumeffs[habitat][1u] + 1.0 / pars.delta - 1.0);
 
 					// Check that expected fitnesses are above zero
 					assert(fit1 >= 0.0);
@@ -188,12 +189,12 @@ int simulate(const std::vector<std::string> &args) {
 					// Read the choice that was made
 					const bool choice = pop[i].getChoice();
 
-					// Update cumulative feeding efficiencies depending on what resource has been chosen
-					sumeffs[choice] += effs[choice];
+					// Update cumulative feeding efficiencies depending on what resource has been chosen, in that habitat
+					sumeffs[habitat][choice] += effs[choice];
 
 					// Update other important statistics
-					++n[choice];
-					sumx[choice] += x;
+					++n[habitat][choice];
+					sumx[habitat][choice] += x;
 
 					// Save individual expected fitness difference if needed
 					if (timetosave && individualExpectedFitnessDifference >= 0) 
@@ -205,31 +206,36 @@ int simulate(const std::vector<std::string> &args) {
 
 				}
 
-				// Save the number of individuals feeding on each resource if needed
+				// Save the number of individuals feeding on each resource in each habitat if needed
 				if (timetosave && resourceCensusFile >= 0) {
 
-					stf::save(n[0u], outfiles[resourceCensusFile]);
-					stf::save(n[1u], outfiles[resourceCensusFile]);
+					stf::save(n[0u][0u], outfiles[resourceCensusFile]);
+					stf::save(n[0u][1u], outfiles[resourceCensusFile]);
+					stf::save(n[1u][0u], outfiles[resourceCensusFile]);
+					stf::save(n[1u][1u], outfiles[resourceCensusFile]);
 
 				}
 
 				// Save the mean trait value of individuals feeding on each resource if needed
 				if (timetosave && resourceMeanTraitValueFile >= 0) {
 
-					stf::save(n[0u] ? sumx[0u] / n[0u] : 0.0, outfiles[resourceMeanTraitValueFile]);
-					stf::save(n[1u] ? sumx[1u] / n[1u] : 0.0, outfiles[resourceMeanTraitValueFile]);
+					stf::save(n[0u][0u] ? sumx[0u][0u] / n[0u][0u] : 0.0, outfiles[resourceMeanTraitValueFile]);
+					stf::save(n[0u][1u] ? sumx[0u][1u] / n[0u][1u] : 0.0, outfiles[resourceMeanTraitValueFile]);
+					stf::save(n[1u][0u] ? sumx[1u][0u] / n[1u][0u] : 0.0, outfiles[resourceMeanTraitValueFile]);
+					stf::save(n[1u][1u] ? sumx[1u][1u] / n[1u][1u] : 0.0, outfiles[resourceMeanTraitValueFile]);
 
 				}
 
 				// For each individual...
 				for (size_t i = 0u; i < pop.size(); ++i) {
 
-					// Which resource was chosen?
+					// Read relevant individual properties
 					const bool choice = pop[i].getChoice();
+					const bool habitat = pop[i].getHabitat();
 
 					// Corresponding values
 					const double eff = choice ? pop[i].getEff2() : pop[i].getEff1();
-					const double sumeff = choice ? sumeffs[0u] : sumeffs[1u];
+					const double sumeff = sumeffs[habitat][choice];
 
 					// Compute realized fitness on the chosen resource
 					const double fit = pars.resource * eff * (sumeff + 1.0 / pars.delta - 1.0);
@@ -245,7 +251,7 @@ int simulate(const std::vector<std::string> &args) {
 						stf::save(fit, outfiles[individualRealizedFitnessFile]);
 
 					// Set individual ecotype relative to population average while we are looping through individuals
-					if (!j) pop[i].setEcotype((sumx[0u] + sumx[1u]) / pop.size());
+					if (!j) pop[i].setEcotype((sumx[0u][0u] + sumx[0u][1u] + sumx[1u][0u] + sumx[1u][1u]) / pop.size());
 
 				}
 			}
