@@ -127,10 +127,10 @@ int simulate(const std::vector<std::string> &args) {
 			if (pars.talkative) std::cout << "t = " << t << '\n';
 
 			// Flag to know if it is time to save some data
-            const bool timetosave = t % pars.tsave == 0u;
+            const bool timeToSave = t % pars.tsave == 0u;
 
 			// Save time if needed
-			if (timetosave && timeFile >= 0) 
+			if (timeToSave && timeFile >= 0) 
 				stf::save(t, outfiles[timeFile]);
 
 			// There are multiple feeding rounds.
@@ -201,17 +201,17 @@ int simulate(const std::vector<std::string> &args) {
 					sumx[habitat][choice] += x;
 
 					// Save individual expected fitness difference if needed
-					if (timetosave && individualExpectedFitnessDifference >= 0) 
+					if (timeToSave && individualExpectedFitnessDifference >= 0) 
 						stf::save(fit2 - fit1, outfiles[individualExpectedFitnessDifference]);
 
 					// Save individual choice if needed
-					if (timetosave && individualChoiceFile >= 0)
+					if (timeToSave && individualChoiceFile >= 0)
 						stf::save(choice, outfiles[individualChoiceFile]);
 
 				}
 
 				// Save the number of individuals feeding on each resource in each habitat if needed
-				if (timetosave && resourceCensusFile >= 0) {
+				if (timeToSave && resourceCensusFile >= 0) {
 
 					stf::save(n[0u][0u], outfiles[resourceCensusFile]);
 					stf::save(n[0u][1u], outfiles[resourceCensusFile]);
@@ -221,7 +221,7 @@ int simulate(const std::vector<std::string> &args) {
 				}
 
 				// Save the mean trait value of individuals feeding on each resource in each habitat if needed
-				if (timetosave && resourceMeanTraitValueFile >= 0) {
+				if (timeToSave && resourceMeanTraitValueFile >= 0) {
 
 					stf::save(n[0u][0u] ? sumx[0u][0u] / n[0u][0u] : 0.0, outfiles[resourceMeanTraitValueFile]);
 					stf::save(n[0u][1u] ? sumx[0u][1u] / n[0u][1u] : 0.0, outfiles[resourceMeanTraitValueFile]);
@@ -252,7 +252,7 @@ int simulate(const std::vector<std::string> &args) {
 					fitnesses[i] += fit;
 
 					// Save individual realized fitness if needed
-					if (timetosave && individualRealizedFitnessFile >= 0) 
+					if (timeToSave && individualRealizedFitnessFile >= 0) 
 						stf::save(fit, outfiles[individualRealizedFitnessFile]);
 
 					// Set individual ecotype relative to population average while we are looping through individuals
@@ -303,25 +303,25 @@ int simulate(const std::vector<std::string> &args) {
 				ssqx[habitat][ecotype] += utl::sqr(x);
 
 				// Save the habitat of that adult if needed
-				if (timetosave && individualHabitatFile >= 0)
+				if (timeToSave && individualHabitatFile >= 0)
 					stf::save(habitat, outfiles[individualHabitatFile]);
 
 				// Save the trait value of that adult if needed
-				if (timetosave && individualTraitValueFile >= 0) 
+				if (timeToSave && individualTraitValueFile >= 0) 
 					stf::save(x, outfiles[individualTraitValueFile]);
 
 				// Save the final fitness of that adult if needed
-				if (timetosave && individualTotalFitnessFile >= 0)
+				if (timeToSave && individualTotalFitnessFile >= 0)
 					stf::save(fitnesses[i], outfiles[individualTotalFitnessFile]);
 
 				// Save the ecotype of that adult if needed
-				if (timetosave && individualEcotypeFile >= 0)
+				if (timeToSave && individualEcotypeFile >= 0)
 					stf::save(ecotype, outfiles[individualEcotypeFile]);
 
 			}
 
 			// Save the number of individuals in each habitat if needed
-			if (timetosave && habitatCensusFile >= 0) {
+			if (timeToSave && habitatCensusFile >= 0) {
 
 				stf::save(n[0u][0u] + n[0u][1u], outfiles[habitatCensusFile]);
 				stf::save(n[1u][0u] + n[1u][1u], outfiles[habitatCensusFile]);
@@ -329,7 +329,7 @@ int simulate(const std::vector<std::string> &args) {
 			}
 
 			// Save the mean trait value in each habitat if needed
-			if (timetosave && habitatMeanTraitValueFile >= 0) {
+			if (timeToSave && habitatMeanTraitValueFile >= 0) {
 
 				const size_t n1 = n[0u][0u] + n[0u][1u];
 				const size_t n2 = n[1u][0u] + n[1u][1u];
@@ -340,7 +340,7 @@ int simulate(const std::vector<std::string> &args) {
 			}
 
 			// Save ecological isolation if needed
-			if (timetosave && ecologicalIsolationFile >= 0) {
+			if (timeToSave && ecologicalIsolationFile >= 0) {
 
 				// Compute within-ecotype and whole-population variances
 				const size_t n1 = n[0u][0u] + n[1u][0u];
@@ -370,7 +370,7 @@ int simulate(const std::vector<std::string> &args) {
 			}
 
 			// Save spatial isolation if needed
-			if (timetosave && spatialIsolationFile >= 0) {
+			if (timeToSave && spatialIsolationFile >= 0) {
 
 				// Different components of the statistic
 				const size_t n11 = n[0u][0u];
