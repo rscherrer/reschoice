@@ -47,7 +47,7 @@ int simulate(const std::vector<std::string> &args) {
 		// - [OK] Number of individuals on each resource in each habitat at each feeding round at each time step
 		// - [OK] Mean trait value on each resource in each habitat at each feeding round at each time step
 		// - [OK] A statistic for ecological isolation between ecotypes at each time step
-		// - A statistic for spatial isolation between ecotypes at each time step
+		// - [OK] A statistic for spatial isolation between ecotypes at each time step
 
 		// Which variables to save
         std::vector<std::string> filenames = { 
@@ -108,9 +108,6 @@ int simulate(const std::vector<std::string> &args) {
             else throw std::runtime_error("Invalid output requested in whattosave.txt");
 
         }
-
-		// Open a buffer that for data recording
-		Buffer buffer;
 
 		// Distribution of mutational deviations (set up here for speed)
 		auto sampleMutation = rnd::normal(0.0, pars.mutsdev);
