@@ -22,6 +22,7 @@ public:
     void disperse();
     void isBorn();
     void setEcotype(const double&);
+    void setRank(const size_t&); 
 
     double getX() const;
     double getEff1() const;
@@ -30,7 +31,7 @@ public:
     bool getHabitat() const;
     bool getEcotype() const;
     bool getChoice() const;
-    size_t getIndex() const;
+    size_t getRank() const;
     bool isAlive() const;
 
 private:
@@ -42,7 +43,7 @@ private:
     bool habitat; // habitat where the individual lives
     bool ecotype; // what resource is the individual more adapted to relative to the pop average
     bool choice; // which resource is chosen?
-    size_t index; // individual identifier (to keep track despite shuffling)
+    size_t rank; // individual position in a queue during a feeding round
     bool alive; // is the individual alive?
 
 };

@@ -40,7 +40,7 @@ int simulate(const std::vector<std::string> &args) {
 		// - Individual trait value at each time step
 		// - Individual total fitness at each time step
 		// - Individual choice at each feeding round at each time step
-		// - Individual position in the queue (index) at each feeding round at each time step
+		// - Individual position in the queue (rank) at each feeding round at each time step
 		// - Individual realized fitness at each feeding round at each time step
 		// - Individual expected fitness difference at each feeding round at each time step
 		// - Number of individuals in each habitat at each time step
@@ -54,7 +54,7 @@ int simulate(const std::vector<std::string> &args) {
         std::vector<std::string> filenames = { 
 			
 			"time", "individualHabitat", "individualTraitValue", "individualEcotype", 
-			"individualTotalFitness", "individualChoice", "individualIndex", "individualRealizedFitness",
+			"individualTotalFitness", "individualChoice", "individualRank", "individualRealizedFitness",
 			"individualExpectedFitnessDifference", "habitatCensus", "habitatMeanTraitValue",
 			"resourceCensus", "resourceMeanTraitValue", "ecologicalIsolation", "spatialIsolation"
 		
@@ -84,7 +84,7 @@ int simulate(const std::vector<std::string> &args) {
 		// Set up flags for which data to save
         int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1),
 		individualEcotypeFile(-1), individualTotalFitnessFile(-1), individualChoiceFile(-1), 
-		individualIndexFile(-1), individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1),
+		individualRankFile(-1), individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1),
 		habitatCensusFile(-1), habitatMeanTraitValueFile(-1), resourceCensusFile(-1),
 		resourceMeanTraitValueFile(-1), ecologicalIsolationFile(-1), spatialIsolationFile(-1);
 
@@ -98,7 +98,7 @@ int simulate(const std::vector<std::string> &args) {
 			else if (filename == "individualEcotype") individualEcotypeFile = f;
 			else if (filename == "individualTotalFitness") individualTotalFitnessFile = f;
 			else if (filename == "individualChoice") individualChoiceFile = f;
-			else if (filename == "individualIndex") individualIndexFile = f;
+			else if (filename == "individualRank") individualRankFile = f;
 			else if (filename == "individualRealizedFitness") individualRealizedFitnessFile = f;
 			else if (filename == "individualExpectedFitnessDifference") individualExpectedFitnessDifference = f;
 			else if (filename == "habitatCensus") habitatCensusFile = f;
@@ -156,8 +156,7 @@ int simulate(const std::vector<std::string> &args) {
 			// to keep track of it. Once all individuals have chosen, the resources is split
 			// (well, only the amount of resources that was discovered). And it is split proportionately
 			// to the realized fitness of the individuals, which uses the same formula as the
-			// expected one but now with sums of feeding efficiencies being computed once everybody
-			// has chosen. The total fitness of an individual is the sum of all the food obtained
+			// expected one but now with sums of feeding efficiencies being computed once everybodyvalues
 			// throughout all feeding rounds.
 
 			// Initialize a vector of fitnesses
@@ -185,6 +184,9 @@ int simulate(const std::vector<std::string> &args) {
 
 					// Respect random order
 					const size_t ii = indices[i];
+
+					// Assign a rank in the queue to the individual
+					pop[ii].setRank(i);
 
 					// Read individual properties
 					const double x = pop[ii].getX();
@@ -244,6 +246,7 @@ int simulate(const std::vector<std::string> &args) {
 					const bool choice = pop[i].getChoice();
 					const bool habitat = pop[i].getHabitat();
 					const bool diff = pop[i].getDiff();
+					const size_t rank = pop[i].getRank();
 
 					// Corresponding feeding efficiency
 					const double eff = choice ? pop[i].getEff2() : pop[i].getEff1();
@@ -268,6 +271,10 @@ int simulate(const std::vector<std::string> &args) {
 					// Save individual realized fitness if needed
 					if (timeToSave && individualRealizedFitnessFile >= 0) 
 						stf::save(fit, outfiles[individualRealizedFitnessFile]);
+
+					// Save individual rank in the queue if needed
+					if (timeToSave && individualRankFile >= 0)
+						stf::save(rank, outfiles[individualRankFile]);
 
 					// Set individual ecotype relative to population average while we are looping through individuals
 					if (!j) pop[i].setEcotype((sumx[0u][0u] + sumx[0u][1u] + sumx[1u][0u] + sumx[1u][1u]) / pop.size());
