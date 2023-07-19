@@ -273,6 +273,16 @@ BOOST_AUTO_TEST_CASE(printerSetUp) {
 
 }
 
+// Closing of the streams works
+BOOST_AUTO_TEST_CASE(streamClosure) {
+
+    Printer print(1u);
+    BOOST_CHECK(print.streams[0u].is_open());
+    print.close();
+    BOOST_CHECK(!print.streams[0u].is_open());
+
+}
+
 // Ecological isolation is correctly calculated
 BOOST_AUTO_TEST_CASE(ecologicalIsolationIsCorrectlCalculated) {
 
