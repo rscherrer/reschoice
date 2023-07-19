@@ -273,6 +273,23 @@ BOOST_AUTO_TEST_CASE(printerSetUp) {
 
 }
 
+// Ecological isolation is correctly calculated
+BOOST_AUTO_TEST_CASE(ecologicalIsolationIsCorrectlCalculated) {
+
+    BOOST_CHECK_EQUAL(als::getEI({{2u, 2u}, {0u, 0u}}, {{-2.0, 2.0}, {0.0, 0.0}}, {{2.0, 2.0}, {0.0, 0.0}}), 1.0);
+    BOOST_CHECK_EQUAL(als::getEI({{2u, 0u}, {0u, 0u}}, {{-2.0, 0.0}, {0.0, 0.0}}, {{2.0, 0.0}, {0.0, 0.0}}), 0.0);
+
+}
+
+// Spatial isolation is correctly calculated
+BOOST_AUTO_TEST_CASE(spatialIsolationIsCorrectlyCalculated) {
+
+    BOOST_CHECK_EQUAL(als::getSI({{1u, 0u}, {0u, 1u}}), 1.0);
+    BOOST_CHECK_EQUAL(als::getSI({{1u, 1u}, {1u, 1u}}), 0.0);
+    BOOST_CHECK_EQUAL(als::getSI({{1u, 1u}, {0u, 0u}}), 0.0);
+
+}
+
 // Test that parameters are saved properly
 BOOST_AUTO_TEST_CASE(paramSavedProperly) {
 
