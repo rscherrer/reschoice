@@ -1,30 +1,42 @@
 #ifndef RESCHOICE_PRINTER_HPP
 #define RESCHOICE_PRINTER_HPP
 
-// This header contains a series of functions for saving output to files
+// This is the header for the Printer class.
 
 #include <fstream>
 #include <vector>
 #include <memory>
+#include <cassert>
 
-namespace stf
+struct Printer 
 {
 
-    void open(std::vector<std::shared_ptr<std::ofstream> >&, const std::vector<std::string>&);
-    void close(std::vector<std::shared_ptr<std::ofstream> >&);
-    void check(const std::vector<std::string>&, const std::vector<std::string>&);
+    Printer(size_t);
 
-    // Function to save a value to output file
-    template <typename T> void save(const T&, std::shared_ptr<std::ofstream>&);
+    template <typename T> void save(const T&, const size_t&);
+    void close();
 
-}
+    std::vector<std::string> fnames;
+    std::vector<std::ofstream> streams;
+
+};
 
 // Function to save a value to output file (defined here because template function)
-template <typename T> void stf::save(const T &x, std::shared_ptr<std::ofstream> &file) {
+template <typename T> void Printer::save(const T &x, const size_t &i) {
 
-    const double x_ = static_cast<double>(x);
-    file->write((char *) &x_, sizeof(double));
+    // Make sure we are not out of bounds
+    assert(i < streams.size());
 
+    // If the corresponding stream is open...
+    if (streams[i].is_open()) {
+
+        // Convert the value into a double
+        const double x_ = static_cast<double>(x);
+
+        // Write it to the file
+        streams[i].write((char *) &x_, sizeof(double));
+
+    }
 }
 
 #endif

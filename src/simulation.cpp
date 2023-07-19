@@ -10,6 +10,72 @@ auto burry = [](Individual ind) -> bool
     return !ind.isAlive();
 };
 
+// Function to compute the ecological isolation statistic
+double getEI(
+	
+	const std::vector<std::vector<size_t> > &n,
+	const std::vector<std::vector<double> > &sumx,
+	const std::vector<std::vector<double> > &ssqx
+	
+) {
+
+	// Compute within-ecotype and whole-population variances
+	const size_t n1 = n[0u][0u] + n[1u][0u];
+	const size_t n2 = n[0u][1u] + n[1u][1u];
+	const size_t n0 = n1 + n2;
+	const double sumx1 = sumx[0u][0u] + sumx[1u][0u];
+	const double sumx2 = sumx[0u][1u] + sumx[1u][1u];
+	const double ssqx1 = ssqx[0u][0u] + ssqx[1u][0u];
+	const double ssqx2 = ssqx[0u][1u] + ssqx[1u][1u];
+	const double varx1 = n1 ? ssqx1 / n1 - utl::sqr(sumx1 / n1) : 0.0;
+	const double varx2 = n2 ? ssqx2 / n2 - utl::sqr(sumx2 / n2) : 0.0;
+	const double varx0 = (ssqx1 + ssqx2) / n0 - utl::sqr((sumx1 + sumx2) / n0);
+
+	// Make sure the variances are positive
+	assert(varx1 >= 0.0);
+	assert(varx2 >= 0.0);
+	assert(varx0 >= 0.0);
+
+	// Compute ecological isolation between ecotypes
+	const double EI = varx0 ? 1.0 - (n1 * varx1 + n2 * varx2) / (n0 * varx0) : 0.0;
+
+	// Make sure ecological isolation is between zero and one
+	assert(EI >= 0.0 && EI <= 1.0);
+
+	return EI;
+
+}
+
+// Function to compute the spatial isolation statistic
+double getSI(const std::vector<std::vector<size_t> > &n) {
+
+    // Different components of the statistic
+	const size_t n11 = n[0u][0u];
+	const size_t n12 = n[0u][1u];
+	const size_t n21 = n[1u][0u];
+	const size_t n22 = n[1u][1u];
+	const size_t n10 = n11 + n12;
+	const size_t n20 = n21 + n22;
+	const size_t n01 = n11 + n21;
+	const size_t n02 = n12 + n22;
+
+	// Compute the product that will go in the denominator
+	const double prod = n10 * n20 * n01 * n02;
+
+	// Make sure it is positive
+	assert(prod >= 0.0);
+
+	// Compute spatial isolation
+	const double SI = prod ? fabs((n11 * n22 - n12 * n21) / sqrt(prod)) : 0.0;
+
+	// Make sure spatial isolation is between zero and one
+	assert(SI >= 0.0 && SI <= 1.0);
+
+	return SI;
+
+}
+
+// Simulation function
 int simulate(const std::vector<std::string> &args) {
 
 	try
@@ -30,86 +96,8 @@ int simulate(const std::vector<std::string> &args) {
 		// Redirect output to log file if needed
         if (pars.savelog) pars.savelog = std::freopen("log.txt", "w", stdout);
 
-		// Create a vector of output file streams (using smart pointers)
-        std::vector<std::shared_ptr<std::ofstream> > outfiles;
-
-		// What variables do we save in this study?
-		// - Time steps
-		// - Individual habitat at each time step
-		// - Individual ecotype at each time step (whether trait value is above or below population average)
-		// - Individual trait value at each time step
-		// - Individual total fitness at each time step
-		// - Individual choice at each feeding round at each time step
-		// - Individual position in the queue (rank) at each feeding round at each time step
-		// - Individual realized fitness at each feeding round at each time step
-		// - Individual expected fitness difference at each feeding round at each time step
-		// - Number of individuals in each habitat at each time step
-		// - Mean trait value in each habitat at each time step
-		// - Number of individuals on each resource in each habitat at each feeding round at each time step
-		// - Mean trait value on each resource in each habitat at each feeding round at each time step
-		// - A statistic for ecological isolation between ecotypes at each time step
-		// - A statistic for spatial isolation between ecotypes at each time step
-
-		// Which variables to save
-        std::vector<std::string> filenames = { 
-			
-			"time", "individualHabitat", "individualTraitValue", "individualEcotype", 
-			"individualTotalFitness", "individualChoice", "individualRank", "individualRealizedFitness",
-			"individualExpectedFitnessDifference", "habitatCensus", "habitatMeanTraitValue",
-			"resourceCensus", "resourceMeanTraitValue", "ecologicalIsolation", "spatialIsolation"
-		
-		};
-
-		// Update the list of which variables to save if needed...
-        if (pars.choose) {
-
-            // Read file where those are provided
-            std::ifstream infile("whattosave.txt");
-            if (!infile.is_open())
-                throw std::runtime_error("Could not read input file whattosave.txt");
-            std::vector<std::string> newfilenames;
-            std::string input;
-            while (infile >> input) newfilenames.push_back(input);
-            stf::check(newfilenames, filenames);
-            filenames.reserve(newfilenames.size());
-            filenames.resize(newfilenames.size());
-            for (size_t f = 0u; f < newfilenames.size(); ++f)
-                filenames[f] = newfilenames[f];
-
-        }
-
-		// Open the file streams
-        stf::open(outfiles, filenames);
-
-		// Set up flags for which data to save
-        int timeFile(-1), individualHabitatFile(-1), individualTraitValueFile(-1),
-		individualEcotypeFile(-1), individualTotalFitnessFile(-1), individualChoiceFile(-1), 
-		individualRankFile(-1), individualRealizedFitnessFile(-1), individualExpectedFitnessDifference(-1),
-		habitatCensusFile(-1), habitatMeanTraitValueFile(-1), resourceCensusFile(-1),
-		resourceMeanTraitValueFile(-1), ecologicalIsolationFile(-1), spatialIsolationFile(-1);
-
-        for (size_t f = 0u; f < filenames.size(); ++f) {
-
-            const std::string filename = filenames[f];
-
-            if (filename == "time") timeFile = f;
-			else if (filename == "individualHabitat") individualHabitatFile = f;
-			else if (filename == "individualTraitValue") individualTraitValueFile = f;
-			else if (filename == "individualEcotype") individualEcotypeFile = f;
-			else if (filename == "individualTotalFitness") individualTotalFitnessFile = f;
-			else if (filename == "individualChoice") individualChoiceFile = f;
-			else if (filename == "individualRank") individualRankFile = f;
-			else if (filename == "individualRealizedFitness") individualRealizedFitnessFile = f;
-			else if (filename == "individualExpectedFitnessDifference") individualExpectedFitnessDifference = f;
-			else if (filename == "habitatCensus") habitatCensusFile = f;
-			else if (filename == "habitatMeanTraitValue") habitatMeanTraitValueFile = f;
-			else if (filename == "resourceCensus") resourceCensusFile = f;
-			else if (filename == "resourceMeanTraitValue") resourceMeanTraitValueFile = f;
-			else if (filename == "ecologicalIsolation") ecologicalIsolationFile = f;
-			else if (filename == "spatialIsolation") spatialIsolationFile = f;
-            else throw std::runtime_error("Invalid output requested in whattosave.txt");
-
-        }
+		// Set up a printer
+		Printer print(pars.whattosave);
 
 		// Distribution of mutational deviations (set up here for speed)
 		auto sampleMutation = rnd::normal(0.0, pars.mutsdev);
@@ -139,8 +127,7 @@ int simulate(const std::vector<std::string> &args) {
             const bool timeToSave = t % pars.tsave == 0u;
 
 			// Save time if needed
-			if (timeToSave && timeFile >= 0) 
-				stf::save(t, outfiles[timeFile]);
+			if (timeToSave) print.save(t, 0u);
 
 			// There are multiple feeding rounds.
 			// Every feeding round, individuals are taken in random order.
@@ -219,24 +206,17 @@ int simulate(const std::vector<std::string> &args) {
 
 				}
 
-				// Save the number of individuals feeding on each resource in each habitat if needed
-				if (timeToSave && resourceCensusFile >= 0) {
+				// Save the number and mean trait values of individuals feeding on each resource in each habitat if needed
+				if (timeToSave) {
 
-					stf::save(n[0u][0u], outfiles[resourceCensusFile]);
-					stf::save(n[0u][1u], outfiles[resourceCensusFile]);
-					stf::save(n[1u][0u], outfiles[resourceCensusFile]);
-					stf::save(n[1u][1u], outfiles[resourceCensusFile]);
+					for (size_t i = 0u; i < 2u; ++i) {
+						for (size_t k = 0u; k < 2u; ++k) {
 
-				}
+							print.save(n[i][k], 1u);
+							print.save(n[i][k] ? sumx[i][k] / n[i][k] : 0.0, 2u);
 
-				// Save the mean trait value of individuals feeding on each resource in each habitat if needed
-				if (timeToSave && resourceMeanTraitValueFile >= 0) {
-
-					stf::save(n[0u][0u] ? sumx[0u][0u] / n[0u][0u] : 0.0, outfiles[resourceMeanTraitValueFile]);
-					stf::save(n[0u][1u] ? sumx[0u][1u] / n[0u][1u] : 0.0, outfiles[resourceMeanTraitValueFile]);
-					stf::save(n[1u][0u] ? sumx[1u][0u] / n[1u][0u] : 0.0, outfiles[resourceMeanTraitValueFile]);
-					stf::save(n[1u][1u] ? sumx[1u][1u] / n[1u][1u] : 0.0, outfiles[resourceMeanTraitValueFile]);
-
+						}
+					}
 				}
 
 				// For each individual...
@@ -260,21 +240,15 @@ int simulate(const std::vector<std::string> &args) {
 					// Add obtained food to the vector of fitnesses
 					fitnesses[i] += fit;
 
-					// Save individual expected fitness difference if needed
-					if (timeToSave && individualExpectedFitnessDifference >= 0) 
-						stf::save(diff, outfiles[individualExpectedFitnessDifference]);
+					// Save a few individual properties if needed
+					if (timeToSave) {
+						
+						print.save(diff, 3u);
+						print.save(choice, 4u);
+						print.save(fit, 5u);
+						print.save(rank, 6u);
 
-					// Save individual choice if needed
-					if (timeToSave && individualChoiceFile >= 0)
-						stf::save(choice, outfiles[individualChoiceFile]);
-
-					// Save individual realized fitness if needed
-					if (timeToSave && individualRealizedFitnessFile >= 0) 
-						stf::save(fit, outfiles[individualRealizedFitnessFile]);
-
-					// Save individual rank in the queue if needed
-					if (timeToSave && individualRankFile >= 0)
-						stf::save(rank, outfiles[individualRankFile]);
+					}
 
 					// Set individual ecotype relative to population average while we are looping through individuals
 					if (!j) pop[i].setEcotype((sumx[0u][0u] + sumx[0u][1u] + sumx[1u][0u] + sumx[1u][1u]) / pop.size());
@@ -323,97 +297,34 @@ int simulate(const std::vector<std::string> &args) {
 				sumx[habitat][ecotype] += x;
 				ssqx[habitat][ecotype] += utl::sqr(x);
 
-				// Save the habitat of that adult if needed
-				if (timeToSave && individualHabitatFile >= 0)
-					stf::save(habitat, outfiles[individualHabitatFile]);
+				// Save a few individual properties of that adult if needed
+				if (timeToSave) {
+					
+					print.save(habitat, 7u);
+					print.save(x, 8u);
+					print.save(fitnesses[i], 9u);
+					print.save(ecotype, 10u);
 
-				// Save the trait value of that adult if needed
-				if (timeToSave && individualTraitValueFile >= 0) 
-					stf::save(x, outfiles[individualTraitValueFile]);
-
-				// Save the final fitness of that adult if needed
-				if (timeToSave && individualTotalFitnessFile >= 0)
-					stf::save(fitnesses[i], outfiles[individualTotalFitnessFile]);
-
-				// Save the ecotype of that adult if needed
-				if (timeToSave && individualEcotypeFile >= 0)
-					stf::save(ecotype, outfiles[individualEcotypeFile]);
-
+				}
 			}
 
-			// Save the number of individuals in each habitat if needed
-			if (timeToSave && habitatCensusFile >= 0) {
+			// Save some population-level statistics if needed
+			if (timeToSave) {
 
-				stf::save(n[0u][0u] + n[0u][1u], outfiles[habitatCensusFile]);
-				stf::save(n[1u][0u] + n[1u][1u], outfiles[habitatCensusFile]);
+				// Save the number and mean trait values of individuals in each habitat
+				for (size_t i = 0u; i < 2u; ++i) {
 
-			}
+					const size_t n0 = n[i][0u] + n[i][1u];
+					print.save(n0, 11u);
+					print.save(n0 ? (sumx[i][0u] + sumx[i][1u]) / n0 : 0.0, 12u);
 
-			// Save the mean trait value in each habitat if needed
-			if (timeToSave && habitatMeanTraitValueFile >= 0) {
+				}
 
-				const size_t n1 = n[0u][0u] + n[0u][1u];
-				const size_t n2 = n[1u][0u] + n[1u][1u];
+				// Save ecological isolation
+				print.save(getEI(n, sumx, ssqx), 13u);
 
-				stf::save(n1 ? (sumx[0u][0u] + sumx[0u][1u]) / n1 : 0.0, outfiles[habitatMeanTraitValueFile]);
-				stf::save(n2 ? (sumx[1u][0u] + sumx[1u][1u]) / n2 : 0.0, outfiles[habitatMeanTraitValueFile]);
-
-			}
-
-			// Save ecological isolation if needed
-			if (timeToSave && ecologicalIsolationFile >= 0) {
-
-				// Compute within-ecotype and whole-population variances
-				const size_t n1 = n[0u][0u] + n[1u][0u];
-				const size_t n2 = n[0u][1u] + n[1u][1u];
-				const double sumx1 = sumx[0u][0u] + sumx[1u][0u];
-				const double sumx2 = sumx[0u][1u] + sumx[1u][1u];
-				const double ssqx1 = ssqx[0u][0u] + ssqx[1u][0u];
-				const double ssqx2 = ssqx[0u][1u] + ssqx[1u][1u];
-				const double varx1 = n1 ? ssqx1 / n1 - utl::sqr(sumx1 / n1) : 0.0;
-				const double varx2 = n2 ? ssqx2 / n2 - utl::sqr(sumx2 / n2) : 0.0;
-				const double varx0 = (ssqx1 + ssqx2) / pop.size() - utl::sqr((sumx1 + sumx2) / pop.size());
-
-				// Make sure the variances are positive
-				assert(varx1 >= 0.0);
-				assert(varx2 >= 0.0);
-				assert(varx0 >= 0.0);
-
-				// Compute ecological isolation between ecotypes
-				const double EI = varx0 ? 1.0 - (n1 * varx1 + n2 * varx2) / (pop.size() * varx0) : 0.0;
-
-				// Make sure ecological isolation is between zero and one
-				assert(EI >= 0.0 && EI <= 1.0);
-
-				// Save it
-				stf::save(EI, outfiles[ecologicalIsolationFile]);
-
-			}
-
-			// Save spatial isolation if needed
-			if (timeToSave && spatialIsolationFile >= 0) {
-
-				// Different components of the statistic
-				const size_t n11 = n[0u][0u];
-				const size_t n12 = n[0u][1u];
-				const size_t n21 = n[1u][0u];
-				const size_t n22 = n[1u][1u];
-				const size_t n10 = n11 + n12;
-				const size_t n20 = n21 + n22;
-				const size_t n01 = n11 + n21;
-				const size_t n02 = n12 + n22;
-
-				// Compute the product that will go in the denominator
-				const double prod = n10 * n20 * n01 * n02;
-
-				// Make sure it is positive
-				assert(prod >= 0.0);
-
-				// Compute spatial isolation
-				const double SI = prod ? fabs((n11 * n22 - n12 * n21) / sqrt(prod)) : 0.0;
-
-				// Save it
-				stf::save(SI, outfiles[spatialIsolationFile]);
+				// Save spatial isolation
+				print.save(getSI(n), 14u);
 
 			}
 
@@ -434,7 +345,7 @@ int simulate(const std::vector<std::string> &args) {
 		if (pars.savelog) std::fclose(stdout);
 
 		// Close output file streams
-        stf::close(outfiles);
+        print.close();
 
         return 0;
 

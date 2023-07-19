@@ -40,7 +40,7 @@ struct Parameters {
     bool savepars; // whether to save parameters into a file
     bool savelog; // whether to redirect screen output to a log file
     bool talkative; // whether to output to screen
-    bool choose; // whether to choose which variables to save
+    size_t whattosave; // code for which variables to save
 
 };
 

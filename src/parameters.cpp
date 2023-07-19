@@ -19,7 +19,7 @@ Parameters::Parameters() :
     savepars(true),
     savelog(false),
     talkative(false),
-    choose(false)
+    whattosave(1u)
 {
     // Make sure parameter values make sense
     check();
@@ -76,7 +76,7 @@ void Parameters::import(std::ifstream &file)
         else if (input == "savepars") file >> savepars;
         else if (input == "savelog") file >> savelog;
         else if (input == "talkative") file >> talkative;
-        else if (input == "choose") file >> choose;
+        else if (input == "whattosave") file >> whattosave;
         else
             throw std::runtime_error("Invalid parameter name: " + input);
 
@@ -149,6 +149,6 @@ void Parameters::write(std::ofstream &file) const
     file << "savepars " << savepars << '\n';
     file << "savelog " << savelog << '\n';
     file << "talkative " << talkative << '\n';
-    file << "choose " << choose << '\n';
+    file << "whattosave " << whattosave << '\n';
 
 }

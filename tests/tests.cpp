@@ -263,6 +263,16 @@ BOOST_AUTO_TEST_CASE(rankAssignment) {
 
 }
 
+// Test printer setup
+BOOST_AUTO_TEST_CASE(printerSetUp) {
+
+    // Only time.dat should be open
+    Printer print(1u);
+    BOOST_CHECK(print.streams[0u].is_open());
+    BOOST_CHECK(!print.streams[1u].is_open());
+
+}
+
 // Test that parameters are saved properly
 BOOST_AUTO_TEST_CASE(paramSavedProperly) {
 
@@ -291,14 +301,14 @@ BOOST_AUTO_TEST_CASE(paramSavedProperly) {
 }
 
 // Function to read in a binary output data file
-std::vector<size_t> readBinary(const std::string &filename)
+template <typename T> std::vector<T> readBinary(const std::string &filename)
 {
     // Open the input file
     std::ifstream file(filename.c_str(), std::ios::in | std::ios::binary);
 
     // Prepare storage for values
-    size_t x;
-    std::vector<size_t> v;
+    T x;
+    std::vector<T> v;
 
     // If the file is open
     if (file.is_open()) {
@@ -307,7 +317,7 @@ std::vector<size_t> readBinary(const std::string &filename)
         while(file) {
 
             // Read elements
-            file.read((char *) &x, sizeof(size_t));
+            file.read((char *) &x, sizeof(T));
 
             // Exit if reaching the end of the file
             if (!file.gcount()) break;
@@ -339,7 +349,7 @@ BOOST_AUTO_TEST_CASE(outputDataAreCorrectlyWritten) {
     simulate({"program_name", "parameters.txt"});
 
     // Read back one saved output data file
-    std::vector<size_t> timepoints = readBinary("time.dat");
+    std::vector<size_t> timepoints = readBinary<size_t>("time.dat");
 
     // Check the right number of entries have been saved
     BOOST_CHECK_EQUAL(timepoints.size(), 11u);
@@ -354,7 +364,7 @@ BOOST_AUTO_TEST_CASE(outputDataAreCorrectlyWritten) {
     simulate({"program_name", "parameters.txt"});
 
     // Read the new data back
-    std::vector<size_t> newtimepoints = readBinary("time.dat");
+    std::vector<size_t> newtimepoints = readBinary<size_t>("time.dat");
 
     // Check the new data does not have the same number of entries
     BOOST_CHECK(newtimepoints.size() < timepoints.size());
@@ -370,22 +380,20 @@ BOOST_AUTO_TEST_CASE(whatToSaveWorks) {
     file.open("parameters.txt");
     file << "tend 10\n";
     file << "tsave 2\n";
-    file << "choose 1\n";
+    file << "whattosave 24577\n"; // 110000000000001 should only save time, EI and SI
     file.close();
-
-    // Create a what-to-save file
-    std::ofstream wtsfile;
-    wtsfile.open("whattosave.txt");
-    wtsfile << "time\n";
-    wtsfile.close();
 
     // Simulate
     simulate({"program_name", "parameters.txt"});
 
     // Read back
-    std::vector<size_t> timepoints = readBinary("time.dat");
+    std::vector<size_t> timepoints = readBinary<size_t>("time.dat");
+    std::vector<double> EI = readBinary<double>("ecologicalIsolation.dat");
+    std::vector<double> SI = readBinary<double>("spatialIsolation.dat");
 
     // Check
     BOOST_CHECK_EQUAL(timepoints.size(), 6u);
+    BOOST_CHECK_EQUAL(EI.size(), 6u);
+    BOOST_CHECK_EQUAL(SI.size(), 6u);
 
 }
