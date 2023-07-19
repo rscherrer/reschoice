@@ -7,6 +7,7 @@
 #include "individual.hpp"
 #include "random.hpp"
 #include "printer.hpp"
+#include "analysis.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
