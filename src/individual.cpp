@@ -67,8 +67,8 @@ void Individual::setEcotype(const double &meanx) {
 void Individual::develop(const double &tradeoff) {
 
     // Update feeding efficiencies
-    eff1 = exp(-tradeoff * utl::sqr(1 + x));
-    eff2 = exp(-tradeoff * utl::sqr(1 - x));
+    eff1 = exp(-tradeoff * utl::sqr(x + 1.0));
+    eff2 = exp(-tradeoff * utl::sqr(x - 1.0));
 
     // Check that feeding efficiencies are still above zero
     assert(eff1 >= 0.0);
