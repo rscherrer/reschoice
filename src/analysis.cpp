@@ -58,7 +58,11 @@ double als::getSI(const std::vector<std::vector<size_t> > &n) {
 	assert(prod >= 0.0);
 
 	// Compute spatial isolation
-	const double SI = prod ? fabs((n11 * n22 - n12 * n21) / sqrt(prod)) : 0.0;
+	const double a = n11 * n22;
+	const double b = n12 * n21;
+	const double SI = prod ? fabs((a - b) / sqrt(prod)) : 0.0;
+
+	// Note: somehow huge numerical imprecision errors if I don't compute a and b separately
 
 	// Make sure spatial isolation is between zero and one
 	assert(SI >= 0.0 && SI <= 1.0);
