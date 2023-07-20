@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE(individualIsDeadAfterBeingKilled) {
 BOOST_AUTO_TEST_CASE(optimalChoice) {
 
     Individual ind(1.0, 0.0);
-    ind.setChoice(true, 1.0);
+    ind.makeChoice(0.0, 1.0, 1.0);
     BOOST_CHECK(ind.getChoice());
 
 }

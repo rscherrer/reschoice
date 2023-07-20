@@ -27,13 +27,17 @@ void Individual::kill() { alive = false; }
 void Individual::isBorn() { alive = true; }
 
 // Function to set the resource choice
-void Individual::setChoice(const bool &r, const double &beta) { 
+void Individual::makeChoice(const double &fit1, const double &fit2, const double &beta) { 
     
-    // Probability of choosing optimally
-    const double prob = 0.5 * (1.0 + beta);
+    // Calculate the breadth of the uncertain fitness assessment (what if it's negative?)
+    const double breadth = fabs(fit2 - fit1) * (1.0 + sqrt(1.0 - beta)) / beta;
 
-    // Choose
-    choice = rnd::bernoulli(prob)(rnd::rng) ? r : !r;
+    // Sample estimated fitness gains
+    const double fit1_ = rnd::uniform(fit1 - 0.5 * breadth, fit1 + 0.5 * breadth)(rnd::rng);
+    const double fit2_ = rnd::uniform(fit2 - 0.5 * breadth, fit2 + 0.5 * breadth)(rnd::rng);
+
+    // Choose the resource that gives the best estimated payoff
+    choice = fit2_ > fit1_;
     
 }
 
