@@ -38,7 +38,7 @@ int simulate(const std::vector<std::string> &args) {
 		auto sampleMutation = rnd::normal(0.0, pars.mutsdev);
 
 		// Create a population of individuals
-		std::vector<Individual> pop(pars.popsize, { pars.tradeoff });
+		std::vector<Individual> pop(pars.popsize, { pars.tradeoff, pars.xstart });
 
 		// Make sure the container can contain twice the population size
 		pop.reserve(2u * pop.size());

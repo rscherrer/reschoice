@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(errorWhenSavingFrequencyIsZero) {
 // Test that an individual is initialized properly
 BOOST_AUTO_TEST_CASE(individualInitialization) {
 
-    Individual ind(1.0);
+    Individual ind(1.0, 0.0);
     BOOST_CHECK(ind.isAlive());
 
 }
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(individualInitialization) {
 // Test that an individual is dead after we kill it
 BOOST_AUTO_TEST_CASE(individualIsDeadAfterBeingKilled) {
 
-    Individual ind(1.0);
+    Individual ind(1.0, 0.0);
     ind.kill();
     BOOST_CHECK(!ind.isAlive());
 
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(individualIsDeadAfterBeingKilled) {
 // Test when choice is optimal
 BOOST_AUTO_TEST_CASE(optimalChoice) {
 
-    Individual ind(1.0);
+    Individual ind(1.0, 0.0);
     ind.setChoice(true, 1.0);
     BOOST_CHECK(ind.getChoice());
 
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE(optimalChoice) {
 // Test birth
 BOOST_AUTO_TEST_CASE(birth) {
 
-    Individual ind(1.0);
+    Individual ind(1.0, 0.0);
     ind.kill();
     BOOST_CHECK(!ind.isAlive());
     ind.isBorn();
@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE(birth) {
 // Test mutation
 BOOST_AUTO_TEST_CASE(mutation) {
 
-    Individual ind(1.0);
+    Individual ind(1.0, 0.0);
     ind.mutate(0.01, 1.0);
     BOOST_CHECK_EQUAL(ind.getX(), 0.01);
     ind.mutate(-0.02, 1.0);
@@ -246,7 +246,7 @@ BOOST_AUTO_TEST_CASE(mutation) {
 // Test dispersal
 BOOST_AUTO_TEST_CASE(dispersal) {
 
-    Individual ind(1.0);
+    Individual ind(1.0, 0.0);
     BOOST_CHECK(!ind.getHabitat());
     ind.disperse();
     BOOST_CHECK(ind.getHabitat());
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(dispersal) {
 // Test rank assignment
 BOOST_AUTO_TEST_CASE(rankAssignment) {
 
-    Individual ind(1.0);
+    Individual ind(1.0, 0.0);
     BOOST_CHECK(!ind.getRank());
     ind.setRank(30u);
     BOOST_CHECK_EQUAL(ind.getRank(), 30u);

@@ -25,6 +25,7 @@ struct Parameters {
 
     // Parameters
     size_t popsize; // fixed population size
+    double xstart; // starting trait value
 	double tradeoff; // resouce utilization tradeoff
 	double beta; // resource choice accuracy
 	double delta; // resource discovery rate

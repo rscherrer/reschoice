@@ -4,6 +4,7 @@
 
 Parameters::Parameters() :
     popsize(10u),
+    xstart(0.0),
     tradeoff(1.0),
     beta(1.0),
     delta(1.0),
@@ -61,6 +62,7 @@ void Parameters::import(std::ifstream &file)
 
         // And update the corresponding parameter value
         if (input == "popsize") file >> popsize;
+        else if (input == "xstart") file >> xstart;
         else if (input == "tradeoff") file >> tradeoff;
         else if (input == "beta") file >> beta;
         else if (input == "delta") file >> delta;
@@ -134,6 +136,7 @@ void Parameters::write(std::ofstream &file) const
 
     // Write names and values separated by spaces
     file << "popsize " << popsize << '\n';
+    file << "xstart " << xstart << '\n';
     file << "tradeoff " << tradeoff << '\n';
     file << "beta " << beta << '\n';
     file << "delta " << delta << '\n';

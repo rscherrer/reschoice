@@ -12,7 +12,7 @@ class Individual {
 
 public:
 
-    Individual(const double&);
+    Individual(const double&, const double&);
 
     void kill();
     void setChoice(const bool&, const double&);
