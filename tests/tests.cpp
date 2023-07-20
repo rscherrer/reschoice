@@ -362,6 +362,18 @@ template <typename T> std::vector<T> readBinary(const std::string &filename)
 
 }
 
+// Printer saves properly
+BOOST_AUTO_TEST_CASE(printerSavesProperly) {
+
+    Printer print(1u);
+    print.save(123u, 0u);
+    print.close();
+    std::vector<double_t> timepoints = readBinary<double>("time.dat");
+    BOOST_CHECK_EQUAL(timepoints.size(), 1u);
+    BOOST_CHECK_EQUAL(timepoints[0u], 123.0);
+
+}
+
 // Test that output data are correctly written
 BOOST_AUTO_TEST_CASE(outputDataAreCorrectlyWritten) {
 
