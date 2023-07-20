@@ -45,9 +45,14 @@ int simulate(const std::vector<std::string> &args) {
 
 		// Create a matrix of resource concentrations
 		std::vector<std::vector<double> > resources({{0.0, 0.0}, {0.0, 0.0}});
-		for (size_t i = 0u; i < 2u; ++i)
-			for (size_t j = 0u; j < 2u; ++j)
-				resources[i][j] = i == pars.resource * (j ? 1.0 : pars.hsymmetry);
+		for (size_t i = 0u; i < 2u; ++i) {
+			for (size_t j = 0u; j < 2u; ++j) {
+
+				resources[i][j] = pars.resource * (i == j ? 1.0 : pars.hsymmetry);
+				assert(resources[i][j] >= 0.0);
+
+			}
+		}
 
 		// Screen output
 		std::cout << "Simulation started.\n";
