@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE(birth) {
 // Test mutation
 BOOST_AUTO_TEST_CASE(mutation) {
 
-    Individual ind(1.0, 0.0);
+    Individual ind(0.0, 0.0);
     ind.mutate(0.01, 1.0);
     BOOST_CHECK_EQUAL(ind.getX(), 0.01);
     ind.mutate(-0.02, 1.0);

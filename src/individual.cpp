@@ -3,7 +3,7 @@
 #include "individual.hpp"
 
 // Spontaneous generation constructor
-Individual::Individual(const double &tradeoff, const double &xval) :
+Individual::Individual(const double &xval, const double &tradeoff) :
     x(xval),
     eff1(0.0),
     eff2(0.0),
