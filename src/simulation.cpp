@@ -50,6 +50,7 @@ int simulate(const std::vector<std::string> &args) {
 
 				resources[i][j] = pars.resource * (i == j ? 1.0 : pars.hsymmetry);
 				assert(resources[i][j] >= 0.0);
+				assert(resources[i][j] <= pars.resource);
 
 			}
 		}
