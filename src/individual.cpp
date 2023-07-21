@@ -29,6 +29,15 @@ void Individual::isBorn() { alive = true; }
 // Function to set the resource choice
 void Individual::makeChoice(const double &fit1, const double &fit2, const double &beta) { 
     
+    // If choice is totally random...
+    if (!beta) {
+        
+        // Early exit
+        choice = rnd::bernoulli(0.5)(rnd::rng);
+        return;
+
+    }
+    
     // Calculate the noise around fitness assessment
     const double noise = fabs(fit2 - fit1) * (1.0 + sqrt(1.0 - beta)) / beta;
 
