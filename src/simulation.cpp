@@ -107,7 +107,7 @@ int simulate(const std::vector<std::string> &args) {
 				std::vector<std::vector<double> > sumx({{0.0, 0.0}, {0.0, 0.0}}); 
 
 				// For each individual...
-				for (size_t i = 0; i < pop.size(); ++i) {
+				for (size_t i = 0u; i < pop.size(); ++i) {
 
 					// Respect random order
 					const size_t ii = indices[i];
@@ -123,8 +123,8 @@ int simulate(const std::vector<std::string> &args) {
 					const std::vector<double> effs({ pop[ii].getEff1(), pop[ii].getEff2() });
 
 					// Compute expected fitness on each resource in the individual's habitat
-					const double fit1 = resources[habitat][0u] * effs[0u] * (sumeffs[habitat][0u] + 1.0 / pars.delta - 1.0);
-					const double fit2 = resources[habitat][1u] * effs[1u] * (sumeffs[habitat][1u] + 1.0 / pars.delta - 1.0);
+					const double fit1 = resources[habitat][0u] * effs[0u] / (sumeffs[habitat][0u] + 1.0 / pars.delta - 1.0);
+					const double fit2 = resources[habitat][1u] * effs[1u] / (sumeffs[habitat][1u] + 1.0 / pars.delta - 1.0);
 
 					// Check that expected fitnesses are above zero
 					assert(fit1 >= 0.0);
@@ -135,7 +135,7 @@ int simulate(const std::vector<std::string> &args) {
 					pop[ii].makeChoice(fit1, fit2, pars.beta);
 
 					// Read the choice that was made
-					const bool choice = pop[i].getChoice();
+					const bool choice = pop[ii].getChoice();
 
 					// Update cumulative feeding efficiencies depending on what resource has been chosen, in that habitat
 					sumeffs[habitat][choice] += effs[choice];
@@ -172,7 +172,7 @@ int simulate(const std::vector<std::string> &args) {
 					const double eff = choice ? pop[i].getEff2() : pop[i].getEff1();
 
 					// Compute realized fitness on the chosen resource
-					const double fit = resources[habitat][choice] * eff * (sumeffs[habitat][choice] + 1.0 / pars.delta - 1.0);
+					const double fit = resources[habitat][choice] * eff / (sumeffs[habitat][choice] + 1.0 / pars.delta - 1.0);
 
 					// Check that the fitness is above zero
 					assert(fit >= 0.0);
