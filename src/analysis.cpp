@@ -19,9 +19,14 @@ double als::getEI(
 	const double sumx2 = sumx[0u][1u] + sumx[1u][1u];
 	const double ssqx1 = ssqx[0u][0u] + ssqx[1u][0u];
 	const double ssqx2 = ssqx[0u][1u] + ssqx[1u][1u];
-	const double varx1 = n1 ? ssqx1 / n1 - utl::sqr(sumx1 / n1) : 0.0;
-	const double varx2 = n2 ? ssqx2 / n2 - utl::sqr(sumx2 / n2) : 0.0;
-	const double varx0 = (ssqx1 + ssqx2) / n0 - utl::sqr((sumx1 + sumx2) / n0);
+	double varx1 = n1 ? ssqx1 / n1 - utl::sqr(sumx1 / n1) : 0.0;
+	double varx2 = n2 ? ssqx2 / n2 - utl::sqr(sumx2 / n2) : 0.0;
+	double varx0 = (ssqx1 + ssqx2) / n0 - utl::sqr((sumx1 + sumx2) / n0);
+
+	// Correct small numerical imprecisions
+	varx1 = varx1 < 0.0 && varx1 > -utl::precis() ? 0.0 : varx1;
+	varx2 = varx2 < 0.0 && varx2 > -utl::precis() ? 0.0 : varx2;
+	varx0 = varx0 < 0.0 && varx0 > -utl::precis() ? 0.0 : varx0;
 
 	// Make sure the variances are positive
 	assert(varx1 >= 0.0);

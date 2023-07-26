@@ -7,6 +7,7 @@ namespace utl
 {
 
     double sqr(const double&);
+    double precis();
 
 }
 
