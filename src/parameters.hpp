@@ -29,7 +29,6 @@ struct Parameters {
     double tradeoff;     // resouce utilization tradeoff    
     double beta;         // resource choice accuracy
     double delta;        // resource discovery rate
-    double resource;     // baseline amount of each resource
     double hsymmetry;    // habitat symmetry parameter
 	size_t nrounds;      // number of feeding rounds
     bool typeII;         // type II resource choice
