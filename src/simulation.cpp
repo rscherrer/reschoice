@@ -29,7 +29,7 @@ int simulate(const std::vector<std::string> &args) {
         if (pars.savepars) pars.save();
 
 		// Redirect output to log file if needed
-        if (pars.savelog) pars.savelog = std::freopen("log.txt", "w", stdout);
+        if (pars.savelog) pars.savelog = std::freopen("screenlog.txt", "w", stdout);
 
 		// Set up a printer
 		Printer print(pars.whattosave);

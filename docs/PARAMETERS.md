@@ -18,6 +18,6 @@
 | tsave | Saving frequency | 10 | Save output every how many time steps? |
 | seed | Seed for the random number generator | Determined by the clock | |
 | savepars | Whether to save parameters (0/1) | 1 | If yes, saved to `paramlog.txt` |
-| savelog | Whether to save screen output (0/1) | 0 | If yes, saved to `log.txt` |
+| savelog | Whether to save screen output (0/1) | 0 | If yes, saved to `screenlog.txt` |
 | talkative | Whether to output time steps to screen (0/1) | 1 | |
 | whattosave | Which variable(s) to save as output | 1 | Click [here](OUTPUT.md) for details |
