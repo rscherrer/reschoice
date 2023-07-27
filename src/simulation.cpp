@@ -45,15 +45,9 @@ int simulate(const std::vector<std::string> &args) {
 
 		// Create a matrix of resource concentrations
 		std::vector<std::vector<double> > resources({{0.0, 0.0}, {0.0, 0.0}});
-		for (size_t i = 0u; i < 2u; ++i) {
-			for (size_t j = 0u; j < 2u; ++j) {
-
-				resources[i][j] = pars.resource * (i == j ? 1.0 : pars.hsymmetry);
-				assert(resources[i][j] >= 0.0);
-				assert(resources[i][j] <= pars.resource);
-
-			}
-		}
+		for (size_t i = 0u; i < 2u; ++i)
+			for (size_t j = 0u; j < 2u; ++j)
+				resources[i][j] = i == j ? 1.0 : pars.hsymmetry;
 
 		// Screen output
 		std::cout << "Simulation started.\n";
@@ -84,7 +78,7 @@ int simulate(const std::vector<std::string> &args) {
 			// to keep track of it. Once all individuals have chosen, the resources is split
 			// (well, only the amount of resources that was discovered). And it is split proportionately
 			// to the realized fitness of the individuals, which uses the same formula as the
-			// expected one but now with sums of feeding efficiencies being computed once everybodyvalues
+			// expected one but now with sums of feeding efficiencies being computed with everybody's values
 			// throughout all feeding rounds.
 
 			// Initialize a vector of fitnesses

@@ -8,7 +8,6 @@ Parameters::Parameters() :
     tradeoff(1.0),
     beta(1.0),
     delta(1.0),
-    resource(100.0),
     hsymmetry(1.0),
     nrounds(10u),
     typeII(false),
@@ -67,7 +66,6 @@ void Parameters::import(std::ifstream &file)
         else if (input == "tradeoff") file >> tradeoff;
         else if (input == "beta") file >> beta;
         else if (input == "delta") file >> delta;
-        else if (input == "resource") file >> resource;
         else if (input == "hsymmetry") file >> hsymmetry;
         else if (input == "nrounds") file >> nrounds;
         else if (input == "typeII") file >> typeII;
@@ -110,7 +108,6 @@ void Parameters::check() const
     if (tradeoff < 0.0) throw std::runtime_error("Trade-off cannot be negative");
     if (beta > 1.0 || beta < 0.0) throw std::runtime_error("Resource choice accuracy should be between zero and one");
     if (delta < 0.0) throw std::runtime_error("Resource discovery rate cannot be negative");
-    if (resource < 0.0) throw std::runtime_error("Resource amount cannot be negative");
     if (hsymmetry < 0.0 || hsymmetry > 1.0) throw std::runtime_error("Habitat symmetry should be between zero and one");
     if (nrounds == 0u) throw std::runtime_error("There should be at least one feeding round");
     if (mutrate < 0.0 || mutrate > 1.0) throw std::runtime_error("Mutation rate should be between zero and one");
@@ -142,7 +139,6 @@ void Parameters::write(std::ofstream &file) const
     file << "tradeoff " << tradeoff << '\n';
     file << "beta " << beta << '\n';
     file << "delta " << delta << '\n';
-    file << "resource " << resource << '\n';
     file << "hsymmetry " << hsymmetry << '\n';
     file << "nrounds " << nrounds << '\n';
     file << "typeII " << typeII << '\n';
