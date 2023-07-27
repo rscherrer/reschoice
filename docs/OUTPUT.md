@@ -3,10 +3,10 @@
 Here is the list of variables that can be saved during a simulation:
 
 Bit | File | Variable | No. values per time step |
-|--|
+|--|--|--|--|
 | 1 | `time.dat` | time steps | 1 |
-| 2 | `resourceCensus.dat` | number of individuals feeding on each resource at each feeding round in each habitat | 4 per feeding round* |
-| 3 | `resourceMeanTraitValue.dat` | mean trait value of individuals feeding on each resource at each feeding round in each habitat | 4 per feeding round* |
+| 2 | `resourceCensus.dat` | number of individuals feeding on each resource at each feeding round in each habitat | 4 per feeding round :asterisk: |
+| 3 | `resourceMeanTraitValue.dat` | mean trait value of individuals feeding on each resource at each feeding round in each habitat | 4 per feeding round :asterisk: |
 | 4 | `individualExpectedFitnessDifference.dat` | expected fitness difference between the resources for each individual at each feeding round | 1 per individual per feeding round |
 | 5 | `individualChoice.dat` | resource choice made by each individual at each feeding round | 1 per individual per feeding round |
 | 6 | `individualRealizedFitness.dat` | realized fitness gain of each individual after each feeding round | 1 per individual per feeding round |
@@ -20,7 +20,7 @@ Bit | File | Variable | No. values per time step |
 | 14 | `ecologicalIsolation.dat` | ecological isolation statistic | 1 |
 | 15 | `spatialIsolation.dat` | spatial isolation statistic | 1 |
 
-* Order of writing: habitat 1 resource 1, habitat 1 resource 1, habitat 2 resource 1, habitat 2 resource 2
+:asterisk: Order of writing: habitat 1 resource 1, habitat 1 resource 1, habitat 2 resource 1, habitat 2 resource 2
 
 ### Encoding
 
@@ -28,15 +28,17 @@ The user can choose which variables to save, and must pass that information to t
 
 For example, `whattosave 1` has for binary representation:
 
-15 14 13 12 11 10  9  8  7  6  5  4  3  2  1 (position)
- 0  0  0  0  0  0  0  0  0  0  0  0  0  0  1 (value)
+| Position | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 |
+|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|
+| Value | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 and so indicates the program that only `time.dat` must be saved (the bit corresponding to `time.dat` is the only one set to one).
 
 Here is another example. If we want to save `time.dat`, `ecologicalIsolation.dat` and `spatialIsolation.dat`, the bit-string is:
 
-15 14 13 12 11 10  9  8  7  6  5  4  3  2  1
- 1  1  0  0  0  0  0  0  0  0  0  0  0  0  1
+| Position | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 |
+|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|
+| Value | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 which is binary for the integer 24577. So, to save those three variables (and no other) we must specify `whattosave 24577` in `parameters.txt`. We recommend to use a binary calculator such as [this one](https://www.calculator.net/binary-calculator.html) to figure what parameter value to pass to the program.
 
