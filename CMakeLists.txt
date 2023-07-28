@@ -1,5 +1,7 @@
 # ./CMakeLists.txt
 
+# Developer-configuration
+
 cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
@@ -7,7 +9,7 @@ if (WIN32)
     set(VCPKG_TARGET_TRIPLET x64-windows)
 endif()
 
-project(reschoice)
+project(reschoice) # change with name of your project
 
 find_package(Git REQUIRED)
 execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --remote
