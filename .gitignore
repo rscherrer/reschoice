@@ -1,3 +1,8 @@
+data/
+results/
+ms/
+reschoicer/
+
 ##### Windows
 # Windows thumbnail cache files
 Thumbs.db
