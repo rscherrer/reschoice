@@ -64,7 +64,8 @@ This program is a descendent of a [program](https://github.com/J-Damhuis/Eco-Evo
 
 ## Links
 
-* [reschoicer](https://github.com/rscherrer/reschoicer): read the simulations in R
+* [reschoicer](https://github.com/rscherrer/reschoicer): package to read the simulations in R
+* * [reschoice-data](https://github.com/rscherrer/reschoice-data): the simulated data
 * [reschoice-results](https://github.com/rscherrer/reschoice-results): scripts used to analyze the data and results of the study
 * [reschoice-ms](https://github.com/rscherrer/reschoice-ms): manuscript
 
