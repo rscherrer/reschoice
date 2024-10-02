@@ -52,11 +52,11 @@ talkative 1
 whattosave 1
 ```
 
-and should be present within the working directory where the simulation is launched. Click [here](docs/PARAMETERS.md) for a detailed description of the parameters and their meaning.
+and should be present within the working directory where the simulation is launched. Click [here](doc/PARAMETERS.md) for a detailed description of the parameters and their meaning.
 
 ### Output
 
-The user can choose which variables to save from the simulation. Those have to be encoded in the `whattosave` parameter within the `parameters.txt` file, as explained [here](docs/OUTPUT.md). Output data are saved into binary files with the `.dat` extension, which can be read by the custom-made [R](https://www.r-project.org/) package [reschoicer](https://github.com/rscherrer/reschoicer).
+The user can choose which variables to save from the simulation. Those have to be encoded in the `whattosave` parameter within the `parameters.txt` file, as explained [here](doc/OUTPUT.md). Output data are saved into binary files with the `.dat` extension, which can be read by the custom-made [R](https://www.r-project.org/) package [reschoicer](https://github.com/rscherrer/reschoicer).
 
 ## About
 
