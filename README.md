@@ -39,7 +39,6 @@ delta 1
 resource 100
 hsymmetry 1
 nrounds 10
-typeII 0
 mutrate 0.0001
 mutsdev 0.02
 dispersal 0.1
