@@ -31,7 +31,6 @@ struct Parameters {
     double delta;        // resource discovery rate
     double hsymmetry;    // habitat symmetry parameter
 	size_t nrounds;      // number of feeding rounds
-    bool typeII;         // type II resource choice
 	double mutrate;      // mutation rate
 	double mutsdev;      // mutational standard deviation
     double dispersal;    // dispersal rate

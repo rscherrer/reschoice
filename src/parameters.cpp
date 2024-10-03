@@ -10,7 +10,6 @@ Parameters::Parameters() :
     delta(1.0),
     hsymmetry(1.0),
     nrounds(10u),
-    typeII(false),
     mutrate(0.0001),
     mutsdev(0.02),
     dispersal(0.1),
@@ -68,7 +67,6 @@ void Parameters::import(std::ifstream &file)
         else if (input == "delta") file >> delta;
         else if (input == "hsymmetry") file >> hsymmetry;
         else if (input == "nrounds") file >> nrounds;
-        else if (input == "typeII") file >> typeII;
         else if (input == "mutrate") file >> mutrate;
         else if (input == "mutsdev") file >> mutsdev;
         else if (input == "dispersal") file >> dispersal;
@@ -141,7 +139,6 @@ void Parameters::write(std::ofstream &file) const
     file << "delta " << delta << '\n';
     file << "hsymmetry " << hsymmetry << '\n';
     file << "nrounds " << nrounds << '\n';
-    file << "typeII " << typeII << '\n';
     file << "mutrate " << mutrate << '\n';
     file << "mutsdev " << mutsdev << '\n';
     file << "dispersal " << dispersal << '\n';

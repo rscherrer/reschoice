@@ -29,36 +29,12 @@ void Individual::isBorn() { alive = true; }
 // Function to set the resource choice
 void Individual::makeChoice(const double &fit1, const double &fit2, const double &beta, const bool &typeII) { 
     
-    // If type II choice...
-    if (typeII) {
+    // Choose the best resource with a certain accuracy
+    const bool isAccurate = rnd::bernoulli(0.5 * (1.0 + beta))(rnd::rng);
+    choice = (fit2 > fit1) == isAccurate;
 
-        // Choose the best resource with a certain accuracy
-        const bool isAccurate = rnd::bernoulli(0.5 * (1.0 + beta))(rnd::rng);
-        choice = (fit2 > fit1) == isAccurate;
-
-        // Early exit
-        return;
-
-    }
-
-    // If choice is totally random...
-    if (!beta) {
-        
-        // Early exit
-        choice = rnd::bernoulli(0.5)(rnd::rng);
-        return;
-
-    }
-    
-    // Calculate the noise around fitness assessment
-    const double noise = fabs(fit2 - fit1) * (1.0 + sqrt(1.0 - beta)) / beta;
-
-    // Sample estimated fitness gains given uncertainty
-    const double fit1_ = rnd::uniform(fit1 - 0.5 * noise, fit1 + 0.5 * noise)(rnd::rng);
-    const double fit2_ = rnd::uniform(fit2 - 0.5 * noise, fit2 + 0.5 * noise)(rnd::rng);
-
-    // Choose the resource that gives the best estimated payoff
-    choice = fit2_ > fit1_;
+    // Early exit
+    return;
     
 }
 
