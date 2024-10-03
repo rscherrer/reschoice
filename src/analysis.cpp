@@ -11,7 +11,7 @@ double als::getEI(
 	
 ) {
 
-	// Comput the variance in trait values in the population
+	// Compute the variance in trait values in the population
 	const size_t n0 = n[0u][0u] + n[0u][1u] + n[1u][0u] + n[1u][1u];
 	const double sumx0 = sumx[0u][0u] + sumx[0u][1u] + sumx[1u][0u] + sumx[1u][1u]; 
 	const double ssqx0 = ssqx[0u][0u] + ssqx[0u][1u] + ssqx[1u][0u] + ssqx[1u][1u];

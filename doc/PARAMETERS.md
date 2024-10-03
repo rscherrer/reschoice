@@ -21,3 +21,7 @@
 | savelog | Whether to save screen output (0/1) | 0 | If yes, saved to `screenlog.txt` |
 | talkative | Whether to output time steps to screen (0/1) | 1 | |
 | whattosave | Which variable(s) to save as output | 1 | Click [here](OUTPUT.md) for details |
+
+### Type II resource choice
+
+If type II resource choice is on, individuals compute their expected payoff when feeding, and then the probability that they choose the resource with the highest payoff is determined by the optimal choice parameter `beta`. In type I resource choice, parameter `beta` is used to tune the uncertainty in estimating an individual's expectd payoff --- reflecting the fact that non-optimal choice may be due to estimation errors in the wild. The higher `beta`, the more narrow the estimation of the perceived payoff is around the "true" expected payoff. However, type I resource choice is basically equivalent to type II, and so for all intends and purposes we used the simpler type II implementation in our analyses (see [here](https://github.com/rscherrer/reschoice/data)).
