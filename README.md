@@ -67,6 +67,7 @@ This program is a descendent of a [program](https://github.com/J-Damhuis/Eco-Evo
 * [reschoice-data](https://github.com/rscherrer/reschoice-data): the simulated data
 * [reschoice-results](https://github.com/rscherrer/reschoice-results): scripts used to analyze the data and results of the study
 * [reschoice-ms](https://github.com/rscherrer/reschoice-ms): manuscript
+* [reschoice-nb](https://github.com/rscherrer/reschoice-nb): some derivations in Mathematica
 
 ## Permissions
 
