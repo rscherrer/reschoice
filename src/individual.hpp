@@ -15,7 +15,7 @@ public:
     Individual(const double&, const double&);
 
     void kill();
-    void makeChoice(const double&, const double&, const double&, const bool& = false);
+    void makeChoice(const double&, const double&, const double&);
     void setDiff(const double&);
     void mutate(const double&, const double&);
     void develop(const double&);

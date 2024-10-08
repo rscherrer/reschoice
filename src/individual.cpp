@@ -27,7 +27,7 @@ void Individual::kill() { alive = false; }
 void Individual::isBorn() { alive = true; }
 
 // Function to set the resource choice
-void Individual::makeChoice(const double &fit1, const double &fit2, const double &beta, const bool &typeII) { 
+void Individual::makeChoice(const double &fit1, const double &fit2, const double &beta) { 
     
     // Choose the best resource with a certain accuracy
     const bool isAccurate = rnd::bernoulli(0.5 * (1.0 + beta))(rnd::rng);
