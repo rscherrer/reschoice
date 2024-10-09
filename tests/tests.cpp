@@ -231,8 +231,20 @@ BOOST_AUTO_TEST_CASE(optimalChoice) {
 
 }
 
+// Even when baseline choice depends on resource abundance
+BOOST_AUTO_TEST_CASE(optimalChoiceWithResourceAbundance) {
+
+    // Create a situation where one resource is almost absent but the
+    // other is actually more advantageous.
+
+    Individual ind(1.0, 0.0);
+    ind.makeChoice(0.0, 1.0, 1.0, 1.0, 1.0, 0.1);
+    BOOST_CHECK(ind.getChoice());
+
+}
+
 // Test that resource abundance weight directs random choice towards the most abundant resource
-BOOST_AUTO_TEST_CASE(choiceDependsOnResourceAbundance) {
+BOOST_AUTO_TEST_CASE(noChoiceButResourceAbundance) {
 
     // Situation where one resource is absent, there is no optimal choice and 
     // choice depends on resource abundance.
