@@ -81,6 +81,17 @@ BOOST_AUTO_TEST_CASE(errorWhenTradeOffIsNegative) {
     BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
 }
 
+// Test that error when abundance weight is not between zero and one
+BOOST_AUTO_TEST_CASE(errorWhenAbundanceWeightIsNotBetweenZeroAndOne) {
+
+    std::ofstream file;
+    file.open("parameters.txt");
+    file << "alpha -1\n";
+    file.close();
+
+    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+}
+
 // Test that error when choice accuracy is not between zero and one
 BOOST_AUTO_TEST_CASE(errorWhenAccuracyIsNotBetweenZeroAndOne) {
 
@@ -216,6 +227,18 @@ BOOST_AUTO_TEST_CASE(optimalChoice) {
 
     Individual ind(1.0, 0.0);
     ind.makeChoice(0.0, 1.0, 1.0);
+    BOOST_CHECK(ind.getChoice());
+
+}
+
+// Test that resource abundance weight directs random choice towards the most abundant resource
+BOOST_AUTO_TEST_CASE(choiceDependsOnResourceAbundance) {
+
+    // Situation where one resource is absent, there is no optimal choice and 
+    // choice depends on resource abundance.
+
+    Individual ind(1.0, 0.0);
+    ind.makeChoice(1.0, 0.0, 0.0, 1.0, 0.0, 1.0);
     BOOST_CHECK(ind.getChoice());
 
 }
