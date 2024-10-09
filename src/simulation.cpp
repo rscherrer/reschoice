@@ -125,9 +125,11 @@ int simulate(const std::vector<std::string> &args) {
 					assert(fit1 >= 0.0);
 					assert(fit2 >= 0.0);
 
-					// Record expected fitness difference and make the individual choose
+					// Record expected fitness difference
 					pop[ii].setDiff(fit2 - fit1);
-					pop[ii].makeChoice(fit1, fit2, pars.beta);
+
+					// Make the individual choose
+					pop[ii].makeChoice(fit1, fit2, resources[habitat][0u], resources[habitat][1u], pars.alpha, pars.beta);
 
 					// Read the choice that was made
 					const bool choice = pop[ii].getChoice();

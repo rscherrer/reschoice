@@ -27,14 +27,35 @@ void Individual::kill() { alive = false; }
 void Individual::isBorn() { alive = true; }
 
 // Function to set the resource choice
-void Individual::makeChoice(const double &fit1, const double &fit2, const double &beta) { 
-    
-    // Choose the best resource with a certain accuracy
-    const bool isAccurate = rnd::bernoulli(0.5 * (1.0 + beta))(rnd::rng);
-    choice = (fit2 > fit1) == isAccurate;
+void Individual::makeChoice(const double &fit1, const double &fit2, const double &beta, const double &alpha, const double &res1, const double &res2) { 
 
-    // Early exit
-    return;
+    // fit1, fit2: expected payoff for each resource
+    // beta: optimal choice parameter
+    // alpha: weight of resource abundance when choice is random
+    // res1, res2: contrentrations of both resources (before depletion)
+
+    // Concentration of the best resource
+    const double rbest = fit2 > fit1 ? res2 : res1;
+
+    // Baseline probability of choosing the best resource without choice
+    const double pbase = 0.5 * (1.0 - alpha) + alpha * rbest / (res1 + res2);
+
+    // Check
+    assert(pbase >= 0.0);
+    assert(pbase <= 1.0);
+
+    // Probability of choosing the best resource
+    const double prob = (1.0 - beta) * pbase + beta;
+
+    // Check
+    assert(prob >= 0.0);
+    assert(prob <= 1.0);
+
+    // Is the best resource chosen?
+    const bool isAccurate = rnd::bernoulli(prob)(rnd::rng);
+
+    // Make the choice
+    choice = (fit2 > fit1) == isAccurate;
     
 }
 

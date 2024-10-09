@@ -6,6 +6,7 @@ Parameters::Parameters() :
     popsize(10u),
     xstart(0.0),
     tradeoff(1.0),
+    alpha(0.0),
     beta(1.0),
     delta(1.0),
     hsymmetry(1.0),
@@ -63,6 +64,7 @@ void Parameters::import(std::ifstream &file)
         if (input == "popsize") file >> popsize;
         else if (input == "xstart") file >> xstart;
         else if (input == "tradeoff") file >> tradeoff;
+        else if (input == "alpha") file >> alpha;
         else if (input == "beta") file >> beta;
         else if (input == "delta") file >> delta;
         else if (input == "hsymmetry") file >> hsymmetry;
@@ -104,6 +106,7 @@ void Parameters::check() const
     // Check the validity of the supplied values
     if (popsize == 0u) throw std::runtime_error("Initial population size cannot be zero");
     if (tradeoff < 0.0) throw std::runtime_error("Trade-off cannot be negative");
+    if (alpha > 1.0 || alpha < 0.0) throw std::runtime_error("Resource abundance weight should be between zero and one");
     if (beta > 1.0 || beta < 0.0) throw std::runtime_error("Resource choice accuracy should be between zero and one");
     if (delta < 0.0) throw std::runtime_error("Resource discovery rate cannot be negative");
     if (hsymmetry < 0.0 || hsymmetry > 1.0) throw std::runtime_error("Habitat symmetry should be between zero and one");
@@ -135,6 +138,7 @@ void Parameters::write(std::ofstream &file) const
     file << "popsize " << popsize << '\n';
     file << "xstart " << xstart << '\n';
     file << "tradeoff " << tradeoff << '\n';
+    file << "alpha " << alpha << '\n';
     file << "beta " << beta << '\n';
     file << "delta " << delta << '\n';
     file << "hsymmetry " << hsymmetry << '\n';
