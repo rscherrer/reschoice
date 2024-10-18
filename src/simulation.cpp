@@ -10,6 +10,51 @@ auto burry = [](Individual ind) -> bool
     return !ind.isAlive();
 };
 
+// Function to compute the amount of resource discovered by a group of feeders
+double calcResourceDiscovered(const double &rtotal, const double &delta, const double &sumeffs) {
+
+	// rtotal: total amount of resource in the habitat
+	// delta: resource discovery rate
+	// sumeffs: cumulative consumption rate of the feeders
+
+	// Check
+	assert(rtotal >= 0.0);
+	assert(delta >= 0.0);
+	assert(sumeffs >= 0.0);
+
+	// Early exit in case of zero (avoid unnecessary exponential)
+	if (!sumeffs || !delta || !rtotal) return 0.0;
+
+	// Compute the saturating curve
+	return rtotal * (1.0 - exp(-delta * sumeffs));
+
+}
+
+// Function to compute estimated fitness of an individual
+double calcFitness(const double &rdiscov, const double &eff, const double &sumeffs, const size_t &n) {
+
+	// rdiscov: amount of resource discovered
+	// eff: consumption efficiency of the focal individual
+	// sumeffs: cumulative consumption rate of all the feeders (incl. focal individual)
+	// n: number of feeders (only used if sumeffs is zero)
+
+	// Check
+	assert(rdiscov >= 0.0);
+	assert(eff >= 0.0);
+	assert(sumeffs >= eff);
+
+	// Special case if cumulative consumption rate (denominator) is zero
+	if (!sumeffs) return n ? rdiscov * 1.0 / n : 0.0;
+
+	// Note: if there are feeders but all with consumption rate of zero, they
+	// split the resource equally. Fitness is only zero if the reason why the
+	// cumulative rate is zero is that there are no feeders.
+
+	// Compute fitness
+	return rdiscov * eff / sumeffs;
+
+}
+
 // Simulation function
 int simulate(const std::vector<std::string> &args) {
 
@@ -117,9 +162,29 @@ int simulate(const std::vector<std::string> &args) {
 					// Get feeding efficiency on each resource
 					const std::vector<double> effs({ pop[ii].getEff1(), pop[ii].getEff2() });
 
-					// Compute expected fitness on each resource in the individual's habitat
-					const double fit1 = resources[habitat][0u] * effs[0u] / (sumeffs[habitat][0u] + 1.0 / pars.delta - 1.0);
-					const double fit2 = resources[habitat][1u] * effs[1u] / (sumeffs[habitat][1u] + 1.0 / pars.delta - 1.0);
+					// Compute the cumulative consumption rates so far on each resource (incl. focal individual)		
+					const double cumul1 = sumeffs[habitat][0u] + effs[0u];
+					const double cumul2 = sumeffs[habitat][1u] + effs[1u];
+
+					// Check
+					assert(cumul1 >= effs[0u]);
+					assert(cumul2 >= effs[1u]);
+
+					// Compute the amount of resource discovered for each resource
+					const double discov1 = calcResourceDiscovered(resources[habitat][0u], pars.delta, cumul1);
+					const double discov2 = calcResourceDiscovered(resources[habitat][1u], pars.delta, cumul2);
+
+					// Check
+					assert(discov1 >= 0.0);
+					assert(discov2 >= 0.0);
+
+					// Check that the resource discovery function is indeed saturating
+					assert(discov1 <= resources[habitat][0u]);
+					assert(discov2 <= resources[habitat][1u]);
+
+					// Compute expected fitness on each resource (special case when denominator is zero)
+					const double fit1 = calcFitness(discov1, effs[0u], cumul1, n[habitat][0u] + 1u);
+					const double fit2 = calcFitness(discov2, effs[1u], cumul2, n[habitat][1u] + 1u);
 
 					// Check that expected fitnesses are above zero
 					assert(fit1 >= 0.0);

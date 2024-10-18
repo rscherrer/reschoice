@@ -8,6 +8,10 @@
 #include <cmath>
 #include <cassert>
 
+// Accessory functions
+double calcBaselineProb(const double&, const double&, const double&);
+double calcProbBest(const double&, const double&);
+
 class Individual {
 
 public:

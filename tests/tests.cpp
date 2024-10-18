@@ -222,6 +222,34 @@ BOOST_AUTO_TEST_CASE(individualIsDeadAfterBeingKilled) {
 
 }
 
+// Test baseline choice probability
+BOOST_AUTO_TEST_CASE(baselineProbability) {
+
+    // Fifty fifty when resource abundance has no weight 
+    BOOST_CHECK_EQUAL(calcBaselineProb(1.0, 1.1, 0.0), 0.5);
+
+    // Relative resource proportion when full weight
+    BOOST_CHECK_EQUAL(calcBaselineProb(1.0, 1.1, 1.0), 1.0 / 1.1);
+
+    // In between 
+    BOOST_CHECK_EQUAL(calcBaselineProb(1.0, 1.0, 0.5), 0.75);
+
+}
+
+// Test probability of choosing the best resource
+BOOST_AUTO_TEST_CASE(probBestResource) {
+
+    // Equal to the baseline probability in the absence of choice
+    BOOST_CHECK_EQUAL(calcProbBest(0.8, 0.0), 0.8);
+
+    // Equal to one with full choice
+    BOOST_CHECK_EQUAL(calcProbBest(0.8, 1.0), 1.0);
+
+    // In between
+    BOOST_CHECK_EQUAL(calcProbBest(0.8, 0.5), 0.9);
+
+}
+
 // Test when choice is optimal
 BOOST_AUTO_TEST_CASE(optimalChoice) {
 
@@ -294,6 +322,46 @@ BOOST_AUTO_TEST_CASE(rankAssignment) {
     BOOST_CHECK(!ind.getRank());
     ind.setRank(30u);
     BOOST_CHECK_EQUAL(ind.getRank(), 30u);
+
+}
+
+// Test resource discovery
+BOOST_AUTO_TEST_CASE(resourceDiscovery) {
+
+    // No resource discovered if the curve is flat (delta is zero)
+    BOOST_CHECK_EQUAL(calcResourceDiscovered(1.0, 0.0, 100.0), 0.0);
+
+    // No resource discovered if no feeding happening
+    BOOST_CHECK_EQUAL(calcResourceDiscovered(1.0, 1.0, 0.0), 0.0);
+
+    // Indistinguishable from saturated when the slope is very high
+    BOOST_CHECK_EQUAL(calcResourceDiscovered(1.0, 1000000.0, 100.0), 1.0);
+
+}
+
+// Test fitness
+BOOST_AUTO_TEST_CASE(fitnessCalculation) {
+
+    // No resource, no fitness
+    BOOST_CHECK_EQUAL(calcFitness(0.0, 1.0, 1.0), 0.0);
+
+    // One gets all
+    BOOST_CHECK_EQUAL(calcFitness(1.0, 1.0, 1.0), 1.0);
+
+    // One gets one tenth of the resource
+    BOOST_CHECK_EQUAL(calcFitness(1.0, 1.0, 10.0), 0.1);
+
+    // One gets nothing if infinitely worse than everyone else
+    BOOST_CHECK_EQUAL(calcFitness(1.0, 0.0, 10.0), 0.0);
+
+    // No feeders, no fitness
+    BOOST_CHECK_EQUAL(calcFitness(1.0, 0.0, 0.0, 0u), 0.0);
+
+    // One gets all if no consumption but no-one else
+    BOOST_CHECK_EQUAL(calcFitness(1.0, 0.0, 0.0, 1u), 1.0);
+
+    // Equal share if everybody has zero consumption
+    BOOST_CHECK_EQUAL(calcFitness(1.0, 0.0, 0.0, 10u), 0.1);
 
 }
 
