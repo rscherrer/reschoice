@@ -36,6 +36,7 @@ xstart -1
 tradeoff 1
 beta 1
 delta 1
+alpha 0
 resource 100
 hsymmetry 1
 nrounds 10
