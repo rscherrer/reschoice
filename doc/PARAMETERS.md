@@ -10,7 +10,7 @@
 | delta | Resource discovery rate | 1 | A parameter scaling the degree of soft versus hard selection |
 | hsymmetry | Habitat symmetry | 1 | The degree of symmetry in resource distribution between the two habitats |
 | nrounds | Number of feeding rounds | 10 | Number of feeding rounds in a feeding season |
-| mutrate | Mutation rate | 0.0001 | Per individual |
+| mutrate | Mutation rate | 0.001 | Per individual |
 | mutsdev | Mutational standard deviation | 0.02 | Standard deviation of the normal distribution mutations are sampled from |
 | dispersal | Dispersal rate | 0.1 | Chances that an individual disperses to the opposite habitat |
 | tend | Simulation time | 100 | Number of time steps in a simulation |
