@@ -68,7 +68,7 @@ void Individual::makeChoice(const double &fit1, const double &fit2, const double
     // fit1, fit2: expected payoff for each resource
     // beta: optimal choice parameter
     // alpha: weight of resource abundance when choice is random
-    // res1, res2: contrentrations of both resources (before depletion)
+    // res1, res2: total contrentrations of both resources
 
     // Concentration of the best resource
     const double rbest = fit2 > fit1 ? res2 : res1;
