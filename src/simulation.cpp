@@ -194,7 +194,7 @@ int simulate(const std::vector<std::string> &args) {
 					pop[ii].setDiff(fit2 - fit1);
 
 					// Make the individual choose
-					pop[ii].makeChoice(fit1, fit2, resources[habitat][0u], resources[habitat][1u], pars.alpha, pars.beta);
+					pop[ii].makeChoice(fit1, fit2, pars.alpha, pars.beta, resources[habitat][0u], resources[habitat][1u]);
 
 					// Read the choice that was made
 					const bool choice = pop[ii].getChoice();
