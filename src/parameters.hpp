@@ -42,6 +42,7 @@ struct Parameters {
     bool savelog;        // whether to redirect screen output to a log file
     bool talkative;      // whether to output to screen
     size_t whattosave;   // code for which variables to save
+    size_t nbytes;       // how many bytes of data to store before writing
 
 };
 

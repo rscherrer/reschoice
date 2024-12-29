@@ -20,7 +20,8 @@ Parameters::Parameters() :
     savepars(true),
     savelog(false),
     talkative(false),
-    whattosave(1u)
+    whattosave(1u),
+    nbytes(0u)
 {
     // Make sure parameter values make sense
     check();
@@ -79,6 +80,7 @@ void Parameters::import(std::ifstream &file)
         else if (input == "savelog") file >> savelog;
         else if (input == "talkative") file >> talkative;
         else if (input == "whattosave") file >> whattosave;
+        else if (input == "nbytes") file >> nbytes;
         else
             throw std::runtime_error("Invalid parameter name: " + input);
 
@@ -153,5 +155,6 @@ void Parameters::write(std::ofstream &file) const
     file << "savelog " << savelog << '\n';
     file << "talkative " << talkative << '\n';
     file << "whattosave " << whattosave << '\n';
+    file << "nbytes " << nbytes << '\n';
 
 }

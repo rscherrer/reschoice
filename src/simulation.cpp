@@ -338,6 +338,12 @@ int simulate(const std::vector<std::string> &args) {
 			// Make sure population size has not changed
 			assert(pop.size() == pars.popsize);
 
+			// Is it time to write to file?
+			const bool timeToFlush = print.size > pars.nbytes;
+
+			// Flush all the stored data to files if needed
+			if (timeToFlush) print.flush();
+
 		}
 
 		// Screen output
@@ -345,6 +351,9 @@ int simulate(const std::vector<std::string> &args) {
 
 		// Close the log file if needed
 		if (pars.savelog) std::fclose(stdout);
+
+		// Flush the buffers one last time
+		print.flush();
 
 		// Close output file streams
         print.close();

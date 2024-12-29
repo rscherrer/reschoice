@@ -469,6 +469,7 @@ BOOST_AUTO_TEST_CASE(printerSavesProperly) {
 
     Printer print(1u);
     print.save(123u, 0u);
+    print.flush();
     print.close();
     std::vector<double_t> timepoints = readBinary<double>("time.dat");
     BOOST_CHECK_EQUAL(timepoints.size(), 1u);

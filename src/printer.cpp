@@ -28,9 +28,14 @@ std::vector<std::string> defaultFileNames() {
 
 // Constructor
 Printer::Printer(size_t wts) :
+    size(0u),
     fnames(defaultFileNames()),
-    streams(std::vector<std::ofstream>(fnames.size()))
+    buffers(fnames.size()),
+    streams(fnames.size())
 {
+
+    // Make sure there are as many buffers as output files
+    assert(buffers.size() == streams.size());
 
     // For each output file stream...
     for (size_t i = 0u; i < streams.size(); ++i) {
@@ -61,10 +66,34 @@ Printer::Printer(size_t wts) :
     }
 }
 
+// Function to flush the buffers and write to file
+void Printer::flush() {
+
+    // For each output file
+    for (size_t i = 0u; i < streams.size(); ++i) {
+
+        // If the file is open...
+        if (streams[i].is_open()) {
+
+            // Flush the buffer into the file
+            for (double x : buffers[i])
+                streams[i].write((char *) &x, sizeof(double));
+                
+        }
+
+        // Clear the buffer
+        buffers[i].clear();
+
+        // Reset the size tracker
+        size = 0u;
+
+    }
+}
+
 // Function to close all the file streams
 void Printer::close() {
 
-    for (size_t f = 0u; f < streams.size(); ++f)
-        streams[f].close();
+    for (size_t i = 0u; i < streams.size(); ++i)
+        streams[i].close();
 
 }
