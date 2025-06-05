@@ -1,43 +1,60 @@
 #ifndef RESCHOICE_PRINTER_HPP
 #define RESCHOICE_PRINTER_HPP
 
-// This is the header for the Printer class.
+// This header is for the Printer class, which saves data to output files
+// by means of buffers.
 
-#include <fstream>
-#include <vector>
-#include <memory>
-#include <cassert>
+#include "buffer.hpp"
 
-struct Printer 
-{
+#include <unordered_map>
+#include <optional>
+#include <cmath>
 
-    Printer(size_t);
+namespace prt {
 
-    template <typename T> void save(const T&, const size_t&);
+    // Utility functions
+    size_t memtosize(const double&, const double&);
+
+}
+
+class Printer {
+
+public:
+
+    // Constructor
+    Printer(const std::vector<std::string>&, const double& = 1.0);
+
+    // Setters
+    void read(const std::string&);
+    void open();
     void close();
 
-    std::vector<std::string> fnames;
-    std::vector<std::ofstream> streams;
+    // Buffer setters
+    void save(const std::string&, const double&);
+
+    // Getters
+    bool ison();
+
+    // Buffer getters
+    bool exists(const std::string&);
+    bool isopen(const std::string&);
+    size_t capacity(const std::string&);
+
+private:
+
+    // Buffer size (in number of values)
+    size_t memory;
+
+    // Output variable names
+    std::vector<std::string> outputs;
+
+    // Valid names
+    std::vector<std::string> valids;
+
+    // Data buffers
+    std::unordered_map<std::string, std::optional<Buffer> > buffers;
 
 };
-
-// Function to save a value to output file (defined here because template function)
-template <typename T> void Printer::save(const T &x, const size_t &i) {
-
-    // Make sure we are not out of bounds
-    assert(i < streams.size());
-
-    // If the corresponding stream is open...
-    if (streams[i].is_open()) {
-
-        // Convert the value into a double
-        const double x_ = static_cast<double>(x);
-
-        // Write it to the file
-        streams[i].write((char *) &x_, sizeof(double));
-
-    }
-}
 
 #endif
 

@@ -11,20 +11,13 @@ Individual::Individual(const double &xval, const double &tradeoff) :
     habitat(false),
     ecotype(false),
     choice(false),
-    rank(0u),
-    alive(true)
+    rank(0u)
 {
 
     // Update feeding efficiencies
     develop(tradeoff);
 
 }
-
-// Function to kill an individual
-void Individual::kill() { alive = false; }
-
-// Function to make sure an individual is alive
-void Individual::isBorn() { alive = true; }
 
 // Function to calculate baseline probability
 double calcBaselineProb(const double &rbest, const double &rboth, const double &alpha) {
@@ -157,4 +150,3 @@ bool Individual::getHabitat() const { return habitat; }
 bool Individual::getEcotype() const { return ecotype; }
 bool Individual::getChoice() const { return choice; }
 size_t Individual::getRank() const { return rank; }
-bool Individual::isAlive() const { return alive; }
