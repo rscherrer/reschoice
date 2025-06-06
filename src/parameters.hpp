@@ -6,6 +6,7 @@
 // the program with a parameter file name as unique argument.
 
 #include "random.hpp"
+#include "reader.hpp"
 #include <fstream>
 #include <iostream>
 #include <chrono>
@@ -13,15 +14,13 @@
 
 struct Parameters {
 
-    Parameters();
+    // Constructor
+    Parameters(const std::string& = "");
 
-    void read(const std::string&);
-    void update();
-    void import(std::ifstream&);
-    void write(std::ofstream&) const;
-    void save() const;
+    // Functions
     void check() const;
-    size_t makeDefaultSeed();
+    void read(const std::string&);
+    void save(const std::string&) const;
 
     // Parameters
     size_t popsize;      // fixed population size
@@ -39,9 +38,10 @@ struct Parameters {
     size_t tsave;        // recording time
     size_t seed;         // seed for the random number generator
     bool savepars;       // whether to save parameters into a file
-    bool savelog;        // whether to redirect screen output to a log file
-    bool talkative;      // whether to output to screen
-    size_t whattosave;   // code for which variables to save
+    bool savedat;        // whether to save output data into files
+    bool verbose;        // whether to output to screen
+    bool choose;         // whether to choose the variables to save
+    double memsave;      // memory used for data storage (in MB)
 
 };
 

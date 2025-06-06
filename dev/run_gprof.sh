@@ -24,15 +24,12 @@ cd "$BIN_DIR"
 # Create the parameters.txt file
 PARAM_FILE="parameters.txt"
 cat > "$PARAM_FILE" <<EOL
-tend 100
+tend 10000
 tsave 10
 verbose 1
 savedat 1
-nloci 1000
-mutation 0.001
-pgood 1 1
-pgoodEnd 1
-effect 0.000000001
+popsize 1000
+nrounds 10
 savepars 1
 EOL
 echo "Created parameter file: $PARAM_FILE"
@@ -41,7 +38,7 @@ echo "Created parameter file: $PARAM_FILE"
 SECONDS=0
 
 # Run the program with the parameter file to generate gmon.out
-./brachypode "$PARAM_FILE"
+./reschoice "$PARAM_FILE"
 
 # Stop the timer and print the elapsed time
 ELAPSED_TIME=$SECONDS
@@ -51,7 +48,7 @@ echo "Program execution time: $ELAPSED_TIME seconds"
 mv gmon.out "../$GPROF_DIR/"
 
 # Generate the profiling report and save it in the gprof directory
-gprof brachypode "../$GPROF_DIR/gmon.out" > "../$GPROF_DIR/report.txt"
+gprof reschoice "../$GPROF_DIR/gmon.out" > "../$GPROF_DIR/report.txt"
 
 # Display the profiling report
 less "../$GPROF_DIR/report.txt"

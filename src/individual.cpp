@@ -11,8 +11,7 @@ Individual::Individual(const double &xval, const double &tradeoff) :
     habitat(false),
     ecotype(false),
     choice(false),
-    rank(0u),
-    alive(true)
+    rank(0u)
 {
 
     // Update feeding efficiencies
@@ -20,14 +19,8 @@ Individual::Individual(const double &xval, const double &tradeoff) :
 
 }
 
-// Function to kill an individual
-void Individual::kill() { alive = false; }
-
-// Function to make sure an individual is alive
-void Individual::isBorn() { alive = true; }
-
 // Function to calculate baseline probability
-double calcBaselineProb(const double &rbest, const double &rboth, const double &alpha) {
+double ind::probbase(const double &rbest, const double &rboth, const double &alpha) {
 
     // rbest: amount of the best resource
     // rboth: sum of both resources
@@ -46,7 +39,7 @@ double calcBaselineProb(const double &rbest, const double &rboth, const double &
 }
 
 // Function to calculate the probability of choosing the best resource
-double calcProbBest(const double &pbase, const double &beta) {
+double ind::probbest(const double &pbase, const double &beta) {
 
     // pbase: baseline probability in the absence of choice
     // beta: resource choice parameter
@@ -74,14 +67,14 @@ void Individual::makeChoice(const double &fit1, const double &fit2, const double
     const double rbest = fit2 > fit1 ? res2 : res1;
 
     // Baseline probability of choosing the best resource without choice
-    const double pbase = calcBaselineProb(rbest, res1 + res2, alpha);
+    const double pbase = ind::probbase(rbest, res1 + res2, alpha);
 
     // Check
     assert(pbase >= 0.0);
     assert(pbase <= 1.0);
 
     // Probability of choosing the best resource
-    const double prob = calcProbBest(pbase, beta);
+    const double prob = ind::probbest(pbase, beta);
 
     // Check
     assert(prob >= 0.0);
@@ -157,4 +150,3 @@ bool Individual::getHabitat() const { return habitat; }
 bool Individual::getEcotype() const { return ecotype; }
 bool Individual::getChoice() const { return choice; }
 size_t Individual::getRank() const { return rank; }
-bool Individual::isAlive() const { return alive; }

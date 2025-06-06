@@ -1,540 +1,230 @@
 #define BOOST_TEST_DYNAMIC_LINK
 #define BOOST_TEST_MODULE Main
 
-// On QtCreator:
-// #define BOOST_TEST_DYN_LINK
+// Here we test all the uses and misuses of the program. These mostly have to
+// with calling the program, passing arguments, reading from and writing to
+// files, and error handling.
 
-#include "../src/simulation.hpp"
+#include "testutils.hpp"
+#include "../src/MAIN.hpp"
 #include <boost/test/unit_test.hpp>
 
 // Test that the simulation runs
 BOOST_AUTO_TEST_CASE(useCase) {
 
-    // Check that the main simulation function works
-    BOOST_CHECK_EQUAL(simulate({"program_name"}), 0);
-
-}
-
-// Test that it works when a parameter file is supplied
-BOOST_AUTO_TEST_CASE(runWithParameterFile) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "popsize 10\n";
-    file << "tradeoff 1\n";
-    file << "beta 1\n";
-    file << "delta 1\n";
-    file << "nrounds 10\n";
-    file << "mutrate 0.0001\n";
-    file << "mutsdev 0.02\n";
-    file << "tend 100\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 0);
+    // Check that the program runs
+    BOOST_CHECK_NO_THROW(doMain({"program"}));
 
 }
 
 // Test that it fails when too many arguments are provided
-BOOST_AUTO_TEST_CASE(tooManyArgs) {
+BOOST_AUTO_TEST_CASE(abuseTooManyArgs) {
 
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameter.txt", "onetoomany.txt"}), 1);
-
-}
-
-// Test that it fails if the parameter file name is invalid
-BOOST_AUTO_TEST_CASE(invalidFileName) {
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "paraaameters.txt"}), 1);
+    // Check error
+    tst::checkError([&] { 
+        doMain({"program", "parameter.txt", "onetoomany.txt"});
+    }, "Too many arguments provided");
 
 }
 
-// Should error when invalid parameter name
-BOOST_AUTO_TEST_CASE(errorWhenInvalidParameterName) {
+// Test that the simulation runs with a parameter file
+BOOST_AUTO_TEST_CASE(useCaseWithParameterFile) {
 
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "ahdggfhsgdhs 0\n";
-    file.close();
+    // Write a parameter file
+    tst::write("parameters.txt", "popsize 9");
 
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
+    // Check that the program runs
+    BOOST_CHECK_NO_THROW(doMain({"program", "parameters.txt"}));
 
-// Test that error when fixed population size is zero
-BOOST_AUTO_TEST_CASE(errorWhenPopSizeIsZero) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "popsize 0\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
-
-// Test that error when tradeoff is negative
-BOOST_AUTO_TEST_CASE(errorWhenTradeOffIsNegative) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "tradeoff -1\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
-
-// Test that error when abundance weight is not between zero and one
-BOOST_AUTO_TEST_CASE(errorWhenAbundanceWeightIsNotBetweenZeroAndOne) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "alpha -1\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
-
-// Test that error when choice accuracy is not between zero and one
-BOOST_AUTO_TEST_CASE(errorWhenAccuracyIsNotBetweenZeroAndOne) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "beta -1\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
-
-// Test that error when discovery rate is negative
-BOOST_AUTO_TEST_CASE(errorWhenDiscoveryRateIsNegative) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "delta -1\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
-
-// Test that error when resource amount is negative
-BOOST_AUTO_TEST_CASE(errorWhenResourceAmountIsNegative) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "resource -1\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
-
-// Test that error when zero feeding rounds
-BOOST_AUTO_TEST_CASE(errorWhenZeroFeedingRounds) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "nrounds 0\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
-
-// Test that error when mutation rate is not between zero and one
-BOOST_AUTO_TEST_CASE(errorWhenMutationRateIsNotBetweenZeroAndOne) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "mutrate -1\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
-
-// Test that error when mutational standard deviation is negative
-BOOST_AUTO_TEST_CASE(errorWhenMutationalStandardDeviationIsNegative) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "mutsdev -1\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
-
-// Test that error when dispersal rate is negative
-BOOST_AUTO_TEST_CASE(errorWhenDispersalIsNegative) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "dispersal -1\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
-
-// Test that error when habitat symmetry is negative
-BOOST_AUTO_TEST_CASE(errorWhenHabitatSymmetryIsNegative) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "hsymmetry -1\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
+    // Cleanup
+    std::remove("parameters.txt");
 
 }
 
-// Test that error when simulation time is zero
-BOOST_AUTO_TEST_CASE(errorWhenSimulationTimeIsZero) {
+// Test that error when invalid parameter file
+BOOST_AUTO_TEST_CASE(abuseInvalidParameterFile) {
 
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "tend 0\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
-
-
-// Test that error when saving frequency is zero
-BOOST_AUTO_TEST_CASE(errorWhenSavingFrequencyIsZero) {
-
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "tsave 0\n";
-    file.close();
-
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 1);
-}
-
-
-// Test that an individual is initialized properly
-BOOST_AUTO_TEST_CASE(individualInitialization) {
-
-    Individual ind(1.0, 0.0);
-    BOOST_CHECK(ind.isAlive());
+    // Check error
+    tst::checkError([&] {
+        doMain({"program", "nonexistent.txt"});
+    }, "Unable to open file nonexistent.txt");
 
 }
 
-// Test that an individual is dead after we kill it
-BOOST_AUTO_TEST_CASE(individualIsDeadAfterBeingKilled) {
-
-    Individual ind(1.0, 0.0);
-    ind.kill();
-    BOOST_CHECK(!ind.isAlive());
-
-}
-
-// Test baseline choice probability
-BOOST_AUTO_TEST_CASE(baselineProbability) {
-
-    // Fifty fifty when resource abundance has no weight 
-    BOOST_CHECK_EQUAL(calcBaselineProb(1.0, 1.1, 0.0), 0.5);
-
-    // Relative resource proportion when full weight
-    BOOST_CHECK_EQUAL(calcBaselineProb(1.0, 1.1, 1.0), 1.0 / 1.1);
-
-    // In between 
-    BOOST_CHECK_EQUAL(calcBaselineProb(1.0, 1.0, 0.5), 0.75);
-
-}
-
-// Test probability of choosing the best resource
-BOOST_AUTO_TEST_CASE(probBestResource) {
-
-    // Equal to the baseline probability in the absence of choice
-    BOOST_CHECK_EQUAL(calcProbBest(0.8, 0.0), 0.8);
-
-    // Equal to one with full choice
-    BOOST_CHECK_EQUAL(calcProbBest(0.8, 1.0), 1.0);
-
-    // In between
-    BOOST_CHECK_EQUAL(calcProbBest(0.8, 0.5), 0.9);
-
-}
-
-// Test when choice is optimal
-BOOST_AUTO_TEST_CASE(optimalChoice) {
-
-    Individual ind(1.0, 0.0);
-    ind.makeChoice(0.0, 1.0, 1.0);
-    BOOST_CHECK(ind.getChoice());
-
-}
-
-// Even when baseline choice depends on resource abundance
-BOOST_AUTO_TEST_CASE(optimalChoiceWithResourceAbundance) {
-
-    // Create a situation where one resource is almost absent but the
-    // other is actually more advantageous.
-
-    Individual ind(1.0, 0.0);
-    ind.makeChoice(0.0, 1.0, 1.0, 1.0, 1.0, 0.1);
-    BOOST_CHECK(ind.getChoice());
-
-}
-
-// Test that resource abundance weight directs random choice towards the most abundant resource
-BOOST_AUTO_TEST_CASE(noChoiceButResourceAbundance) {
-
-    // Situation where one resource is absent, there is no optimal choice and 
-    // choice depends on resource abundance.
-
-    Individual ind(1.0, 0.0);
-    ind.makeChoice(1.0, 0.0, 0.0, 1.0, 0.0, 1.0);
-    BOOST_CHECK(ind.getChoice());
-
-}
-
-// Test birth
-BOOST_AUTO_TEST_CASE(birth) {
-
-    Individual ind(1.0, 0.0);
-    ind.kill();
-    BOOST_CHECK(!ind.isAlive());
-    ind.isBorn();
-    BOOST_CHECK(ind.isAlive());
-
-}
-
-// Test mutation
-BOOST_AUTO_TEST_CASE(mutation) {
-
-    Individual ind(0.0, 0.0);
-    ind.mutate(0.01, 1.0);
-    BOOST_CHECK_EQUAL(ind.getX(), 0.01);
-    ind.mutate(-0.02, 1.0);
-    BOOST_CHECK_EQUAL(ind.getX(), -0.01);
-
-}
-
-// Test dispersal
-BOOST_AUTO_TEST_CASE(dispersal) {
-
-    Individual ind(1.0, 0.0);
-    BOOST_CHECK(!ind.getHabitat());
-    ind.disperse();
-    BOOST_CHECK(ind.getHabitat());
-
-}
-
-// Test rank assignment
-BOOST_AUTO_TEST_CASE(rankAssignment) {
-
-    Individual ind(1.0, 0.0);
-    BOOST_CHECK(!ind.getRank());
-    ind.setRank(30u);
-    BOOST_CHECK_EQUAL(ind.getRank(), 30u);
-
-}
-
-// Test resource discovery
-BOOST_AUTO_TEST_CASE(resourceDiscovery) {
-
-    // No resource discovered if the curve is flat (delta is zero)
-    BOOST_CHECK_EQUAL(calcResourceDiscovered(1.0, 0.0, 100.0), 0.0);
-
-    // No resource discovered if no feeding happening
-    BOOST_CHECK_EQUAL(calcResourceDiscovered(1.0, 1.0, 0.0), 0.0);
-
-    // Indistinguishable from saturated when the slope is very high
-    BOOST_CHECK_EQUAL(calcResourceDiscovered(1.0, 1000000.0, 100.0), 1.0);
-
-}
-
-// Test fitness
-BOOST_AUTO_TEST_CASE(fitnessCalculation) {
-
-    // No resource, no fitness
-    BOOST_CHECK_EQUAL(calcFitness(0.0, 1.0, 1.0), 0.0);
-
-    // One gets all
-    BOOST_CHECK_EQUAL(calcFitness(1.0, 1.0, 1.0), 1.0);
-
-    // One gets one tenth of the resource
-    BOOST_CHECK_EQUAL(calcFitness(1.0, 1.0, 10.0), 0.1);
-
-    // One gets nothing if infinitely worse than everyone else
-    BOOST_CHECK_EQUAL(calcFitness(1.0, 0.0, 10.0), 0.0);
-
-    // No feeders, no fitness
-    BOOST_CHECK_EQUAL(calcFitness(1.0, 0.0, 0.0, 0u), 0.0);
-
-    // One gets all if no consumption but no-one else
-    BOOST_CHECK_EQUAL(calcFitness(1.0, 0.0, 0.0, 1u), 1.0);
-
-    // Equal share if everybody has zero consumption
-    BOOST_CHECK_EQUAL(calcFitness(1.0, 0.0, 0.0, 10u), 0.1);
-
-}
-
-// Test printer setup
-BOOST_AUTO_TEST_CASE(printerSetUp) {
-
-    // Only time.dat should be open
-    Printer print(1u);
-    BOOST_CHECK(print.streams[0u].is_open());
-    BOOST_CHECK(!print.streams[1u].is_open());
-
-}
-
-// Closing of the streams works
-BOOST_AUTO_TEST_CASE(streamClosure) {
-
-    Printer print(1u);
-    BOOST_CHECK(print.streams[0u].is_open());
-    print.close();
-    BOOST_CHECK(!print.streams[0u].is_open());
-
-}
-
-// Ecological isolation is correctly calculated
-BOOST_AUTO_TEST_CASE(ecologicalIsolationIsCorrectlCalculated) {
-
-    BOOST_CHECK_EQUAL(als::getEI({{2u, 2u}, {0u, 0u}}, {{-2.0, 2.0}, {0.0, 0.0}}, {{2.0, 2.0}, {0.0, 0.0}}), 1.0);
-    BOOST_CHECK_EQUAL(als::getEI({{2u, 0u}, {0u, 0u}}, {{-2.0, 0.0}, {0.0, 0.0}}, {{2.0, 0.0}, {0.0, 0.0}}), 0.0);
-
-}
-
-// Spatial isolation is correctly calculated
-BOOST_AUTO_TEST_CASE(spatialIsolationIsCorrectlyCalculated) {
-
-    BOOST_CHECK_EQUAL(als::getSI({{1u, 0u}, {0u, 1u}}), 1.0);
-    BOOST_CHECK_EQUAL(als::getSI({{1u, 1u}, {1u, 1u}}), 0.0);
-    BOOST_CHECK_EQUAL(als::getSI({{1u, 1u}, {0u, 0u}}), 0.0);
-
-}
-
-// Test that parameters are saved properly
-BOOST_AUTO_TEST_CASE(paramSavedProperly) {
-
-    // Prepare a parameter file
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "savepars 1\n";
-    file.close();
-
-    // First run where we save the parameters
-    BOOST_CHECK_EQUAL(simulate({"program_name", "parameters.txt"}), 0);
-
-    // Second run where we provide the saved parameters from the first one
-    BOOST_CHECK_EQUAL(simulate({"program_name", "paramlog.txt"}), 0);
-
-    // Check the seed was saved too
-    std::ifstream infile;
-    infile.open("paramlog.txt");
-    std::string input;
-    size_t seed = 0u;
-    while (infile >> input) if (input == "seed") infile >> seed;
-    infile.close();
-
-    BOOST_CHECK(seed > 0u); // check that a random (nonzero) seed was saved
-
-}
-
-// Function to read in a binary output data file
-template <typename T> std::vector<T> readBinary(const std::string &filename)
-{
-    // Open the input file
-    std::ifstream file(filename.c_str(), std::ios::in | std::ios::binary);
-
-    // Prepare storage for values
-    T x;
-    std::vector<T> v;
-
-    // If the file is open
-    if (file.is_open()) {
-
-        // Loop through the file until we reach the end of the file
-        while(file) {
-
-            // Read elements
-            file.read((char *) &x, sizeof(T));
-
-            // Exit if reaching the end of the file
-            if (!file.gcount()) break;
-
-            // Store elements
-            v.push_back(x);
-
-        }
-    }
-
-    // Close the file
-    file.close();
-
-    return v;
-
-}
-
-// Printer saves properly
-BOOST_AUTO_TEST_CASE(printerSavesProperly) {
-
-    Printer print(1u);
-    print.save(123u, 0u);
-    print.close();
-    std::vector<double_t> timepoints = readBinary<double>("time.dat");
-    BOOST_CHECK_EQUAL(timepoints.size(), 1u);
-    BOOST_CHECK_EQUAL(timepoints[0u], 123.0);
-
-}
-
-// Test that output data are correctly written
-BOOST_AUTO_TEST_CASE(outputDataAreCorrectlyWritten) {
-
-    // Set up parameters with a known frequency of recording the data
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "tend 10\n";
-    file << "tsave 1\n";
-    file.close();
+// Test that it works when saving the parameters
+BOOST_AUTO_TEST_CASE(useCaseWithParameterSaving) {
+
+    // Write a parameter file specifying to save parameters
+    tst::write("parameters.txt", "savepars 1");
 
     // Run a simulation
-    simulate({"program_name", "parameters.txt"});
+    doMain({"program", "parameters.txt"});
 
-    // Read back one saved output data file
-    std::vector<size_t> timepoints = readBinary<size_t>("time.dat");
+    // Read the saved parameters
+    Parameters pars1("paramlog.txt");
 
-    // Check the right number of entries have been saved
-    BOOST_CHECK_EQUAL(timepoints.size(), 11u);
+    // Rerun the simulation with the saved parameters
+    doMain({"program", "paramlog.txt"});
 
-    // Now change the number of entries to save
-    file.open("parameters.txt");
-    file << "tend 10\n";
-    file << "tsave 5\n";
-    file.close();
+    // Read the overwritten parameters
+    Parameters pars2("paramlog.txt");
 
-    // Re-simulate
-    simulate({"program_name", "parameters.txt"});
+    // Check that the (clock-generated) seed is the same
+    BOOST_CHECK_EQUAL(pars1.seed, pars2.seed);
 
-    // Read the new data back
-    std::vector<size_t> newtimepoints = readBinary<size_t>("time.dat");
-
-    // Check the new data does not have the same number of entries
-    BOOST_CHECK(newtimepoints.size() < timepoints.size());
-    BOOST_CHECK_EQUAL(newtimepoints.size(), 3u);
+    // Cleanup
+    std::remove("parameters.txt");
+    std::remove("paramlog.txt");
 
 }
 
-// Test that providing a file with what to save works
-BOOST_AUTO_TEST_CASE(whatToSaveWorks) {
+// Test that it works when the user can choose which data to save
+BOOST_AUTO_TEST_CASE(useCaseUserDefinedOutput) {
 
-    // Create parameters
-    std::ofstream file;
-    file.open("parameters.txt");
-    file << "tend 10\n";
-    file << "tsave 2\n";
-    file << "whattosave 24577\n"; // 110000000000001 should only save time, EI and SI
-    file.close();
+    // Write an output request file
+    tst::write("whattosave.txt", "time");
 
-    // Simulate
-    simulate({"program_name", "parameters.txt"});
+    // Write a parameter file
+    tst::write("parameters.txt", "savedat 1\nchoose 1\ntend 10\ntsave 1");
 
-    // Read back
-    std::vector<size_t> timepoints = readBinary<size_t>("time.dat");
-    std::vector<double> EI = readBinary<double>("ecologicalIsolation.dat");
-    std::vector<double> SI = readBinary<double>("spatialIsolation.dat");
+    // Run the simulation
+    doMain({"program", "parameters.txt"});
+
+    // Read the data if they exist
+    const std::vector<double> values = tst::read("time.dat");
 
     // Check
-    BOOST_CHECK_EQUAL(timepoints.size(), 6u);
-    BOOST_CHECK_EQUAL(EI.size(), 6u);
-    BOOST_CHECK_EQUAL(SI.size(), 6u);
+    assert(!values.empty());
+
+    // Check their values
+    for (auto i : values)
+        BOOST_CHECK_EQUAL(values[i], i);
+    
+    // Check that no other output file was read
+    tst::checkError([&] { 
+        tst::read("habitatCensus.dat"); 
+    }, "Unable to open file habitatCensus.dat");
+    
+    // Cleanup
+    std::remove("parameters.txt");
+    std::remove("whattosave.txt");
+    std::remove("time.dat");
+    
+}
+
+// Test that error when wrong output request file
+BOOST_AUTO_TEST_CASE(abuseWrongOutputRequestFile) {
+
+    // Write a parameter file
+    tst::write("parameters.txt", "savedat 1\nchoose 1");
+
+    // Check error if output request file not present
+    tst::checkError([&] {
+        doMain({"program", "parameters.txt"});
+    }, "Unable to open file whattosave.txt");
+
+    // Cleanup
+    std::remove("parameters.txt");
+
+}
+
+// Test that all outputs are saved if no choice is made
+BOOST_AUTO_TEST_CASE(useCaseAllOutputsIfNoChoice) {
+
+    // Write a parameter file with data saving but no choice
+    tst::write("parameters.txt", "popsize 5\nnrounds 2\ntend 10\ntsave 1\nsavedat 1\nchoose 0");
+
+    // Run the simulation
+    doMain({"program", "parameters.txt"});
+
+    // Check that all output files can be read
+    BOOST_CHECK_NO_THROW(tst::read("time.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("resourceCensus.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("resourceMeanTraitValue.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("individualExpectedFitnessDifference.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("individualChoice.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("individualRealizedFitness.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("individualRank.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("individualHabitat.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("individualTraitValue.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("individualTotalFitness.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("individualEcotype.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("habitatCensus.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("habitatMeanTraitValue.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("ecologicalIsolation.dat"));
+    BOOST_CHECK_NO_THROW(tst::read("spatialIsolation.dat"));
+
+    // Check some values
+    BOOST_CHECK_EQUAL(tst::read("time.dat").size(), 11u);
+    BOOST_CHECK_EQUAL(tst::read("resourceCensus.dat").size(), 88u);
+    BOOST_CHECK_EQUAL(tst::read("resourceMeanTraitValue.dat").size(), 88u);
+    BOOST_CHECK_EQUAL(tst::read("individualExpectedFitnessDifference.dat").size(), 110u);
+    BOOST_CHECK_EQUAL(tst::read("individualChoice.dat").size(), 110u);
+    BOOST_CHECK_EQUAL(tst::read("individualRealizedFitness.dat").size(), 110u);
+    BOOST_CHECK_EQUAL(tst::read("individualRank.dat").size(), 110u);
+    BOOST_CHECK_EQUAL(tst::read("individualHabitat.dat").size(), 55u);
+    BOOST_CHECK_EQUAL(tst::read("individualTraitValue.dat").size(), 55u);
+    BOOST_CHECK_EQUAL(tst::read("individualTotalFitness.dat").size(), 55u);
+    BOOST_CHECK_EQUAL(tst::read("individualEcotype.dat").size(), 55u);
+    BOOST_CHECK_EQUAL(tst::read("habitatCensus.dat").size(), 22u);
+    BOOST_CHECK_EQUAL(tst::read("habitatMeanTraitValue.dat").size(), 22u);
+    BOOST_CHECK_EQUAL(tst::read("ecologicalIsolation.dat").size(), 11u);
+    BOOST_CHECK_EQUAL(tst::read("spatialIsolation.dat").size(), 11u);
+
+    // Cleanup
+    std::remove("parameters.txt");
+    std::remove("time.dat");
+    std::remove("resourceCensus.dat");
+    std::remove("resourceMeanTraitValue.dat");
+    std::remove("individualExpectedFitnessDifference.dat");
+    std::remove("individualChoice.dat");
+    std::remove("individualRealizedFitness.dat");
+    std::remove("individualRank.dat");
+    std::remove("individualHabitat.dat");
+    std::remove("individualTraitValue.dat");
+    std::remove("individualTotalFitness.dat");
+    std::remove("individualEcotype.dat");
+    std::remove("habitatCensus.dat");
+    std::remove("habitatMeanTraitValue.dat");
+    std::remove("ecologicalIsolation.dat");
+    std::remove("spatialIsolation.dat");
+
+}
+
+// Test that nothing is saved if no data saving
+BOOST_AUTO_TEST_CASE(useCaseNothingIsSaved) {
+
+    // Write a parameter file specifying no data saving
+    tst::write("parameters.txt", "savedat 0");
+
+    // Run the simulation
+    doMain({"program", "parameters.txt"});
+
+    // Check that none of the possible output files are present
+    tst::checkError([&] {tst::read("time.dat");}, "Unable to open file time.dat");
+    tst::checkError([&] {tst::read("resourceCensus.dat");}, "Unable to open file resourceCensus.dat");
+    tst::checkError([&] {tst::read("individualExpectedFitnessDifference.dat");}, "Unable to open file individualExpectedFitnessDifference.dat");
+
+    // Cleanup
+    std::remove("parameters.txt");
+
+}
+
+// Test that it works when verbose is on
+BOOST_AUTO_TEST_CASE(useCaseWithVerbose) {
+
+    // Write a parameter file with verbose
+    tst::write("parameters.txt", "verbose 1\ntend 1\npopsize 10");
+
+    // Capture output
+    const std::string output = tst::captureOutput([&] { doMain({"program", "parameters.txt"}); });
+
+    // Find relevant bits in output
+    BOOST_CHECK(output.find("Simulation started") != std::string::npos);
+    BOOST_CHECK(output.find("t = 0") != std::string::npos);
+    BOOST_CHECK(output.find("Simulation ended") != std::string::npos);
+
+    // Cleanup
+    std::remove("parameters.txt");
 
 }
