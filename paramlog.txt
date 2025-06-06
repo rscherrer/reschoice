@@ -9,12 +9,11 @@ nrounds 10
 mutrate 0.0001
 mutsdev 0.02
 dispersal 0.1
-tend 100
+tend 1
 tsave 20
-seed 1749158227155251270
+seed 1749223195445437801
 savepars 1
 savedat 0
-savelog 0
-verbose 0
+verbose 1
 choose 0
 memsave 1

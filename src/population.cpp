@@ -18,6 +18,7 @@ Population::Population(const Parameters &pars) :
     dispersal(pars.dispersal),
     tend(pars.tend),
     tsave(pars.tsave),
+	verbose(pars.verbose),
     resources({{1.0, hsymmetry}, {hsymmetry, 1.0}}),
     sampleMutation(rnd::normal(0.0, mutsdev)),
     time(0u)
@@ -61,7 +62,6 @@ void Population::check() const {
     assert(dispersal >= 0.0 && dispersal <= 1.0);
     assert(tend > 0u);
     assert(tsave > 0u);
-    assert(patchsizes.size() == 2u);
     assert(time >= 0);
 
 }
@@ -85,7 +85,7 @@ void Population::moveon() {
 }
 
 // Function to compute the amount of resource discovered by a group of feeders
-double pop::resources(const double &rtotal, const double &delta, const double &sumeffs) {
+double pop::discover(const double &rtotal, const double &delta, const double &sumeffs) {
 
 	// rtotal: total amount of resource in the habitat
 	// delta: resource discovery rate
@@ -145,7 +145,7 @@ double stat::ei(
 	double varx0 = ssqx0 / n0 - utl::sqr(sumx0 / n0);
 
 	// Correct small numerical imprecisions
-	varx0 = varx0 < 0.0 && varx0 > -utl::precis() ? 0.0 : varx0;
+	varx0 = varx0 < 0.0 && varx0 > -1e-06 ? 0.0 : varx0;
 
 	// Make sure the variance is positive
 	assert(varx0 >= 0.0);
@@ -222,6 +222,9 @@ void Population::cycle(Printer &print) {
     // Check
     assert(individuals->size() == popsize);
 
+	// Verbose if needed
+    if (verbose) show();
+
     // Initialize a vector of fitnesses
 	std::vector<double> fitnesses(popsize);
 
@@ -270,8 +273,8 @@ void Population::cycle(Printer &print) {
 			assert(cumul2 >= effs[1u]);
 
 			// Compute the amount of resource discovered for each resource
-			const double discov1 = pop::resources(resources[habitat][0u], delta, cumul1);
-			const double discov2 = pop::resources(resources[habitat][1u], delta, cumul2);
+			const double discov1 = pop::discover(resources[habitat][0u], delta, cumul1);
+			const double discov2 = pop::discover(resources[habitat][1u], delta, cumul2);
 
 			// Check
 			assert(discov1 >= 0.0);
@@ -317,6 +320,16 @@ void Population::cycle(Printer &print) {
 			}
 		}
 
+		// Compute the final amounts of resources discovered in each habitat on each resource
+		std::vector<std::vector<double> > discovered({{0.0, 0.0}, {0.0, 0.0}});
+		for (size_t i = 0u; i < 2u; ++i) {
+			for (size_t k = 0u; k < 2u; ++k) {
+				discovered[i][k] = pop::discover(resources[i][k], delta, sumeffs[i][k]);
+				assert(discovered[i][k] >= 0.0);
+				assert(discovered[i][k] <= resources[i][k]);
+			}
+		}
+
 		// For each individual...
 		for (size_t i = 0u; i < popsize; ++i) {
 
@@ -333,7 +346,7 @@ void Population::cycle(Printer &print) {
 			const double eff = choice ? ind.getEff2() : ind.getEff1();
 
 			// Compute realized fitness on the chosen resource
-			const double fit = resources[habitat][choice] * eff / (sumeffs[habitat][choice] + 1.0 / delta - 1.0);
+			const double fit = eff * discovered[habitat][choice];
 
 			// Check that the fitness is above zero
 			assert(fit >= 0.0);
@@ -381,7 +394,7 @@ void Population::cycle(Printer &print) {
 		newborns->push_back(parent);
 
 		// Mutate offspring if needed
-		if (rnd::bernoulli(mutrate)(rnd::rng)) 
+		if (rnd::bernoulli(mutrate)(rnd::rng))
 			newborns->back().mutate(sampleMutation(rnd::rng), tradeoff);
 
 		// The offspring has a chance to disperse
@@ -442,6 +455,6 @@ void Population::cycle(Printer &print) {
     assert(newborns->empty());
 
 	// Make sure population size has not changed
-	assert(individuals.size() == popsize);
+	assert(individuals->size() == popsize);
     
 }

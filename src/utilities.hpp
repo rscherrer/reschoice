@@ -6,9 +6,9 @@
 namespace utl
 {
 
-    double sqr(const double&);
-    double precis();
-
+    // Utility functions
+    inline double sqr(const double &x) { return x * x; }
+    
 }
 
 #endif

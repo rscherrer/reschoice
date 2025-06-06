@@ -5,12 +5,17 @@
 
 #include "utilities.hpp"
 #include "random.hpp"
+
 #include <cmath>
 #include <cassert>
 
-// Accessory functions
-double calcBaselineProb(const double&, const double&, const double&);
-double calcProbBest(const double&, const double&);
+namespace ind {
+
+    // Accessory functions
+    double probbase(const double&, const double&, const double&);
+    double probbest(const double&, const double&);
+
+}
 
 class Individual {
 

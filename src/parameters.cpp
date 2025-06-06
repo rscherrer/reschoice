@@ -29,7 +29,6 @@ Parameters::Parameters(const std::string &filename) :
     seed(clockseed()),
     savepars(true),
     savedat(false),
-    savelog(false),
     verbose(false),
     choose(false),
     memsave(1.0)
@@ -112,7 +111,6 @@ void Parameters::read(const std::string &filename)
         else if (name == "seed") reader.readvalue<size_t>(seed);
         else if (name == "savepars") reader.readvalue<bool>(savepars);
         else if (name == "savedat") reader.readvalue<bool>(savedat);
-        else if (name == "savelog") reader.readvalue<bool>(savelog);
         else if (name == "verbose") reader.readvalue<bool>(verbose);
         else if (name == "choose") reader.readvalue<bool>(choose);
         else if (name == "memsave") reader.readvalue<double>(memsave, chk::enoughmb<double>);
@@ -159,7 +157,6 @@ void Parameters::save(const std::string &filename) const
     file << "seed " << seed << '\n';
     file << "savepars " << savepars << '\n';
     file << "savedat " << savedat << '\n';
-    file << "savelog " << savelog << '\n';
     file << "verbose " << verbose << '\n';
     file << "choose " << choose << '\n';
     file << "memsave " << memsave << '\n';

@@ -39,7 +39,6 @@ struct Parameters {
     size_t seed;         // seed for the random number generator
     bool savepars;       // whether to save parameters into a file
     bool savedat;        // whether to save output data into files
-    bool savelog;        // whether to redirect screen output to a log file
     bool verbose;        // whether to output to screen
     bool choose;         // whether to choose the variables to save
     double memsave;      // memory used for data storage (in MB)

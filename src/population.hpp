@@ -8,13 +8,12 @@
 #include "printer.hpp"
 #include "parameters.hpp"
 #include "individual.hpp"
-#include "utilities.hpp"
 
 namespace pop {
 
     // Accessory functions
-    double resources(const double&, const double&, const double&);
-    double fitness(const double&, const double&, const double&, const size_t&);
+    double discover(const double&, const double&, const double&);
+    double fitness(const double&, const double&, const double&, const size_t& = 1u);
 
 }
 
@@ -45,8 +44,10 @@ public:
     bool keepon() const { return time <= tend; };
     
     // Other getters
+    size_t size() const { return individuals->size(); };
     size_t getTime() const { return time; };
     size_t getHabitat(const size_t &i) const { assert(i < individuals->size()); return (*individuals)[i].getHabitat(); };
+    double getX(const size_t &i) const { assert(i < individuals->size()); return (*individuals)[i].getX(); };
 
 private:
 
@@ -67,6 +68,7 @@ private:
     double dispersal;    // dispersal rate
     size_t tend;         // simulation time
     size_t tsave;        // recording time
+    bool verbose;        // whether to output to screen
 
     // Resources in each habitat
     std::vector<std::vector<double> > resources;
