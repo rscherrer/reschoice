@@ -1,1 +1,0 @@
-genhtml ./lcov/lcov.info --output-directory ./lcov
