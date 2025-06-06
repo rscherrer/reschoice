@@ -1,3 +1,7 @@
+# Subdirs
+r/
+
+# Third party
 vcpkg/
 lcov/
 gprof/
