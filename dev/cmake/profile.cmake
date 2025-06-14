@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 # Project name
-project(brachypode)
+project(reschoice)
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 20)

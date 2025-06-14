@@ -10,7 +10,7 @@ if (WIN32)
 endif()
 
 # Project name
-project(brachypode)
+project(reschoice)
 
 # Git will be needed to install Boost
 find_package(Git REQUIRED)
