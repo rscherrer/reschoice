@@ -2,7 +2,7 @@
 r/
 
 # Third party
-vcpkg/
+vcpkg
 lcov/
 gprof/
 valgrind/

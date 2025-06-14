@@ -47,8 +47,11 @@ BOOST_AUTO_TEST_CASE(populationScreenOutput) {
     // Printer
     Printer print({"foo", "bar"});
 
-    // Check that output is as expected
-    tst::checkOutput([&] { pop.cycle(print); }, "t = 0\n");
+    // Capture output
+    const std::string output = tst::captureOutput([&] { pop.cycle(print); });
+
+    // Find relevant bits in output
+    BOOST_CHECK(output.find("t = 0") != std::string::npos);
 
 }
 

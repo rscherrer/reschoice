@@ -66,16 +66,6 @@ void Population::check() const {
 
 }
 
-// Function to display progress
-void Population::show() const {
-
-    // TODO: Maybe display more
-
-    // Display
-    std::cout << "t = " << time << '\n';
-
-}
-
 // Function to increment time
 void Population::moveon() {
 
@@ -222,9 +212,6 @@ void Population::cycle(Printer &print) {
     // Check
     assert(individuals->size() == popsize);
 
-	// Verbose if needed
-    if (verbose) show();
-
     // Initialize a vector of fitnesses
 	std::vector<double> fitnesses(popsize);
 
@@ -346,7 +333,7 @@ void Population::cycle(Printer &print) {
 			const double eff = choice ? ind.getEff2() : ind.getEff1();
 
 			// Compute realized fitness on the chosen resource
-			const double fit = eff * discovered[habitat][choice];
+			const double fit = pop::fitness(discovered[habitat][choice], eff, sumeffs[habitat][choice], n[habitat][choice]);
 
 			// Check that the fitness is above zero
 			assert(fit >= 0.0);
@@ -425,6 +412,10 @@ void Population::cycle(Printer &print) {
 		}
     }
 
+	// Compute statistics
+	const double EI = stat::ei(n, sumx, ssqx);
+	const double SI = stat::si(n);
+
 	// Save some population-level statistics if needed
 	if (tts) {
 
@@ -438,10 +429,21 @@ void Population::cycle(Printer &print) {
 		}
 
 		// Save ecological isolation
-		print.save("ecologicalIsolation", stat::ei(n, sumx, ssqx));
+		print.save("ecologicalIsolation", EI);
 
 		// Save spatial isolation
-		print.save("spatialIsolation", stat::si(n));
+		print.save("spatialIsolation", SI);
+
+	}
+
+	// Verbose if needed
+    if (verbose) {
+
+		// Show statistics
+    	std::cout << "t = " << time << ", ";
+		std::cout << "meanx = " << (sumx[0u][0u] + sumx[0u][1u] + sumx[1u][0u] + sumx[1u][1u]) / popsize << ", ";
+		std::cout << "EI = " << EI << ", ";
+		std::cout << "SI = " << SI << '\n';
 
 	}
 

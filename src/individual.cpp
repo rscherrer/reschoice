@@ -63,8 +63,11 @@ void Individual::makeChoice(const double &fit1, const double &fit2, const double
     // alpha: weight of resource abundance when choice is random
     // res1, res2: total contrentrations of both resources
 
+    // Which resource is better? (pick at random if they are equal)
+    const bool best = fit1 == fit2 ? rnd::bernoulli(0.5)(rnd::rng) : fit2 > fit1;
+
     // Concentration of the best resource
-    const double rbest = fit2 > fit1 ? res2 : res1;
+    const double rbest = best ? res2 : res1;
 
     // Baseline probability of choosing the best resource without choice
     const double pbase = ind::probbase(rbest, res1 + res2, alpha);
@@ -84,7 +87,7 @@ void Individual::makeChoice(const double &fit1, const double &fit2, const double
     const bool isAccurate = rnd::bernoulli(prob)(rnd::rng);
 
     // Make the choice
-    choice = (fit2 > fit1) == isAccurate;
+    choice = best == isAccurate;
     
 }
 
