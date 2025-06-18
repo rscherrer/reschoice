@@ -478,6 +478,7 @@ void Population::cycle(Printer &print) {
     }
 
 	// Compute statistics
+	const double meanx = (sumx[0u][0u] + sumx[0u][1u] + sumx[1u][0u] + sumx[1u][1u]) / popsize;
 	const double sdevx = stat::sdev(n, sumx, ssqx);
 	const double EI = stat::ei(n, sumx, ssqx);
 	const double SI = stat::si(n);
@@ -500,6 +501,9 @@ void Population::cycle(Printer &print) {
 		// Save spatial isolation
 		print.save("spatialIsolation", SI);
 
+		// Save trait mean
+		print.save("traitMean", meanx);
+
 		// Save trait standard deviation
 		print.save("traitStandardDeviation", sdevx);
 
@@ -510,7 +514,7 @@ void Population::cycle(Printer &print) {
 
 		// Show statistics
     	std::cout << "t = " << time << ", ";
-		std::cout << "meanx = " << (sumx[0u][0u] + sumx[0u][1u] + sumx[1u][0u] + sumx[1u][1u]) / popsize << ", ";
+		std::cout << "meanx = " << meanx << ", ";
 		std::cout << "EI = " << EI << ", ";
 		std::cout << "SI = " << SI << '\n';
 

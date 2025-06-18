@@ -25,7 +25,8 @@ std::vector<std::string> valid() {
         "habitatMeanTraitValue",                    // 12   mean trait value in each habitat
 		"ecologicalIsolation",                      // 13   ecological isolation statistic
         "spatialIsolation",                         // 14   spatial isolation statistic
-        "traitStandardDeviation"                    // 15   trait standard deviation in the population
+        "traitMean",                                // 15   trait mean in the population
+        "traitStandardDeviation"                    // 16   trait standard deviation in the population
 
     };
 
