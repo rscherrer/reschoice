@@ -128,20 +128,53 @@ double stat::ei(
 	
 ) {
 
-	// Compute the variance in trait values in the population
+	// Useful counts
 	const size_t n0 = n[0u][0u] + n[0u][1u] + n[1u][0u] + n[1u][1u];
+	const size_t n1 = n[0u][0u] + n[1u][0u];
+	const size_t n2 = n[0u][1u] + n[1u][1u];
+
+	// Early exit
+	if (!n1 || !n2) return 0.0;
+
+	// Useful sums
 	const double sumx0 = sumx[0u][0u] + sumx[0u][1u] + sumx[1u][0u] + sumx[1u][1u]; 
+	const double sumx1 = sumx[0u][0u] + sumx[1u][0u];
+	const double sumx2 = sumx[0u][1u] + sumx[1u][1u];
+
+	// Useful sums of squares	
 	const double ssqx0 = ssqx[0u][0u] + ssqx[0u][1u] + ssqx[1u][0u] + ssqx[1u][1u];
+	const double ssqx1 = ssqx[0u][0u] + ssqx[1u][0u];
+	const double ssqx2 = ssqx[0u][1u] + ssqx[1u][1u];
+
+	// Variances
 	double varx0 = ssqx0 / n0 - utl::sqr(sumx0 / n0);
+	double varx1 = ssqx1 / n1 - utl::sqr(sumx1 / n1);
+	double varx2 = ssqx2 / n2 - utl::sqr(sumx2 / n2);
 
 	// Correct small numerical imprecisions
-	varx0 = varx0 < 0.0 && varx0 > -1e-06 ? 0.0 : varx0;
+	varx0 = utl::correct(varx0);
+	varx1 = utl::correct(varx1);
+	varx2 = utl::correct(varx2);
 
-	// Make sure the variance is positive
+	// Make sure the variances are positive
 	assert(varx0 >= 0.0);
+	assert(varx1 >= 0.0);
+	assert(varx2 >= 0.0);
 
-	// Compute standard deviation in trait values as our metric for ecological isolation
-	const double EI = sqrt(varx0);
+	// Compute the F-statistic
+	double EI = 1.0 - (n1 * varx1 + n2 * varx2) / (n0 * varx0);
+
+	// Check
+	assert(EI >= 0.0 && EI <= 1.0);
+
+	// Lower bound
+	const double EI0 = 2.0 / utl::pi(); 
+
+	// Rescale it
+	EI = (EI - EI0) / (1.0 - EI0);
+
+	// Re-check
+	assert(EI <= 1.0);
 
 	return EI;
 
