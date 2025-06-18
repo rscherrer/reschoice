@@ -24,7 +24,7 @@ cd "$BIN_DIR"
 # Create the parameters.txt file
 PARAM_FILE="parameters.txt"
 cat > "$PARAM_FILE" <<EOL
-tend 10000
+tend 1000
 tsave 10
 verbose 1
 savedat 1

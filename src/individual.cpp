@@ -56,11 +56,11 @@ double ind::probbest(const double &pbase, const double &beta) {
 }
 
 // Function to set the resource choice
-void Individual::makeChoice(const double &fit1, const double &fit2, const double &beta, const double &alpha, const double &res1, const double &res2) { 
+void Individual::makeChoice(const double &fit1, const double &fit2, const double &alpha, const double &beta, const double &res1, const double &res2) { 
 
     // fit1, fit2: expected payoff for each resource
-    // beta: optimal choice parameter
     // alpha: weight of resource abundance when choice is random
+    // beta: optimal choice parameter
     // res1, res2: total contrentrations of both resources
 
     // Which resource is better? (pick at random if they are equal)
