@@ -20,6 +20,7 @@ namespace pop {
 namespace stat {
 
     // Compute statistics
+    double sdev(const std::vector<std::vector<size_t> >&, const std::vector<std::vector<double> >&, const std::vector<std::vector<double> >&);
     double ei(const std::vector<std::vector<size_t> >&, const std::vector<std::vector<double> >&, const std::vector<std::vector<double> >&);
 	double si(const std::vector<std::vector<size_t> >&);
 

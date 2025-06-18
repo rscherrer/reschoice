@@ -119,6 +119,38 @@ double pop::fitness(const double &rdiscov, const double &eff, const double &sume
 
 }
 
+// Function to compute the trait standard deviation
+double stat::sdev(
+	
+	const std::vector<std::vector<size_t> > &n,
+	const std::vector<std::vector<double> > &sumx,
+	const std::vector<std::vector<double> > &ssqx
+	
+) {
+
+	// Useful counts
+	const size_t n0 = n[0u][0u] + n[0u][1u] + n[1u][0u] + n[1u][1u];
+
+	// Useful sums
+	const double sumx0 = sumx[0u][0u] + sumx[0u][1u] + sumx[1u][0u] + sumx[1u][1u]; 
+
+	// Useful sums of squares	
+	const double ssqx0 = ssqx[0u][0u] + ssqx[0u][1u] + ssqx[1u][0u] + ssqx[1u][1u];
+
+	// Variance
+	double varx = ssqx0 / n0 - utl::sqr(sumx0 / n0);
+
+	// Correct small numerical imprecisions
+	varx = utl::correct(varx);
+
+	// Make sure the variance is positive
+	assert(varx >= 0.0);
+
+	// Standard deviation
+	return sqrt(varx);
+
+}
+
 // Function to compute the ecological isolation statistic
 double stat::ei(
 	
@@ -446,6 +478,7 @@ void Population::cycle(Printer &print) {
     }
 
 	// Compute statistics
+	const double sdevx = stat::sdev(n, sumx, ssqx);
 	const double EI = stat::ei(n, sumx, ssqx);
 	const double SI = stat::si(n);
 
@@ -466,6 +499,9 @@ void Population::cycle(Printer &print) {
 
 		// Save spatial isolation
 		print.save("spatialIsolation", SI);
+
+		// Save trait standard deviation
+		print.save("traitStandardDeviation", sdevx);
 
 	}
 
