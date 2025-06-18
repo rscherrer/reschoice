@@ -25,7 +25,7 @@ public:
     Individual(const double&, const double&);
 
     // Setters
-    void makeChoice(const double&, const double&, const double&, const double& = 0.0, const double& = 1.0, const double& = 1.0);
+    void makeChoice(const double&, const double&, const double&, const double&, const double&, const double&);
     void setDiff(const double&);
     void mutate(const double&, const double&);
     void develop(const double&);

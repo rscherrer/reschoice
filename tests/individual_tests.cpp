@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(probBestResource) {
 BOOST_AUTO_TEST_CASE(optimalChoice) {
 
     Individual ind(1.0, 0.0);
-    ind.makeChoice(0.0, 1.0, 1.0);
+    ind.makeChoice(0.0, 1.0, 0.0, 1.0, 1.0, 1.0);
     BOOST_CHECK(ind.getChoice());
 
 }
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(noChoiceButResourceAbundance) {
     // choice depends on resource abundance.
 
     Individual ind(1.0, 0.0);
-    ind.makeChoice(1.0, 0.0, 0.0, 1.0, 0.0, 1.0);
+    ind.makeChoice(1.0, 0.0, 1.0, 0.0, 0.0, 1.0);
     BOOST_CHECK(ind.getChoice());
 
 }

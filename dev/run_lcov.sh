@@ -17,12 +17,17 @@ fi
 echo "Cleaning existing coverage data..."
 find . -name "*.gcda" -exec rm {} +
 
-# Run all test executables
+# Run all test executables in a temporary directory
 echo "Running test executables..."
 for TEST_EXECUTABLE in "$TESTS_DIR"/*tests; do
     if [ -x "$TEST_EXECUTABLE" ]; then
         echo "Running $TEST_EXECUTABLE..."
-        "$TEST_EXECUTABLE"
+        TMPDIR=$(mktemp -d)
+        (
+            cd "$TMPDIR"
+            "$OLDPWD/$TEST_EXECUTABLE"
+        )
+        rm -rf "$TMPDIR"
     else
         echo "Warning: Skipping $TEST_EXECUTABLE (not executable or not found)."
     fi
