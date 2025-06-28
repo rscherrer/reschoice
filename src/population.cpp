@@ -391,7 +391,7 @@ void Population::cycle(Printer &print) {
 			// Read relevant individual properties
 			const bool choice = ind.getChoice();
 			const bool habitat = ind.getHabitat();
-			const bool diff = ind.getDiff();
+			const double diff = ind.getDiff();
 			const size_t rank = ind.getRank();
 
 			// Corresponding feeding efficiency
