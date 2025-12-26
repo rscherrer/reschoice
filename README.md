@@ -74,7 +74,8 @@ This code is written in C++20. It was developed on Ubuntu Linux 24.04 LTS, makin
 
 Sister repositories include:
 
-
+* [reschoice-r](https://github.com/rscherrer/reschoice-r): analysis code and results
+* [reschoice-ms](https://github.com/rscherrer/reschoice-ms): manuscript
 
 ## Permissions
 
