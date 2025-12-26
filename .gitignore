@@ -1,6 +1,7 @@
 # Subdirs
 r/
 ms/
+private/
 
 # Third party
 vcpkg
