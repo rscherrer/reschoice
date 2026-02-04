@@ -1,4 +1,4 @@
-## Example Setup
+## Example setup
 
 In this guide we show how to build the program using the [CMake](https://cmake.org/) build system. Below we provide a ready-made CMake configuration file but the user is free to use any custom configuration.
 
@@ -8,7 +8,7 @@ In this guide we show how to build the program using the [CMake](https://cmake.o
 - Build system: [CMake](https://cmake.org/) (>= 3.16)
 - Source retrieval: [git](https://git-scm.com/) (optional)
 
-### Download the Code
+### Download the code
 
 You can download the source code using `git`:
 
@@ -37,7 +37,7 @@ project(reschoice)
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Boilerplate
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
@@ -68,7 +68,7 @@ add_executable(reschoice "${CMAKE_SOURCE_DIR}/main.cpp" ${src})
 set_target_properties(reschoice PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/$<0:>)
 ```
 
-### Build the Program
+### Build the program
 
 Then, run the following code from within the repository to create a build folder and instruct CMake to build the program in release mode according to the instructions given in the `CMakeLists.txt` configuration file.
 

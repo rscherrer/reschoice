@@ -1,4 +1,4 @@
-## Test Configuration
+## Test configuration
 
 In this guide we show how to modify our [main CMake setup](SETUP.md) in order to run the tests that come with the program. Those tests were written with the [Boost.Test](https://www.boost.org/doc/libs/1_86_0/libs/test/doc/html/index.html) C++ library, and here we show how to build them as separate executables that can be used to check the proper behavior of the program. Check out [this page](https://en.wikipedia.org/wiki/Test-driven_development) for more information about **_unit testing_** and **_test-driven development_** (TDD).
 
@@ -10,7 +10,7 @@ In this guide we show how to modify our [main CMake setup](SETUP.md) in order to
 
 ([Boost.Test](https://www.boost.org/doc/libs/1_86_0/libs/test/doc/html/index.html) and [vcpkg](https://vcpkg.io/) will be downloaded in the process.)
 
-### Download the Code 
+### Download the code 
 
 First, download the repository and set it as working directory if you have not already done so:
 
@@ -49,7 +49,7 @@ endif()
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Boilerplate
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
@@ -128,7 +128,7 @@ These steps will connect the repo to Microsoft's [vcpkg](https://vcpkg.io/) inst
 
 This setup has the advantage of integrating with CMake and working well across platforms, so the steps are **the same on Windows, Linux or MacOS**. However, in case errors occur during this installation process, we recommend to refer to the log files created by `vcpkg` (some dependencies may be missing and they will be listed there if that is the case).
 
-### Build the Tests
+### Build the tests
 
 Then, run:
 
@@ -141,7 +141,7 @@ cmake --build .
 
 Here, the `cmake` command downloads the necessary dependencies through `vcpkg`, and builds all the targets (in debug mode) required by the `CMakeLists.txt` configuration --- not just the program itself, but also the tests, whose executables can be found in `bin/tests/`.
 
-### Run the Tests
+### Run the tests
 
 Simply run those executables to run the tests. For example:
 

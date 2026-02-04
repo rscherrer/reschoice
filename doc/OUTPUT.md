@@ -1,14 +1,14 @@
-## Output Data
+## Output data
 
-### Saving Parameters
+### Saving parameters
 
 If `savepars` is `1` the program saves the parameters it has used to run the simulation in a parameter log file called `paramlog.txt`. These include the `seed` of the pseudo random number generator and any parameters that have been updated (e.g. by reading them from file). See [here](PARAMETERS.md) for details about parameters.
 
-### Screen Output
+### Screen output
 
 The program outputs to the screen messages about the status of the simulation at each generation (if `verbose` is `1`).
 
-### Saving Data
+### Saving data
 
 The program saves data every `tsave` generations. The data are saved **in binary format**, in files with extension `.dat`. If data must be saved (`savedat 1`) and no variable choice is given (`choose 0`), by default the program saves all of the following:
 

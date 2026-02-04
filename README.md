@@ -78,4 +78,4 @@ This code is written in C++20. It was developed on Ubuntu Linux 24.04 LTS, makin
 
 ## Permissions
 
-Copyright (c) Raphaël Scherrer, 2025 (open source license will be added upon publication). This program is inspired by the thesis work of Joris Damhuis, which can be found at this [link](https://github.com/J-Damhuis/Eco-Evolutionary-Dynamics). This code comes with no guarantee whatsoever.
+Copyright (c) Raphaël Scherrer and Joris Damhuis, 2025. This code is licensed under the MIT license. See [license file](LICENSE.txt) for details. This program is inspired by the thesis work of Joris Damhuis, which can be found at this [link](https://github.com/J-Damhuis/Eco-Evolutionary-Dynamics). This code comes with no guarantee whatsoever.

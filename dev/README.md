@@ -1,4 +1,4 @@
-## Development Tools
+## Development tools
 
 The specific scripts and files used during the development of the program can be found in the `dev/` folder. 
 
