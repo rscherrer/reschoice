@@ -1,10 +1,11 @@
 # reschoice
 
-This is the source code for an individual-based simulation of evolutionary branching under various degrees of resource choice.
+This is the source code for an individual-based simulation study of evolutionary branching under various degrees of resource choice.
 
 ![Build](https://img.shields.io/badge/build-passing-brightgreen)
 ![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+![DOI](https://img.shields.io/badge/DOI-10.32942/X2T36C-blue)
 
 ## Description
 
