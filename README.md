@@ -79,7 +79,7 @@ This code is written in C++20. It was developed on Ubuntu Linux 24.04 LTS, makin
 ## Notes
 
 * A version of this repository has been archived at Zenodo and can be accessed via the following [link](https://doi.org/10.5281/zenodo.18497296).
-* The associated (not-peer-reviewed) manuscript is publicly available on the preprint server EcoEvoRxiv, under the DOI: [10.32942/X2T36C](https://doi.org/10.32942/X2T36C).
+* The associated manuscript is publicly available on the preprint server EcoEvoRxiv, under the DOI: [10.32942/X2T36C](https://doi.org/10.32942/X2T36C).
 
 ## Permissions
 
