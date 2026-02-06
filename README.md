@@ -76,6 +76,10 @@ This code is written in C++20. It was developed on Ubuntu Linux 24.04 LTS, makin
 * [reschoice-r](https://github.com/rscherrer/reschoice-r): analysis code and results
 * [reschoice-ms](https://github.com/rscherrer/reschoice-ms): manuscript
 
+## Notes
+
+A version of this repository has been archived at Zenodo and can be accessed via the following [link](https://doi.org/10.5281/zenodo.18497296).
+
 ## Permissions
 
 Copyright (c) Raphaël Scherrer and Joris Damhuis, 2025. This code is licensed under the MIT license. See [license file](LICENSE.txt) for details. This program is inspired by the thesis work of Joris Damhuis, which can be found at this [link](https://github.com/J-Damhuis/Eco-Evolutionary-Dynamics). This code comes with no guarantee whatsoever.
