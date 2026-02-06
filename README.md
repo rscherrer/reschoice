@@ -6,6 +6,7 @@ This is the source code for an individual-based simulation study of evolutionary
 ![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
 [![DOI](https://img.shields.io/badge/DOI-10.32942/X2T36C-blue)](https://doi.org/10.32942/X2T36C)
+[![Zenodo](https://img.shields.io/badge/Zenodo-10.5281/zenodo.18497296-blue)](https://doi.org/10.5281/zenodo.18497296)
 
 ## Description
 
