@@ -78,6 +78,11 @@ This code is written in C++20. It was developed on Ubuntu Linux 24.04 LTS, makin
 * [reschoice-r](https://github.com/rscherrer/reschoice-r): analysis code and results
 * [reschoice-ms](https://github.com/rscherrer/reschoice-ms): manuscript
 
+Some parts of the code presented here have since been made into the following libraries:
+
+* [readpars](https://github.com/rscherrer/readpars): parameter file reader
+* [binprint](https://github.com/rscherrer/binprint): save binary output files
+
 ## Notes
 
 * A version of this repository has been archived at Zenodo and can be accessed via the following [link](https://doi.org/10.5281/zenodo.18497296).
