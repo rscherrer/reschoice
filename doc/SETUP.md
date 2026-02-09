@@ -73,9 +73,8 @@ set_target_properties(reschoice PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOUR
 Then, run the following code from within the repository to create a build folder and instruct CMake to build the program in release mode according to the instructions given in the `CMakeLists.txt` configuration file.
 
 ```shell 
-mkdir build
+cmake -S . -B build
 cd build
-cmake ..
 cmake --build .
 ```
 
